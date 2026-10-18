@@ -26,6 +26,7 @@ import {
   X,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
+import { launchCinematicTask } from "@/components/effects/CinematicTaskLauncher";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
@@ -267,8 +268,15 @@ export default function DashboardPage() {
 
         <div className="grid gap-4 md:grid-cols-2">
           {/* Task 1: LinkedIn Follow & Post */}
-          <Link
-            href="/missions/linkedin-follow-post"
+          <div
+            onClick={() =>
+              launchCinematicTask({
+                slug: "linkedin-follow-post",
+                title: "Follow & Post on LinkedIn",
+                points: 50,
+                brand: "linkedin",
+              })
+            }
             className="group block rounded-[1.25rem] border border-border bg-surface p-6 shadow-soft-sm transition-all hover:shadow-glow hover:-translate-y-0.5 cursor-pointer"
           >
             <div className="flex items-start gap-4">
@@ -294,11 +302,18 @@ export default function DashboardPage() {
                 <ArrowRight className="h-4 w-4" />
               </div>
             </div>
-          </Link>
+          </div>
 
           {/* Task 2: Join WhatsApp Community */}
-          <Link
-            href="/missions/join-whatsapp-community"
+          <div
+            onClick={() =>
+              launchCinematicTask({
+                slug: "join-whatsapp-community",
+                title: "Join Zyven WhatsApp Community",
+                points: 30,
+                brand: "whatsapp",
+              })
+            }
             className="group block rounded-[1.25rem] border border-border bg-surface p-6 shadow-soft-sm transition-all hover:shadow-glow hover:-translate-y-0.5 cursor-pointer"
           >
             <div className="flex items-start gap-4">
@@ -324,7 +339,7 @@ export default function DashboardPage() {
                 <ArrowRight className="h-4 w-4" />
               </div>
             </div>
-          </Link>
+          </div>
         </div>
       </section>
 

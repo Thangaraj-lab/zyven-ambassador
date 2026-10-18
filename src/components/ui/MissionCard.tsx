@@ -9,6 +9,7 @@ import { PointsPill } from "./PointsPill";
 import { cn } from "@/lib/utils";
 import type { Mission } from "@/lib/data/types";
 import { useMotionOK, ease } from "@/lib/motion";
+import { launchCinematicTask } from "@/components/effects/CinematicTaskLauncher";
 
 interface MissionCardProps {
   mission: Mission;
@@ -121,9 +122,19 @@ export function MissionCard({
     return <div title="New missions drop soon">{cardContent}</div>;
   }
 
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    launchCinematicTask({
+      slug: mission.slug,
+      title: mission.title,
+      points: mission.points,
+      brand: mission.brand,
+    });
+  };
+
   return (
-    <Link href={`/missions/${mission.slug}`} className="block">
+    <div onClick={handleClick} className="block cursor-pointer">
       {cardContent}
-    </Link>
+    </div>
   );
 }

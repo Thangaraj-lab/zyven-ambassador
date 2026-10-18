@@ -20,6 +20,7 @@ import {
 import { motion } from "motion/react";
 import { mockRepository } from "@/lib/data/mock/mockRepository";
 import { useRouter } from "next/navigation";
+import { triggerRgbAlert } from "@/components/effects/RGBAlertSystem";
 
 export function AmbassadorNav() {
   const pathname = usePathname();
@@ -91,8 +92,11 @@ export function AmbassadorNav() {
   }, [lastScrollY]);
 
   const handleLogout = async () => {
+    triggerRgbAlert("SESSION TERMINATED", "Logged Out Securely • RGB LED Reset");
     await mockRepository.logout();
-    router.push("/login");
+    setTimeout(() => {
+      router.push("/login");
+    }, 600);
   };
 
   return (

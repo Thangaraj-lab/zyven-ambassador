@@ -6,6 +6,9 @@ import { DevPanel } from "@/components/dev/DevPanel";
 import { Toaster } from "sonner";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale, getMessages } from "next-intl/server";
+import { RGBAlertSystem } from "@/components/effects/RGBAlertSystem";
+import { FirecrackerCelebration } from "@/components/effects/FirecrackerCelebration";
+import { CinematicTaskLauncher } from "@/components/effects/CinematicTaskLauncher";
 import "./globals.css";
 
 const plusJakarta = Plus_Jakarta_Sans({
@@ -77,6 +80,9 @@ export default async function RootLayout({
             <QueryProvider>
               {children}
               <DevPanel />
+              <RGBAlertSystem />
+              <FirecrackerCelebration />
+              <CinematicTaskLauncher />
               <Toaster
                 position="top-right"
                 toastOptions={{

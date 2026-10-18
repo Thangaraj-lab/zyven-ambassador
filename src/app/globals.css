@@ -261,6 +261,51 @@ html {
   background-image: radial-gradient(circle at 90% 10%, rgba(124, 58, 237, 0.15) 0%, transparent 60%);
 }
 
+@keyframes rgbFlow {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+  100% {
+    filter: hue-rotate(360deg);
+  }
+}
+
+@keyframes redStrobe {
+  0%, 100% {
+    opacity: 0.15;
+  }
+  50% {
+    opacity: 0.55;
+  }
+}
+
+@keyframes cardShake {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-9px); }
+  40%, 80% { transform: translateX(9px); }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(200%); }
+}
+
+.animate-rgb-flow {
+  animation: rgbFlow 2.5s linear infinite;
+}
+
+.animate-red-strobe {
+  animation: redStrobe 0.22s ease-in-out infinite;
+}
+
+.animate-card-shake {
+  animation: cardShake 0.42s ease-in-out;
+}
+
+.animate-shimmer {
+  animation: shimmer 2s infinite;
+}
+
 .glass-nav {
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(12px);

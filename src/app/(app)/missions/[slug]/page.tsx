@@ -28,6 +28,7 @@ import {
   Loader2,
 } from "lucide-react";
 import Link from "next/link";
+import { triggerFirecrackers } from "@/components/effects/FirecrackerCelebration";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { motion } from "motion/react";
@@ -119,9 +120,12 @@ export default function MissionDetailPage() {
       // Step 5 & 6: Button transforms into success state with drawn checkmark
       setSubmitStage("success");
 
+      // 3D Firecracker Explosions & Sound Effects
+      triggerFirecrackers(mission.title, mission.points);
+
       // Haptic feedback
       if (typeof navigator !== "undefined" && navigator.vibrate) {
-        navigator.vibrate(20);
+        navigator.vibrate([40, 60, 40]);
       }
 
       toast.success("Verification proof submitted for review");

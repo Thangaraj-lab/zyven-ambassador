@@ -11,6 +11,8 @@ import { ArrowRight, Mail, Lock, Sparkles } from "lucide-react";
 import { motion } from "motion/react";
 import { toast } from "sonner";
 
+import { triggerRgbAlert, triggerRedAlarm } from "@/components/effects/RGBAlertSystem";
+
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -19,6 +21,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [shakeCard, setShakeCard] = useState(false);
 
   const redirectByRole = (role: string) => {
     if (nextUrl) {
@@ -38,9 +41,13 @@ export default function LoginPage() {
     setIsLoading(true);
     try {
       const user = await mockRepository.loginWithGoogleMock();
+      triggerRgbAlert("LOGIN SUCCESSFUL", `Authenticated via ${provider.toUpperCase()} • RGB LED Online`);
       toast.success(`Welcome to Zyven! Signed in via ${provider.toUpperCase()}.`);
-      redirectByRole(user.role);
+      setTimeout(() => {
+        redirectByRole(user.role);
+      }, 700);
     } catch {
+      triggerRedAlarm("AUTH ERROR", "Provider authentication failed");
       toast.error("Authentication failed. Please try again.");
     } finally {
       setIsLoading(false);
@@ -53,12 +60,28 @@ export default function LoginPage() {
       toast.error("Please enter your email");
       return;
     }
+
+    // High Red LED Alarm for Wrong Password Demonstration
+    if (password === "wrong" || password === "error" || (password && password.length < 4)) {
+      setShakeCard(true);
+      setTimeout(() => setShakeCard(false), 500);
+      triggerRedAlarm("ACCESS DENIED: WRONG PASSWORD", "High Red Strobe Emergency Alarm Active");
+      toast.error("Security alert: Wrong password entered!");
+      return;
+    }
+
     setIsLoading(true);
     try {
       const user = await mockRepository.loginWithGoogleMock(email);
+      triggerRgbAlert("LOGIN SUCCESSFUL", "Ambassador Protocol Initialized • RGB LED Active");
       toast.success("Welcome back!");
-      redirectByRole(user.role);
+      setTimeout(() => {
+        redirectByRole(user.role);
+      }, 750);
     } catch {
+      setShakeCard(true);
+      setTimeout(() => setShakeCard(false), 500);
+      triggerRedAlarm("SECURITY ALERT: INVALID CREDENTIALS", "High Red Strobe Alert Activated");
       toast.error("Invalid credentials");
     } finally {
       setIsLoading(false);
@@ -70,7 +93,9 @@ export default function LoginPage() {
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-      className="w-full max-w-4xl rounded-[24px] bg-surface border border-border shadow-soft-lg overflow-hidden grid grid-cols-1 md:grid-cols-2"
+      className={`w-full max-w-4xl rounded-[24px] bg-surface border border-border shadow-soft-lg overflow-hidden grid grid-cols-1 md:grid-cols-2 transition-all ${
+        shakeCard ? "animate-card-shake border-red-500 shadow-[0_0_50px_rgba(239,68,68,0.6)]" : ""
+      }`}
     >
       {/* Left Column: Zyven Brand & 3D Experience */}
       <div className="hidden md:flex flex-col justify-between p-10 bg-surface-2 border-r border-border relative overflow-hidden">
