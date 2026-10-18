@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { PointsPill } from "@/components/ui/PointsPill";
 import { Plus, Clock, Edit, X, Check } from "lucide-react";
 import { toast } from "sonner";
+import Link from "next/link";
 import type { Mission } from "@/lib/data/types";
 
 export default function AdminMissionsPage() {
@@ -94,15 +95,16 @@ export default function AdminMissionsPage() {
           </h1>
         </div>
 
-        <Button
-          variant="primary"
-          size="md"
-          onClick={() => handleOpenEdit()}
-          className="gap-2 font-bold shadow-soft-sm"
-        >
-          <Plus className="h-4 w-4" />
-          <span>Create Mission</span>
-        </Button>
+        <Link href="/admin/missions/new">
+          <Button
+            variant="primary"
+            size="md"
+            className="gap-2 font-bold shadow-soft-sm"
+          >
+            <Plus className="h-4 w-4" />
+            <span>Create Mission Studio</span>
+          </Button>
+        </Link>
       </div>
 
       {/* Missions Grid */}
