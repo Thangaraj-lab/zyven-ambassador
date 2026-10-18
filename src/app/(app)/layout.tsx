@@ -6,6 +6,7 @@ import { RouteProgressBar } from "@/components/nav/RouteProgressBar";
 import { useSession } from "@/lib/data/hooks";
 import { useRouter, usePathname } from "next/navigation";
 import { Loader2 } from "lucide-react";
+import { WorldTransition } from "@/components/motion/WorldTransition";
 
 export default function AppLayout({
   children,
@@ -53,7 +54,7 @@ export default function AppLayout({
       <RouteProgressBar />
       <AmbassadorNav />
       <main className="flex-1 min-w-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full">
-        {children}
+        <WorldTransition>{children}</WorldTransition>
       </main>
     </div>
   );

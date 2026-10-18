@@ -26,7 +26,8 @@ import {
   X,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
-import { launchCinematicTask } from "@/components/effects/CinematicTaskLauncher";
+import { openMissionPortal } from "@/components/motion/MissionPortal";
+import { EnergyLine } from "@/components/motion/EnergyLine";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
@@ -270,24 +271,25 @@ export default function DashboardPage() {
           {/* Task 1: LinkedIn Follow & Post */}
           <div
             onClick={() =>
-              launchCinematicTask({
+              openMissionPortal({
                 slug: "linkedin-follow-post",
                 title: "Follow & Post on LinkedIn",
                 points: 50,
                 brand: "linkedin",
               })
             }
-            className="group block rounded-[1.25rem] border border-border bg-surface p-6 shadow-soft-sm transition-all hover:shadow-glow hover:-translate-y-0.5 cursor-pointer"
+            className="group relative block rounded-[1.25rem] border border-border bg-surface p-6 shadow-soft-sm transition-all duration-300 hover:shadow-glow hover:-translate-y-1 active:scale-[0.985] cursor-pointer overflow-hidden"
           >
+            <EnergyLine color="#0077B5" active={true} />
             <div className="flex items-start gap-4">
-              <div className="grid h-12 w-12 place-items-center rounded-xl bg-accent shrink-0">
-                <span className="font-black text-[#0077B5] text-lg">in</span>
+              <div className="grid h-12 w-12 place-items-center rounded-xl bg-[#0077B5]/10 text-[#0077B5] shrink-0 border border-[#0077B5]/20 group-hover:scale-105 group-hover:shadow-[0_0_15px_rgba(0,119,181,0.35)] transition-all">
+                <span className="font-black text-lg">in</span>
               </div>
               <div className="flex-1">
                 <div className="font-bold text-base text-text group-hover:text-primary transition-colors">
                   Follow &amp; Post on LinkedIn
                 </div>
-                <span className="mt-2 inline-block rounded-full bg-accent px-3 py-1 text-xs font-bold text-accent-fg">
+                <span className="mt-2 inline-block rounded-full bg-[#0077B5]/10 px-3 py-1 text-xs font-bold text-[#0077B5] border border-[#0077B5]/20">
                   +50 Points
                 </span>
               </div>
@@ -307,24 +309,25 @@ export default function DashboardPage() {
           {/* Task 2: Join WhatsApp Community */}
           <div
             onClick={() =>
-              launchCinematicTask({
+              openMissionPortal({
                 slug: "join-whatsapp-community",
                 title: "Join Zyven WhatsApp Community",
                 points: 30,
                 brand: "whatsapp",
               })
             }
-            className="group block rounded-[1.25rem] border border-border bg-surface p-6 shadow-soft-sm transition-all hover:shadow-glow hover:-translate-y-0.5 cursor-pointer"
+            className="group relative block rounded-[1.25rem] border border-border bg-surface p-6 shadow-soft-sm transition-all duration-300 hover:shadow-glow hover:-translate-y-1 active:scale-[0.985] cursor-pointer overflow-hidden"
           >
+            <EnergyLine color="#25D366" active={true} />
             <div className="flex items-start gap-4">
-              <div className="grid h-12 w-12 place-items-center rounded-xl bg-accent shrink-0">
-                <span className="font-black text-[#25D366] text-sm">WA</span>
+              <div className="grid h-12 w-12 place-items-center rounded-xl bg-[#25D366]/10 text-[#25D366] shrink-0 border border-[#25D366]/20 group-hover:scale-105 group-hover:shadow-[0_0_15px_rgba(37,211,102,0.35)] transition-all">
+                <span className="font-black text-sm">WA</span>
               </div>
               <div className="flex-1">
                 <div className="font-bold text-base text-text group-hover:text-primary transition-colors">
                   Join Zyven WhatsApp Community
                 </div>
-                <span className="mt-2 inline-block rounded-full bg-accent px-3 py-1 text-xs font-bold text-accent-fg">
+                <span className="mt-2 inline-block rounded-full bg-[#25D366]/10 px-3 py-1 text-xs font-bold text-[#25D366] border border-[#25D366]/20">
                   +30 Points
                 </span>
               </div>

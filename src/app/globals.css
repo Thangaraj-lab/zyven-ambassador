@@ -302,6 +302,19 @@ html {
   animation: cardShake 0.42s ease-in-out;
 }
 
+@keyframes energyDash {
+  0% {
+    stroke-dashoffset: 400;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+
+.animate-energy-dash {
+  animation: energyDash 2s linear infinite;
+}
+
 .animate-shimmer {
   animation: shimmer 2s infinite;
 }

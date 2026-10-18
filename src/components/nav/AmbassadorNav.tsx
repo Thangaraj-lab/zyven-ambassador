@@ -21,6 +21,7 @@ import { motion } from "motion/react";
 import { mockRepository } from "@/lib/data/mock/mockRepository";
 import { useRouter } from "next/navigation";
 import { triggerRgbAlert } from "@/components/effects/RGBAlertSystem";
+import { triggerLogoutDialog } from "@/components/motion/LogoutModal";
 
 export function AmbassadorNav() {
   const pathname = usePathname();
@@ -143,7 +144,7 @@ export function AmbassadorNav() {
             <ThemeToggle />
           </div>
           <button
-            onClick={handleLogout}
+            onClick={() => triggerLogoutDialog()}
             className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold text-danger hover:bg-danger/10 transition-colors cursor-pointer"
           >
             <LogOut className="h-4 w-4" />

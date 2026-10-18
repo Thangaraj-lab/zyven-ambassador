@@ -22,9 +22,12 @@ import {
   X,
   Check,
   Clock,
+  LogOut,
+  Shield,
 } from "lucide-react";
 import { toast } from "sonner";
 import { BackButton } from "@/components/ui/BackButton";
+import { triggerLogoutDialog } from "@/components/motion/LogoutModal";
 
 export default function ProfilePage() {
   const { data: session, refetch: refetchSession } = useSession();
@@ -354,6 +357,29 @@ export default function ProfilePage() {
           </div>
         </div>
       )}
+
+      {/* Account Security & Sign Out Section */}
+      <div className="p-6 rounded-[24px] bg-surface border border-border shadow-soft-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="flex items-center gap-3.5">
+          <div className="h-10 w-10 rounded-xl bg-danger/10 text-danger flex items-center justify-center shrink-0">
+            <Shield className="h-5 w-5" />
+          </div>
+          <div>
+            <h4 className="text-sm font-bold text-text">Account Session & Security</h4>
+            <p className="text-xs text-text-muted">
+              Securely sign out of this device. Your ambassador tier and points ledger remain saved.
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={() => triggerLogoutDialog()}
+          className="flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl border border-danger/30 text-danger hover:bg-danger/10 text-xs font-bold transition-all duration-200 cursor-pointer shrink-0"
+        >
+          <LogOut className="h-4 w-4" />
+          <span>Sign Out</span>
+        </button>
+      </div>
 
       {/* Edit Profile Drawer / Modal */}
       {isEditing && (

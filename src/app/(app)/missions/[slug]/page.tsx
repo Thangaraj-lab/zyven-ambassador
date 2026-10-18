@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { triggerFirecrackers } from "@/components/effects/FirecrackerCelebration";
+import { triggerGravityPoints } from "@/components/motion/GravityField";
 import { BackButton } from "@/components/ui/BackButton";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
@@ -121,7 +122,10 @@ export default function MissionDetailPage() {
       // Step 5 & 6: Button transforms into success state with drawn checkmark
       setSubmitStage("success");
 
-      // 3D Firecracker Explosions & Sound Effects
+      // Archetype 3: Gravity Field Energy extraction and points core animation
+      triggerGravityPoints(mission.points, mission.title);
+
+      // 3D Firecracker Celebration & Sound Effects
       triggerFirecrackers(mission.title, mission.points);
 
       // Haptic feedback
