@@ -17,7 +17,7 @@ import {
   ShieldCheck,
   Trophy,
   CheckCircle2,
-  Zap,
+  ChartColumn,
   ChevronDown,
   Building,
 } from "lucide-react";
@@ -35,27 +35,27 @@ export default function LandingPage() {
   const faqs = [
     {
       q: "What is the Zyven Student Ambassador Program?",
-      a: "It is an exclusive collegiate leadership program empowering engineering and tech students across Tamil Nadu to represent Zyven, host developer events, build campus communities, and earn transparent rewards.",
+      a: "An elite campus leadership initiative empowering college students to represent Zyven, host developer events, build campus communities, and earn verified rewards.",
     },
     {
-      q: "Who is eligible to apply for Cohort 1?",
-      a: "Any undergraduate or postgraduate engineering or technology student enrolled in an accredited institution in Tamil Nadu (e.g. MEC, PSG, Kongu, KSR, Sona, SRM, etc.) can join.",
+      q: "Who is eligible to apply?",
+      a: "Any undergraduate or postgraduate college student enrolled in an accredited institution can register for free.",
     },
     {
       q: "How are points earned and verified?",
-      a: "You complete live missions like sharing news on LinkedIn or expanding student developer groups. Once you submit a post URL or screenshot proof, our operations team verifies it within 24 hours, and points are atomically recorded on your ledger.",
+      a: "Complete active missions, submit your proof (link or screenshot), and receive verified points on your ledger within 24 hours.",
     },
     {
       q: "What perks do unlocked tiers offer?",
-      a: "As you progress through Bronze (50 pts), Silver (150 pts), Gold (300 pts), and Champion (500 pts), you unlock digital certificates, exclusive Zyven merchandise boxes, VIP founder AMAs, and direct fast-track consideration for tech internships.",
+      a: "Earn exclusive merchandise boxes, digital certificates, founder AMA access, and priority internship referrals as you level up your tier.",
     },
     {
       q: "Can multiple ambassadors join from the same college?",
-      a: "Yes! Ambassadors from the same college work together to accumulate points on the College Leaderboard for annual collegiate awards.",
+      a: "Yes! Ambassadors from the same campus collaborate to climb the collegiate standings and unlock campus-wide rewards.",
     },
     {
-      q: "Is there any registration fee to become an ambassador?",
-      a: "No, participation in the Zyven Student Ambassador Program is 100% free.",
+      q: "Is there any cost to join?",
+      a: "Participation in the Zyven Student Ambassador Program is 100% free.",
     },
   ];
 
@@ -66,14 +66,14 @@ export default function LandingPage() {
 
       {/* Header Navigation */}
       <header className="relative z-20 mx-auto flex max-w-[1200px] items-center justify-between px-6 py-6">
-        <Link href="/" className="flex items-center gap-2 group">
+        <Link href="/" className="flex items-center gap-2.5 group">
           <div className="relative h-9 w-9">
             <Image
               src="/assets/z3d-crystal.png"
               alt="Zyven 3D Logo"
               width={36}
               height={36}
-              className="h-9 w-9 object-contain drop-shadow transition-transform group-hover:scale-105"
+              className="h-9 w-9 object-contain drop-shadow transition-transform duration-300 group-hover:scale-110"
               priority
             />
           </div>
@@ -106,13 +106,13 @@ export default function LandingPage() {
           <LocaleToggle />
           <Link
             href="/login"
-            className="rounded-full border border-border bg-surface px-5 py-2 text-sm font-semibold text-text hover:bg-surface-2 transition-colors cursor-pointer"
+            className="rounded-full border border-border bg-surface px-5 py-2 text-sm font-semibold text-text hover:bg-surface-2 transition-all cursor-pointer"
           >
             Login
           </Link>
           <Link
             href="/register"
-            className="rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white shadow-glow hover:brightness-105 transition-all cursor-pointer"
+            className="rounded-full bg-brand px-5 py-2 text-sm font-semibold text-white shadow-glow hover:brightness-105 active:scale-95 transition-all cursor-pointer"
           >
             Register
           </Link>
@@ -122,8 +122,8 @@ export default function LandingPage() {
       {/* Hero Section */}
       <section className="relative z-10 mx-auto grid max-w-[1200px] items-center gap-8 px-6 pt-6 lg:grid-cols-2">
         <div className="rise space-y-6">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3 py-1 text-xs font-semibold text-accent-fg border border-accent-fg/10">
-            <Star className="h-3 w-3 fill-current" />
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-accent px-3.5 py-1 text-xs font-semibold text-accent-fg border border-accent-fg/10 shadow-soft-sm">
+            <Star className="h-3 w-3 fill-current text-primary" />
             <span>Student Ambassador Program</span>
           </span>
 
@@ -134,13 +134,13 @@ export default function LandingPage() {
           </h1>
 
           <p className="max-w-md text-base sm:text-lg text-text-muted leading-relaxed">
-            Represent Zyven on your campus, take on exciting missions, earn points, unlock rewards, and be part of a growing ambassador community.
+            Represent Zyven in your campus, take on exciting missions, earn points, unlock rewards, and be part of a growing ambassador community.
           </p>
 
           <div className="flex flex-wrap items-center gap-3 pt-2">
             <Link
               href="/register"
-              className="inline-flex items-center gap-2 rounded-xl bg-brand px-6 py-3.5 font-semibold text-white shadow-glow transition-transform hover:-translate-y-0.5 active:scale-95 cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-xl bg-brand px-6 py-3.5 font-semibold text-white shadow-glow transition-all duration-200 hover:-translate-y-0.5 hover:brightness-105 active:scale-95 cursor-pointer"
             >
               <span>Register as Ambassador</span>
               <ArrowRight className="h-4 w-4" />
@@ -148,7 +148,7 @@ export default function LandingPage() {
 
             <Link
               href="#journey"
-              className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface px-6 py-3.5 font-semibold text-text hover:bg-surface-2 transition-colors cursor-pointer"
+              className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface px-6 py-3.5 font-semibold text-text hover:bg-surface-2 transition-all duration-200 hover:-translate-y-0.5 cursor-pointer"
             >
               <Play className="h-4 w-4 fill-current text-primary" />
               <span>Watch Video</span>
@@ -158,32 +158,43 @@ export default function LandingPage() {
 
         {/* Right Hero Visual with Attached Real Photo & Floating Pills */}
         <div className="relative flex justify-center items-center py-4">
-          <div className="relative w-full max-w-[460px] overflow-hidden rounded-[2.5rem] p-2 bg-gradient-to-tr from-primary/10 via-accent/30 to-transparent border border-border/80 shadow-2xl">
-            <Image
-              src="/assets/hero-ambassador.jpg"
-              alt="Zyven student ambassador smiling"
-              width={1024}
-              height={1152}
-              className="mx-auto max-h-[580px] w-full rounded-[2rem] object-cover [mask-image:radial-gradient(85%_85%_at_50%_45%,black_65%,transparent)] transition-transform duration-500 hover:scale-105"
-              priority
-            />
+          <div className="relative w-full max-w-[460px]">
+            {/* Ambient Purple Glow Behind Portrait */}
+            <div className="glow-pulse pointer-events-none absolute -inset-4 sm:-inset-8 rounded-full bg-gradient-to-tr from-primary/30 via-purple-500/20 to-transparent blur-3xl -z-10" />
 
-            {/* Floating Badge 1: Complete Tasks */}
-            <div className="float-slow absolute right-4 top-8 flex items-center gap-2 rounded-full border border-border bg-surface/90 px-4 py-2.5 text-xs sm:text-sm font-semibold shadow-soft-md backdrop-blur z-20 text-text">
-              <CheckCircle2 className="h-4 w-4 sm:h-5 sm:w-5 text-primary stroke-[2.5]" />
-              <span>Complete Tasks</span>
-            </div>
+            <div className="relative overflow-hidden rounded-[2.5rem] p-2 bg-gradient-to-tr from-primary/15 via-accent/40 to-transparent border border-border/80 shadow-2xl backdrop-blur-sm group">
+              <Image
+                src="/assets/hero-ambassador.jpg"
+                alt="Zyven student ambassador smiling"
+                width={1024}
+                height={1152}
+                className="mx-auto max-h-[580px] w-full rounded-[2rem] object-cover [mask-image:radial-gradient(85%_85%_at_50%_45%,black_70%,transparent)] transition-transform duration-700 group-hover:scale-[1.03]"
+                priority
+              />
 
-            {/* Floating Badge 2: Earn Points */}
-            <div className="float-slow absolute right-0 top-1/2 -translate-y-1/2 flex items-center gap-2 rounded-full border border-border bg-surface/90 px-4 py-2.5 text-xs sm:text-sm font-semibold shadow-soft-md backdrop-blur z-20 text-text [animation-delay:1.2s]">
-              <Trophy className="h-4 w-4 sm:h-5 sm:w-5 text-warning" />
-              <span>Earn Points</span>
-            </div>
+              {/* Floating Badge 1: Complete Tasks */}
+              <div className="float-badge-1 absolute right-3 sm:right-6 top-8 flex items-center gap-2.5 rounded-full border border-border/90 bg-surface/90 px-4 py-2.5 text-xs sm:text-sm font-semibold shadow-soft-md backdrop-blur-md z-20 text-text transition-transform hover:scale-105 cursor-default">
+                <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                  <CheckCircle2 className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary stroke-[2.5]" />
+                </div>
+                <span>Complete Tasks</span>
+              </div>
 
-            {/* Floating Badge 3: Climb Leaderboard */}
-            <div className="float-slow absolute bottom-12 left-2 flex items-center gap-2 rounded-full border border-border bg-surface/90 px-4 py-2.5 text-xs sm:text-sm font-semibold shadow-soft-md backdrop-blur z-20 text-text [animation-delay:2.4s]">
-              <Zap className="h-4 w-4 sm:h-5 sm:w-5 text-primary fill-current" />
-              <span>Climb Leaderboard</span>
+              {/* Floating Badge 2: Earn Points */}
+              <div className="float-badge-2 absolute -right-2 sm:right-0 top-1/2 -translate-y-1/2 flex items-center gap-2.5 rounded-full border border-border/90 bg-surface/90 px-4 py-2.5 text-xs sm:text-sm font-semibold shadow-soft-md backdrop-blur-md z-20 text-text transition-transform hover:scale-105 cursor-default">
+                <div className="h-5 w-5 rounded-full bg-warning/10 flex items-center justify-center text-warning">
+                  <Trophy className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-warning" />
+                </div>
+                <span>Earn Points</span>
+              </div>
+
+              {/* Floating Badge 3: Climb Leaderboard */}
+              <div className="float-badge-3 absolute bottom-10 left-2 sm:left-4 flex items-center gap-2.5 rounded-full border border-border/90 bg-surface/90 px-4 py-2.5 text-xs sm:text-sm font-semibold shadow-soft-md backdrop-blur-md z-20 text-text transition-transform hover:scale-105 cursor-default">
+                <div className="h-5 w-5 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                  <ChartColumn className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
+                </div>
+                <span>Climb Leaderboard</span>
+              </div>
             </div>
           </div>
         </div>
@@ -191,9 +202,9 @@ export default function LandingPage() {
 
       {/* 4-Item Stats Strip */}
       <section className="relative z-10 mx-auto -mt-4 max-w-[1200px] px-6">
-        <div className="grid grid-cols-2 gap-6 rounded-[1.5rem] border border-border bg-surface/80 p-6 shadow-soft-md backdrop-blur md:grid-cols-4">
-          <div className="flex items-center gap-3.5">
-            <div className="grid h-12 w-12 place-items-center rounded-2xl bg-accent text-accent-fg">
+        <div className="grid grid-cols-2 gap-4 sm:gap-6 rounded-[1.5rem] border border-border bg-surface/85 p-6 shadow-soft-md backdrop-blur-md md:grid-cols-4">
+          <div className="interactive-card flex items-center gap-3.5 p-2 rounded-xl">
+            <div className="grid h-12 w-12 place-items-center rounded-2xl bg-accent text-accent-fg shrink-0">
               <Users className="h-6 w-6 text-primary" />
             </div>
             <div>
@@ -202,8 +213,8 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3.5">
-            <div className="grid h-12 w-12 place-items-center rounded-2xl bg-accent text-accent-fg">
+          <div className="interactive-card flex items-center gap-3.5 p-2 rounded-xl">
+            <div className="grid h-12 w-12 place-items-center rounded-2xl bg-accent text-accent-fg shrink-0">
               <GraduationCap className="h-6 w-6 text-primary" />
             </div>
             <div>
@@ -212,8 +223,8 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3.5">
-            <div className="grid h-12 w-12 place-items-center rounded-2xl bg-accent text-accent-fg">
+          <div className="interactive-card flex items-center gap-3.5 p-2 rounded-xl">
+            <div className="grid h-12 w-12 place-items-center rounded-2xl bg-accent text-accent-fg shrink-0">
               <Coins className="h-6 w-6 text-primary" />
             </div>
             <div>
@@ -222,8 +233,8 @@ export default function LandingPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-3.5">
-            <div className="grid h-12 w-12 place-items-center rounded-2xl bg-accent text-accent-fg">
+          <div className="interactive-card flex items-center gap-3.5 p-2 rounded-xl">
+            <div className="grid h-12 w-12 place-items-center rounded-2xl bg-accent text-accent-fg shrink-0">
               <Megaphone className="h-6 w-6 text-primary" />
             </div>
             <div>
@@ -244,68 +255,68 @@ export default function LandingPage() {
             Your journey as a <span className="text-brand">Zyven Ambassador</span>
           </h2>
           <p className="text-sm text-text-muted max-w-xl">
-            Five simple steps to lead on campus, level up your developer network, and earn real recognition.
+            Five simple steps to lead on campus, level up your network, and earn verified rewards.
           </p>
         </div>
 
         <div className="mt-12 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-5">
           {/* Step 1 */}
-          <div className="group rounded-[1.25rem] border border-border bg-surface p-6 shadow-soft-sm transition-all hover:-translate-y-1 hover:shadow-glow">
+          <div className="interactive-card group rounded-[1.25rem] border border-border bg-surface p-6 shadow-soft-sm hover:border-primary/50 hover:shadow-glow cursor-default">
             <div className="grid h-12 w-12 place-items-center rounded-full bg-accent transition-colors group-hover:bg-brand">
               <UserPlus className="h-5 w-5 text-primary group-hover:text-white transition-colors" />
             </div>
-            <div className="mt-5 text-xs font-bold text-primary">STEP 1</div>
+            <div className="mt-5 text-xs font-bold text-primary tracking-wider">STEP 1</div>
             <div className="mt-1 font-bold text-base text-text">Register</div>
             <div className="mt-1 text-xs text-text-muted leading-relaxed">
-              Create your ambassador account in 60 seconds.
+              Create your ambassador account
             </div>
           </div>
 
           {/* Step 2 */}
-          <div className="group rounded-[1.25rem] border border-border bg-surface p-6 shadow-soft-sm transition-all hover:-translate-y-1 hover:shadow-glow">
+          <div className="interactive-card group rounded-[1.25rem] border border-border bg-surface p-6 shadow-soft-sm hover:border-primary/50 hover:shadow-glow cursor-default">
             <div className="grid h-12 w-12 place-items-center rounded-full bg-accent transition-colors group-hover:bg-brand">
               <ClipboardList className="h-5 w-5 text-primary group-hover:text-white transition-colors" />
             </div>
-            <div className="mt-5 text-xs font-bold text-primary">STEP 2</div>
+            <div className="mt-5 text-xs font-bold text-primary tracking-wider">STEP 2</div>
             <div className="mt-1 font-bold text-base text-text">Complete Profile</div>
             <div className="mt-1 text-xs text-text-muted leading-relaxed">
-              Add your academic & social presence details.
+              Add your academic &amp; social details
             </div>
           </div>
 
           {/* Step 3 */}
-          <div className="group rounded-[1.25rem] border border-border bg-surface p-6 shadow-soft-sm transition-all hover:-translate-y-1 hover:shadow-glow">
+          <div className="interactive-card group rounded-[1.25rem] border border-border bg-surface p-6 shadow-soft-sm hover:border-primary/50 hover:shadow-glow cursor-default">
             <div className="grid h-12 w-12 place-items-center rounded-full bg-accent transition-colors group-hover:bg-brand">
               <Rocket className="h-5 w-5 text-primary group-hover:text-white transition-colors" />
             </div>
-            <div className="mt-5 text-xs font-bold text-primary">STEP 3</div>
+            <div className="mt-5 text-xs font-bold text-primary tracking-wider">STEP 3</div>
             <div className="mt-1 font-bold text-base text-text">Explore Tasks</div>
             <div className="mt-1 text-xs text-text-muted leading-relaxed">
-              Take on live campus and online missions.
+              Take on exciting missions
             </div>
           </div>
 
           {/* Step 4 */}
-          <div className="group rounded-[1.25rem] border border-border bg-surface p-6 shadow-soft-sm transition-all hover:-translate-y-1 hover:shadow-glow">
+          <div className="interactive-card group rounded-[1.25rem] border border-border bg-surface p-6 shadow-soft-sm hover:border-primary/50 hover:shadow-glow cursor-default">
             <div className="grid h-12 w-12 place-items-center rounded-full bg-accent transition-colors group-hover:bg-brand">
               <ShieldCheck className="h-5 w-5 text-primary group-hover:text-white transition-colors" />
             </div>
-            <div className="mt-5 text-xs font-bold text-primary">STEP 4</div>
-            <div className="mt-1 font-bold text-base text-text">Submit & Verify</div>
+            <div className="mt-5 text-xs font-bold text-primary tracking-wider">STEP 4</div>
+            <div className="mt-1 font-bold text-base text-text">Submit &amp; Get Verified</div>
             <div className="mt-1 text-xs text-text-muted leading-relaxed">
-              Share proof and earn verified ledger points.
+              Share proof and earn points
             </div>
           </div>
 
           {/* Step 5 */}
-          <div className="group rounded-[1.25rem] border border-border bg-surface p-6 shadow-soft-sm transition-all hover:-translate-y-1 hover:shadow-glow">
+          <div className="interactive-card group rounded-[1.25rem] border border-border bg-surface p-6 shadow-soft-sm hover:border-primary/50 hover:shadow-glow cursor-default">
             <div className="grid h-12 w-12 place-items-center rounded-full bg-accent transition-colors group-hover:bg-brand">
               <Trophy className="h-5 w-5 text-primary group-hover:text-white transition-colors" />
             </div>
-            <div className="mt-5 text-xs font-bold text-primary">STEP 5</div>
-            <div className="mt-1 font-bold text-base text-text">Climb Leaderboard</div>
+            <div className="mt-5 text-xs font-bold text-primary tracking-wider">STEP 5</div>
+            <div className="mt-1 font-bold text-base text-text">Climb the Leaderboard</div>
             <div className="mt-1 text-xs text-text-muted leading-relaxed">
-              Compete, grow, and unlock milestone rewards.
+              Compete, grow and unlock rewards
             </div>
           </div>
         </div>

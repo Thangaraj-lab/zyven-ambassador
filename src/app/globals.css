@@ -134,6 +134,44 @@ body[lang="ta"] {
   }
 }
 
+@keyframes floatBadge1 {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-8px) rotate(0.6deg);
+  }
+}
+
+@keyframes floatBadge2 {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-10px) rotate(-0.6deg);
+  }
+}
+
+@keyframes floatBadge3 {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-7px) rotate(0.5deg);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.75;
+    transform: scale(1.05);
+  }
+}
+
 @keyframes rise {
   0% {
     opacity: 0;
@@ -145,12 +183,40 @@ body[lang="ta"] {
   }
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 .float-slow {
   animation: 6s ease-in-out infinite floaty;
 }
 
+.float-badge-1 {
+  animation: 5s ease-in-out infinite floatBadge1;
+}
+
+.float-badge-2 {
+  animation: 6.2s ease-in-out infinite floatBadge2;
+}
+
+.float-badge-3 {
+  animation: 5.4s ease-in-out infinite floatBadge3;
+}
+
+.glow-pulse {
+  animation: 4.5s ease-in-out infinite pulseGlow;
+}
+
 .rise {
   animation: 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both rise;
+}
+
+.interactive-card {
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.25s ease;
+}
+
+.interactive-card:hover {
+  transform: translateY(-4px);
 }
 
 .bg-radial-wash {
