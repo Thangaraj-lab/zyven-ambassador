@@ -61,85 +61,114 @@ export default function RewardsLadderPage() {
         <ProgressBar value={tierData?.progressPercentage ?? 0} height={10} />
       </div>
 
-      {/* Tier Ladder Cards */}
-      <div className="space-y-4">
-        {rewards.map((reward) => {
+      {/* Tier Ladder Cards with Vertical Progression Spine */}
+      <div className="relative pl-6 sm:pl-8 space-y-6 before:absolute before:left-3 sm:before:left-4 before:top-6 before:bottom-6 before:w-0.5 before:bg-gradient-to-b before:from-success before:via-primary before:to-border">
+        {rewards.map((reward, idx) => {
           const isUnlocked = totalPoints >= reward.threshold;
           const isNext =
             tierData?.nextTier?.toLowerCase() === reward.tier.toLowerCase();
 
           return (
-            <div
-              key={reward.id}
-              className={`p-6 rounded-[24px] border transition-all ${
-                isUnlocked
-                  ? "bg-surface border-success/40 shadow-soft-sm"
-                  : isNext
-                  ? "bg-surface border-primary shadow-soft-md ring-1 ring-primary/30"
-                  : "bg-surface-2/40 border-border opacity-70"
-              }`}
-            >
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`h-10 w-10 rounded-xl flex items-center justify-center font-bold text-xs ${
-                      isUnlocked
-                        ? "bg-success text-white"
-                        : isNext
-                        ? "brand-gradient-bg text-white"
-                        : "bg-surface-2 text-text-muted border border-border"
-                    }`}
-                  >
-                    {isUnlocked ? (
-                      <Check className="h-5 w-5 stroke-[3]" />
-                    ) : (
-                      <Lock className="h-5 w-5" />
-                    )}
+            <div key={reward.id} className="relative">
+              {/* Spine Node Dot */}
+              <div
+                className={`absolute -left-6 sm:-left-8 top-6 -translate-x-1/2 h-5 w-5 rounded-full border-2 flex items-center justify-center transition-all ${
+                  isUnlocked
+                    ? "bg-success border-white ring-4 ring-success/20 text-white"
+                    : isNext
+                    ? "brand-gradient-bg border-white ring-4 ring-primary/30 text-white animate-pulse"
+                    : "bg-surface-2 border-border text-text-muted"
+                }`}
+              >
+                {isUnlocked ? (
+                  <Check className="h-2.5 w-2.5 stroke-[3]" />
+                ) : (
+                  <div className="h-1.5 w-1.5 rounded-full bg-current" />
+                )}
+              </div>
+
+              {/* Tier Card */}
+              <div
+                className={`p-6 rounded-[24px] border transition-all ${
+                  isUnlocked
+                    ? "bg-surface border-success/40 shadow-soft-sm"
+                    : isNext
+                    ? "bg-surface border-primary shadow-soft-md ring-1 ring-primary/30"
+                    : "bg-surface-2/40 border-border opacity-70"
+                }`}
+              >
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`h-10 w-10 rounded-xl flex items-center justify-center font-bold text-xs ${
+                        isUnlocked
+                          ? "bg-success text-white"
+                          : isNext
+                          ? "brand-gradient-bg text-white"
+                          : "bg-surface-2 text-text-muted border border-border"
+                      }`}
+                    >
+                      {isUnlocked ? (
+                        <Check className="h-5 w-5 stroke-[3]" />
+                      ) : (
+                        <Lock className="h-5 w-5" />
+                      )}
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] font-black text-text-muted uppercase tracking-wider">
+                          Tier 0{idx + 1}
+                        </span>
+                        {isNext && (
+                          <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-black uppercase tracking-wider">
+                            Next Milestone
+                          </span>
+                        )}
+                      </div>
+                      <h3 className="text-base font-extrabold text-text">
+                        {reward.title}
+                      </h3>
+                      <span className="text-xs text-text-muted">
+                        Requires {reward.threshold} Points
+                      </span>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-base font-extrabold text-text">
-                      {reward.title}
-                    </h3>
-                    <span className="text-xs text-text-muted">
-                      Requires {reward.threshold} Points
+
+                  <div className="flex items-center gap-2">
+                    <TierBadge tier={reward.tier as TierType} size="md" />
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
+                        isUnlocked
+                          ? "bg-success/10 text-success border border-success/30"
+                          : isNext
+                          ? "bg-primary/10 text-primary border border-primary/30"
+                          : "bg-surface-2 text-text-muted border border-border"
+                      }`}
+                    >
+                      {isUnlocked ? "Unlocked" : isNext ? "Next Goal" : "Locked"}
                     </span>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <TierBadge tier={reward.tier as TierType} size="md" />
-                  <span
-                    className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${
-                      isUnlocked
-                        ? "bg-success/10 text-success border border-success/30"
-                        : isNext
-                        ? "bg-primary/10 text-primary border border-primary/30"
-                        : "bg-surface-2 text-text-muted border border-border"
-                    }`}
-                  >
-                    {isUnlocked ? "Unlocked" : isNext ? "Next Goal" : "Locked"}
+                {/* Perks List */}
+                <div className="space-y-2 pt-2 border-t border-border/80">
+                  <span className="text-[11px] font-bold text-text-muted uppercase tracking-wider block">
+                    Perks & Privileges (Planned):
                   </span>
-                </div>
-              </div>
-
-              {/* Perks List */}
-              <div className="space-y-2 pt-2 border-t border-border/80">
-                <span className="text-[11px] font-bold text-text-muted uppercase tracking-wider block">
-                  Perks & Privileges (Planned):
-                </span>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-text">
-                  {reward.perks.map((perk) => (
-                    <div key={perk} className="flex items-start gap-2">
-                      <Sparkles
-                        className={`h-3.5 w-3.5 mt-0.5 shrink-0 ${
-                          isUnlocked ? "text-success" : "text-text-muted"
-                        }`}
-                      />
-                      <span className={!isUnlocked ? "text-text-muted" : ""}>
-                        {perk}
-                      </span>
-                    </div>
-                  ))}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs text-text">
+                    {reward.perks.map((perk) => (
+                      <div key={perk} className="flex items-start gap-2">
+                        <Sparkles
+                          className={`h-3.5 w-3.5 mt-0.5 shrink-0 ${
+                            isUnlocked ? "text-success" : "text-text-muted"
+                          }`}
+                        />
+                        <span className={!isUnlocked ? "text-text-muted" : ""}>
+                          {perk}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
