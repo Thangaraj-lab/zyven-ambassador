@@ -1,0 +1,196 @@
+{
+  "nav": {
+    "home": "முகப்பு",
+    "about": "பற்றி",
+    "howItWorks": "எப்படி செயல்படுகிறது",
+    "benefits": "நன்மைகள்",
+    "leaderboard": "முன்னணி பட்டியல்",
+    "contact": "தொடர்பு",
+    "dashboard": "டாஷ்போர்டு",
+    "missions": "பணிகள்",
+    "rewards": "பரிசுகள்",
+    "profile": "சுயவிவரம்",
+    "admin": "நிர்வாகம்",
+    "login": "உள்நுழைக",
+    "register": "பதிவு செய்",
+    "logout": "வெளியேறு"
+  },
+  "brand": {
+    "name": "Zyven",
+    "tagline": "பிரதிநிதித்துவப்படுத்துங்கள். உருவாக்குங்கள். செல்வாக்கு பெறுங்கள். வளருங்கள்.",
+    "subtagline": "முன்னணி மாணவர் தூதர் தளம்"
+  },
+  "hero": {
+    "badge": "மாணவர் தூதர் திட்டம்",
+    "headline": "Zyven மாணவர் தூதராக இணையுங்கள்",
+    "description": "உங்கள் கல்லூரியில் Zyven-ஐ பிரதிநிதித்துவப்படுத்துங்கள், அற்புதமான பணிகளை நிறைவேற்றுங்கள், Points ஈட்டுங்கள் மற்றும் பரிசுகளை வெல்லுங்கள்.",
+    "ctaRegister": "தூதராக பதிவு செய்க",
+    "ctaHowItWorks": "எப்படி செயல்படுகிறது எனப் பாருங்கள்",
+    "photoAlt": "Zyven மாணவர் தூதர்",
+    "tagTask": "பணிகளை முடிக்கவும்",
+    "tagPoints": "Points ஈட்டவும்",
+    "tagRank": "முன்னேறவும்",
+    "cohortCounter": "துவக்க அணி: {count} / 100 தூதர்கள் இணைந்துள்ளனர்",
+    "stats": {
+      "ambassadors": "100+",
+      "ambassadorsLabel": "துவக்க தூதர்கள்",
+      "colleges": "6+",
+      "collegesLabel": "இணைந்த கல்லூரிகள்",
+      "campaigns": "12+",
+      "campaignsLabel": "நேரலை பணிகள்",
+      "reach": "50K+",
+      "reachLabel": "சமூக சென்றடைவு"
+    }
+  },
+  "howItWorks": {
+    "eyebrow": "எப்படி செயல்படுகிறது",
+    "title": "ஒரு Zyven தூதராக உங்கள் பயணம்",
+    "description": "கல்லூரியில் முன்னணியில் நின்று, உங்கள் தொழில் திறனை உயர்த்தி, நன்மைகளை ஈட்ட 5 எளிய படிகள்.",
+    "steps": [
+      {
+        "step": "01",
+        "title": "பதிவு செய்து இணையுங்கள்",
+        "description": "60 வினாடிகளில் உங்கள் கணக்கை உருவாக்கி கல்லூரியைத் தேர்ந்தெடுக்கவும்."
+      },
+      {
+        "step": "02",
+        "title": "சுயவிவரத்தை நிரப்பவும்",
+        "description": "உங்கள் ஆர்வங்கள், சமூக ஊடகங்கள் மற்றும் தலைமை இலக்குகளை பகிருங்கள்."
+      },
+      {
+        "step": "03",
+        "title": "பணிகளைத் தொடங்குங்கள்",
+        "description": "Zyven அறிவிப்புகளைப் பகிர்தல் போன்ற நேரலை சவால்களை ஏற்கவும்."
+      },
+      {
+        "step": "04",
+        "title": "ஆதாரத்தை சமர்ப்பிக்கவும்",
+        "description": "உங்கள் பதிவின் இணைப்பு அல்லது screenshot பதிவேற்றவும். 24 மணிநேரத்தில் சரிபார்க்கப்படும்."
+      },
+      {
+        "step": "05",
+        "title": "Points பெற்று முன்னேறுங்கள்",
+        "description": "Points சேகரித்து முன்னிலை பெற்று, பிரத்யேக சலுகைகளைத் திறக்கவும்."
+      }
+    ]
+  },
+  "dashboard": {
+    "greeting": "இனிய {timeOfDay}, {name} 👋",
+    "subtitle": "Zyven மாணவர் தூதர்",
+    "pointsToNext": "{nextTier} நிலையை அடைய இன்னும் {points} Points",
+    "rank": "தரவரிசை #{rank}",
+    "totalPoints": "மொத்த Points",
+    "tasksCompleted": "முடித்த பணிகள்",
+    "currentTier": "தற்போதைய நிலை",
+    "activeTasks": "செயலில் உள்ள பணிகள்",
+    "viewAll": "அனைத்தையும் பார்",
+    "leaderboardSnapshot": "முன்னணி சுருக்கம்",
+    "viewFullLeaderboard": "முழு பட்டியலைக் காண்க",
+    "collegeBattle": "கல்லூரி போட்டி",
+    "announcements": "அறிவிப்புகள்",
+    "nextReward": "அடுத்த பரிசு",
+    "firstMissionCta": {
+      "title": "உங்கள் முதல் பணியைத் தொடங்குங்கள்!",
+      "description": "நீங்கள் 0 Points இல் உள்ளீர்கள். உடனடியாக 50 Points பெற்று Bronze நிலையை அடைய LinkedIn பணியை முடிக்கவும்!",
+      "button": "முதல் பணியைத் தொடங்குக"
+    }
+  },
+  "missions": {
+    "title": "பணிகள்",
+    "subtitle": "பணிகளை முடித்து Points ஈட்டுங்கள்.",
+    "filters": {
+      "all": "அனைத்தும்",
+      "available": "கிடைப்பவை",
+      "inReview": "சரிபார்ப்பில்",
+      "completed": "முடிந்தவை",
+      "comingSoon": "விரைவில்"
+    },
+    "states": {
+      "available": "கிடைக்கிறது",
+      "started": "நடைபெறுகிறது",
+      "submitted": "சமர்ப்பிக்கப்பட்டது",
+      "underReview": "சரிபார்ப்பில்",
+      "approved": "அங்கீகரிக்கப்பட்டது",
+      "rejected": "மாற்றம் தேவை",
+      "locked": "விரைவில்"
+    },
+    "step": "படி {number}",
+    "points": "{count} Points",
+    "estimatedTime": "{minutes} நிமிடங்கள்",
+    "submitProof": "ஆதாரம் சமர்ப்பிக்கவும்",
+    "proofUrlLabel": "நேரலை பதிவு இணைப்பு",
+    "proofUrlPlaceholder": "https://www.linkedin.com/posts/...",
+    "screenshotLabel": "Screenshot ஆதாரத்தை பதிவேற்றவும்",
+    "submitButton": "சரிபார்ப்புக்கு சமர்ப்பிக்கவும்",
+    "submitting": "சமர்ப்பிக்கப்படுகிறது...",
+    "resubmit": "மீண்டும் சமர்ப்பிக்கவும்",
+    "copyTemplate": "பதிவு உரையை நகலெடு",
+    "copied": "நகலெடுக்கப்பட்டது!",
+    "openComposer": "LinkedIn திற",
+    "verificationNote": "சரிபார்ப்பு பொதுவாக 24 மணி நேரத்திற்குள் நிறைவடையும்.",
+    "submittedTitle": "பணி சமர்ப்பிக்கப்பட்டது!",
+    "submittedDesc": "உங்கள் ஆதாரம் சரிபார்ப்புக்கு அனுப்பப்பட்டது. சரிபார்க்கப்பட்டதும் Points வழங்கப்படும்.",
+    "approvedBanner": "{date} அன்று {points} Points பெறப்பட்டது",
+    "shareAchievement": "LinkedIn இல் பகிரவும்",
+    "newMissionsDropSoon": "புதிய பணிகள் ஒவ்வொரு வாரமும் வெளியிடப்படும்"
+  },
+  "leaderboard": {
+    "title": "முன்னணி பட்டியல்",
+    "subtitle": "மாணவர் தூதர்கள் மற்றும் கல்லூரிகளின் தரவரிசை.",
+    "individualTab": "தூதர்கள்",
+    "collegeTab": "கல்லூரிகள்",
+    "allTime": "எப்போதுமான",
+    "weekly": "வாராந்திர (விரைவில்)",
+    "monthly": "மாதாந்திர (விரைவில்)",
+    "you": "நீங்கள்",
+    "demoNotice": "மாதிரித் தரவு — முதல் அணி துவக்கத்தில் உண்மையான தரவரிசை தொடங்கும்",
+    "collegeRank": "கல்லூரி தரவரிசை",
+    "points": "points",
+    "members": "தூதர்கள்"
+  },
+  "rewards": {
+    "title": "பரிசுகள் & நிலைகள்",
+    "subtitle": "சிறப்புச் சலுகைகள் மற்றும் வாய்ப்புகளை அன்லாக் செய்யுங்கள்.",
+    "bronze": "Bronze",
+    "silver": "Silver",
+    "gold": "Gold",
+    "champion": "Champion",
+    "threshold": "{points} Points",
+    "unlocked": "அன்லாக் செய்யப்பட்டது",
+    "locked": "பூட்டப்பட்டுள்ளது",
+    "currentProgress": "தற்போதைய முன்னேற்றம்",
+    "plannedNotice": "சலுகைகள் திட்டமிடப்பட்டவையாகும்."
+  },
+  "admin": {
+    "title": "நிர்வாகக் குழு",
+    "totalAmbassadors": "மொத்த தூதர்கள்",
+    "pendingReviews": "காத்திருக்கும் சரிபார்ப்புகள்",
+    "pointsAwarded": "வழங்கப்பட்ட Points",
+    "approvalRate": "ஒப்புதல் விகிதம்",
+    "reviewQueue": "சரிபார்ப்பு வரிசை",
+    "approve": "ஒப்புதல் (+{points})",
+    "reject": "நிராகரி",
+    "requestChanges": "மாற்றம் கோரவும்",
+    "reason": "கருத்து / காரணம்",
+    "reasonPlaceholder": "மாற்றங்களுக்கான காரணத்தை விளக்கவும்...",
+    "openProof": "ஆதார இணைப்பைத் திற",
+    "nextInQueue": "வரிசையில் அடுத்தது",
+    "ambassadorsList": "தூதர்கள் மேலாண்மை",
+    "missionsList": "பணிகள் மேலாண்மை"
+  },
+  "common": {
+    "back": "பின்செல்",
+    "continue": "தொடரவும்",
+    "cancel": "ரத்து",
+    "save": "சேமிக்கவும்",
+    "loading": "ஏற்றப்படுகிறது...",
+    "error": "பிழை ஏற்பட்டது",
+    "retry": "மீண்டும் முயற்சி செய்",
+    "success": "வெற்றி",
+    "demo": "மாதிரி தரவு",
+    "themeLight": "பகல் பயன்முறை",
+    "themeDark": "இரவு பயன்முறை",
+    "language": "மொழி",
+    "close": "மூடுக"
+  }
+}

@@ -1,0 +1,196 @@
+{
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "howItWorks": "How It Works",
+    "benefits": "Benefits",
+    "leaderboard": "Leaderboard",
+    "contact": "Contact",
+    "dashboard": "Dashboard",
+    "missions": "Missions",
+    "rewards": "Rewards",
+    "profile": "Profile",
+    "admin": "Admin",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Log Out"
+  },
+  "brand": {
+    "name": "Zyven",
+    "tagline": "Represent. Create. Influence. Grow.",
+    "subtagline": "The Premier Student Ambassador Network"
+  },
+  "hero": {
+    "badge": "Student Ambassador Program",
+    "headline": "Become a Zyven Student Ambassador",
+    "description": "Represent Zyven in your campus, take on exciting missions, earn points, unlock rewards, and be part of a growing ambassador community.",
+    "ctaRegister": "Register as Ambassador",
+    "ctaHowItWorks": "See How It Works",
+    "photoAlt": "Zyven Student Ambassador",
+    "tagTask": "Complete Tasks",
+    "tagPoints": "Earn Points",
+    "tagRank": "Climb Leaderboard",
+    "cohortCounter": "Founding Cohort: {count} / 100 ambassadors joined",
+    "stats": {
+      "ambassadors": "100+",
+      "ambassadorsLabel": "Founding Ambassadors",
+      "colleges": "6+",
+      "collegesLabel": "Partner Colleges",
+      "campaigns": "12+",
+      "campaignsLabel": "Missions Live",
+      "reach": "50K+",
+      "reachLabel": "Community Reach"
+    }
+  },
+  "howItWorks": {
+    "eyebrow": "How It Works",
+    "title": "Your Journey as a Zyven Ambassador",
+    "description": "Five simple steps to lead on campus, level up your career, and earn real recognition.",
+    "steps": [
+      {
+        "step": "01",
+        "title": "Register & Join",
+        "description": "Create your ambassador account and select your college in 60 seconds."
+      },
+      {
+        "step": "02",
+        "title": "Complete Your Profile",
+        "description": "Tell us about your interests, social presence, and leadership goals."
+      },
+      {
+        "step": "03",
+        "title": "Take on Missions",
+        "description": "Pick live challenges like sharing Zyven announcements or growing the community."
+      },
+      {
+        "step": "04",
+        "title": "Submit Proof & Verify",
+        "description": "Paste your post link or upload a screenshot. Admins verify within 24 hours."
+      },
+      {
+        "step": "05",
+        "title": "Earn Points & Rank Up",
+        "description": "Collect points on the transparent ledger, climb the leaderboard, and unlock rewards."
+      }
+    ]
+  },
+  "dashboard": {
+    "greeting": "Good {timeOfDay}, {name} 👋",
+    "subtitle": "Zyven Student Ambassador",
+    "pointsToNext": "{points} points to {nextTier}",
+    "rank": "Rank #{rank}",
+    "totalPoints": "Total Points",
+    "tasksCompleted": "Tasks Completed",
+    "currentTier": "Current Tier",
+    "activeTasks": "Active Missions",
+    "viewAll": "View All",
+    "leaderboardSnapshot": "Leaderboard Snapshot",
+    "viewFullLeaderboard": "View Full Leaderboard",
+    "collegeBattle": "College Battle",
+    "announcements": "Announcements",
+    "nextReward": "Next Reward",
+    "firstMissionCta": {
+      "title": "Start Your First Mission!",
+      "description": "You're at 0 points. Complete your LinkedIn mission now to earn 50 points and jump to Bronze tier immediately!",
+      "button": "Begin First Mission"
+    }
+  },
+  "missions": {
+    "title": "Missions",
+    "subtitle": "Complete tasks, boost your campus visibility, and earn points.",
+    "filters": {
+      "all": "All",
+      "available": "Available",
+      "inReview": "In Review",
+      "completed": "Completed",
+      "comingSoon": "Coming Soon"
+    },
+    "states": {
+      "available": "Available",
+      "started": "In Progress",
+      "submitted": "Submitted",
+      "underReview": "Under Review",
+      "approved": "Approved",
+      "rejected": "Needs Fix",
+      "locked": "Coming Soon"
+    },
+    "step": "Step {number}",
+    "points": "{count} Points",
+    "estimatedTime": "{minutes} mins",
+    "submitProof": "Submit Proof",
+    "proofUrlLabel": "Live Post / Activity URL",
+    "proofUrlPlaceholder": "https://www.linkedin.com/posts/...",
+    "screenshotLabel": "Upload Screenshot Proof",
+    "submitButton": "Submit Verification",
+    "submitting": "Submitting...",
+    "resubmit": "Resubmit with Fixes",
+    "copyTemplate": "Copy Post Template",
+    "copied": "Template Copied!",
+    "openComposer": "Open Composer",
+    "verificationNote": "Verification usually takes up to 24 hours.",
+    "submittedTitle": "Mission Submitted!",
+    "submittedDesc": "Your proof has been submitted for review. Points will be awarded once verified.",
+    "approvedBanner": "Earned {points} Points on {date}",
+    "shareAchievement": "Share on LinkedIn",
+    "newMissionsDropSoon": "New campus missions drop every week"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "subtitle": "Track top student leaders and collegiate standings.",
+    "individualTab": "Ambassadors",
+    "collegeTab": "Colleges",
+    "allTime": "All Time",
+    "weekly": "Weekly (Soon)",
+    "monthly": "Monthly (Soon)",
+    "you": "You",
+    "demoNotice": "Demo data — official rankings start with Cohort 1 launch",
+    "collegeRank": "College Standings",
+    "points": "pts",
+    "members": "ambassadors"
+  },
+  "rewards": {
+    "title": "Rewards & Tiers",
+    "subtitle": "Unlock milestone privileges, merchandise, and industry opportunities.",
+    "bronze": "Bronze",
+    "silver": "Silver",
+    "gold": "Gold",
+    "champion": "Champion",
+    "threshold": "{points} Points",
+    "unlocked": "Unlocked",
+    "locked": "Locked",
+    "currentProgress": "Current Progress",
+    "plannedNotice": "Perks are scheduled for cohort qualification and graduation."
+  },
+  "admin": {
+    "title": "Admin Console",
+    "totalAmbassadors": "Total Ambassadors",
+    "pendingReviews": "Pending Reviews",
+    "pointsAwarded": "Points Awarded",
+    "approvalRate": "Approval Rate",
+    "reviewQueue": "Review Queue",
+    "approve": "Approve (+{points})",
+    "reject": "Reject",
+    "requestChanges": "Request Changes",
+    "reason": "Feedback Reason",
+    "reasonPlaceholder": "Explain why this submission needs changes...",
+    "openProof": "Open Proof Link",
+    "nextInQueue": "Next in Queue",
+    "ambassadorsList": "Ambassador Management",
+    "missionsList": "Manage Missions"
+  },
+  "common": {
+    "back": "Back",
+    "continue": "Continue",
+    "cancel": "Cancel",
+    "save": "Save Changes",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "retry": "Try Again",
+    "success": "Success",
+    "demo": "Demo Data",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "language": "Language",
+    "close": "Close"
+  }
+}
