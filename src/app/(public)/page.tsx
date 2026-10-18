@@ -22,6 +22,7 @@ import { MissionCard } from "@/components/ui/MissionCard";
 import { LeaderboardRow } from "@/components/ui/LeaderboardRow";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { ZyvenMark } from "@/components/brand/ZyvenMark";
+import { Zyven3DMark } from "@/components/brand/Zyven3DMark";
 import {
   SEED_MISSIONS,
   SEED_DEMO_AMBASSADORS,
@@ -144,10 +145,10 @@ export default function LandingPage() {
             <div className="relative w-full max-w-md sm:max-w-lg aspect-[4/5] rounded-[32px] overflow-hidden border border-border/80 shadow-soft-lg bg-surface-2">
               {/* Replace with real MEC ambassador photo - Graceful dynamic gradient and portrait fallback */}
               <div className="absolute inset-0 bg-gradient-to-tr from-primary/30 via-primary-2/20 to-transparent flex items-center justify-center p-8">
-                {/* Visual ambassador illustration & brand mark */}
+                {/* Visual ambassador illustration & selective 3D mark */}
                 <div className="flex flex-col items-center justify-center text-center space-y-4">
-                  <div className="h-28 w-28 rounded-3xl brand-gradient-bg text-white flex items-center justify-center shadow-soft-lg">
-                    <ZyvenMark size={64} />
+                  <div className="relative flex items-center justify-center p-2">
+                    <Zyven3DMark size={160} />
                   </div>
                   <div>
                     <h4 className="text-lg font-black text-text">
