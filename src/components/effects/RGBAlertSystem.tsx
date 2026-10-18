@@ -36,7 +36,7 @@ export function RGBAlertSystem() {
   useEffect(() => {
     const handleRgb = (e: Event) => {
       const custom = e as CustomEvent<{ message: string; subtext?: string }>;
-      soundEffects.playRgbChime();
+      // Login chime/beep sound removed per user request for silent, clean login
       setAlert({
         active: true,
         type: "rgb",

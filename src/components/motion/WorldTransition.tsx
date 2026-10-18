@@ -35,11 +35,11 @@ export function WorldTransition({ children }: WorldTransitionProps) {
     }
 
     if (pathname.startsWith("/rewards")) {
-      // Objects converge toward center
+      // Objects converge toward center - sharp cinematic transition
       return {
-        initial: { opacity: 0, scale: 0.985, filter: "blur(2px)" },
-        animate: { opacity: 1, scale: 1, filter: "blur(0px)" },
-        exit: { opacity: 0, scale: 1.01 },
+        initial: { opacity: 0, scale: 0.985, y: 8 },
+        animate: { opacity: 1, scale: 1, y: 0 },
+        exit: { opacity: 0, scale: 1.01, y: -6 },
         transition: { duration: 0.3, ease: ease.out },
       };
     }

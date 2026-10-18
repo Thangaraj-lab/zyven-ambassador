@@ -233,60 +233,64 @@ export function MissionPortal() {
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4 sm:p-6 overflow-y-auto overflow-x-hidden">
-        {/* Spatial Atmospheric Backdrop */}
+        {/* Spatial Atmospheric Backdrop - Sharp, High-Contrast Scrim */}
         <motion.div
           initial={{ opacity: 0 }}
-          animate={{
-            opacity: phase === "launching" ? 1 : 0.88,
-            backdropFilter: phase === "launching" ? "blur(28px)" : "blur(18px)",
-          }}
+          animate={{ opacity: phase === "launching" ? 0.96 : 0.9 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.25 }}
           onClick={handleClose}
-          className="fixed inset-0 bg-[#060814]/90 dark:bg-[#03050c]/95"
+          className="fixed inset-0 bg-[#04060f]/95 dark:bg-[#020308]/98"
         />
 
-        {/* Dynamic Spatial Light Horizon & Concentric Energy Waves */}
+        {/* Dynamic Spatial Light Horizon & Precision Optical Energy Rings */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.8 }}
-          animate={{ opacity: 0.65, scale: 1 }}
-          exit={{ opacity: 0, scale: 1.2 }}
-          transition={{ duration: 0.5 }}
+          initial={{ opacity: 0, scale: 0.85 }}
+          animate={{ opacity: 0.75, scale: 1 }}
+          exit={{ opacity: 0, scale: 1.15 }}
+          transition={{ duration: 0.4 }}
           className="pointer-events-none fixed inset-0 flex items-center justify-center -z-10 overflow-hidden"
         >
+          {/* Subtle Radial Vignette Glow */}
           <div
-            className="h-[600px] w-[600px] rounded-full blur-[140px] opacity-40 transition-all duration-700"
+            className="h-[550px] w-[550px] rounded-full opacity-30 transition-all duration-500"
             style={{
-              background: `radial-gradient(circle, ${palette.border} 0%, ${palette.glow} 40%, transparent 75%)`,
+              background: `radial-gradient(circle, ${palette.border} 0%, ${palette.glow} 45%, transparent 70%)`,
             }}
           />
+          {/* Precision Concentric Rings with Sci-Fi Dashes */}
           <div
-            className="absolute h-[520px] w-[520px] rounded-full border border-dashed opacity-25 animate-spin"
+            className="absolute h-[520px] w-[520px] rounded-full border border-dashed opacity-35 animate-spin"
             style={{ borderColor: palette.accent, animationDuration: "35s" }}
           />
           <div
-            className="absolute h-[680px] w-[680px] rounded-full border opacity-15"
+            className="absolute h-[680px] w-[680px] rounded-full border opacity-20"
             style={{ borderColor: palette.border }}
+          />
+          {/* Outer Geometric Horizon Marks */}
+          <div
+            className="absolute h-[820px] w-[820px] rounded-full border border-dotted opacity-15"
+            style={{ borderColor: palette.accent }}
           />
         </motion.div>
 
-        {/* Main Mission Briefing Window (Slide 1, Step 5 from reference) */}
+        {/* Main Mission Briefing Window - Razor-Sharp Cinematic Presentation */}
         <motion.div
           initial={
             motionOK
-              ? { scale: 0.92, opacity: 0, y: 24, rotateX: 6 }
+              ? { scale: 0.94, opacity: 0, y: 16 }
               : { opacity: 0 }
           }
           animate={
             phase === "launching"
-              ? { scale: 1.2, opacity: 0, z: 250, filter: "blur(6px)" }
-              : { scale: 1, opacity: 1, y: 0, rotateX: 0, filter: "blur(0px)" }
+              ? { scale: 1.06, opacity: 0, y: -12 }
+              : { scale: 1, opacity: 1, y: 0 }
           }
-          exit={{ scale: 0.95, opacity: 0, y: 16 }}
-          transition={{ duration: 0.38, ease: ease.out }}
-          className="relative max-w-xl w-full my-auto rounded-[32px] bg-surface/95 dark:bg-[#0b0f24]/95 border border-white/20 dark:border-white/10 shadow-2xl backdrop-blur-2xl p-6 sm:p-8 z-10 space-y-6 overflow-hidden"
+          exit={{ scale: 0.96, opacity: 0, y: 12 }}
+          transition={{ duration: 0.32, ease: ease.out }}
+          className="relative max-w-xl w-full my-auto rounded-[32px] bg-surface dark:bg-[#0c1024] border border-border/80 dark:border-white/15 shadow-2xl p-6 sm:p-8 z-10 space-y-6 overflow-hidden"
           style={{
-            boxShadow: `0 24px 60px -12px ${palette.glow}`,
+            boxShadow: `0 20px 50px -10px ${palette.glow}`,
           }}
         >
           {/* Animated SVG Traveling Energy Border */}

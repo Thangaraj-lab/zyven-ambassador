@@ -59,8 +59,9 @@ export function LivingInterfaceProvider({ children }: { children: React.ReactNod
             style={{
               left: smoothX,
               top: smoothY,
+              background: "radial-gradient(circle, rgba(99, 102, 241, 0.07) 0%, transparent 65%)",
             }}
-            className="pointer-events-none fixed -translate-x-1/2 -translate-y-1/2 h-[600px] w-[600px] rounded-full bg-primary/[0.04] dark:bg-primary/[0.07] blur-[120px] -z-10 hidden md:block"
+            className="pointer-events-none fixed -translate-x-1/2 -translate-y-1/2 h-[500px] w-[500px] rounded-full -z-10 hidden md:block"
           />
         )}
         {children}
