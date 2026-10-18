@@ -8,6 +8,8 @@ import { EmptyState } from "@/components/ui/EmptyState";
 import { Sparkles, Filter } from "lucide-react";
 import { useTranslations } from "next-intl";
 
+import { BackButton } from "@/components/ui/BackButton";
+
 type FilterType = "all" | "available" | "in_review" | "completed" | "coming_soon";
 
 export default function MissionsListPage() {
@@ -48,7 +50,12 @@ export default function MissionsListPage() {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
+      {/* Universal Back Navigation */}
+      <div>
+        <BackButton fallbackHref="/dashboard" label="Back to Dashboard" />
+      </div>
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

@@ -24,6 +24,7 @@ import {
   Clock,
 } from "lucide-react";
 import { toast } from "sonner";
+import { BackButton } from "@/components/ui/BackButton";
 
 export default function ProfilePage() {
   const { data: session, refetch: refetchSession } = useSession();
@@ -79,6 +80,11 @@ export default function ProfilePage() {
 
   return (
     <div className="space-y-6 max-w-4xl mx-auto pb-12">
+      {/* Universal Back Navigation */}
+      <div>
+        <BackButton fallbackHref="/dashboard" label="Back to Dashboard" />
+      </div>
+
       {/* Cover Gradient & Header Card */}
       <div className="rounded-[28px] overflow-hidden bg-surface border border-border shadow-soft-sm">
         {/* Decorative Cover Gradient */}

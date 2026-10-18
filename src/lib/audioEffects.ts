@@ -137,26 +137,44 @@ class SoundSynthesizer {
     }
   }
 
-  // 4. Cinematic Task Card Opening Sci-Fi Warp
+  // 4. Cinematic Task Card Opening Sci-Fi Warp with Sub-bass & Laser
   playCinematicCardOpen() {
     const ctx = this.getContext();
     if (!ctx) return;
 
     const now = ctx.currentTime;
 
-    // Resonant futuristic frequency sweep
+    // Sub-bass impact boom
+    const subOsc = ctx.createOscillator();
+    const subGain = ctx.createGain();
+    subOsc.type = "sine";
+    subOsc.frequency.setValueAtTime(110, now);
+    subOsc.frequency.exponentialRampToValueAtTime(35, now + 0.38);
+    subGain.gain.setValueAtTime(0.35, now);
+    subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.42);
+    subOsc.connect(subGain);
+    subGain.connect(ctx.destination);
+    subOsc.start(now);
+    subOsc.stop(now + 0.45);
+
+    // Resonant futuristic RGB frequency sweep
     const osc = ctx.createOscillator();
     const gain = ctx.createGain();
+    osc.type = "sawtooth";
+    osc.frequency.setValueAtTime(140, now);
+    osc.frequency.exponentialRampToValueAtTime(980, now + 0.36);
 
-    osc.type = "sine";
-    osc.frequency.setValueAtTime(180, now);
-    osc.frequency.exponentialRampToValueAtTime(840, now + 0.35);
+    const filter = ctx.createBiquadFilter();
+    filter.type = "lowpass";
+    filter.frequency.setValueAtTime(400, now);
+    filter.frequency.exponentialRampToValueAtTime(3200, now + 0.35);
 
-    gain.gain.setValueAtTime(0.02, now);
-    gain.gain.linearRampToValueAtTime(0.2, now + 0.2);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.45);
+    gain.gain.setValueAtTime(0.01, now);
+    gain.gain.linearRampToValueAtTime(0.22, now + 0.22);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.46);
 
-    osc.connect(gain);
+    osc.connect(filter);
+    filter.connect(gain);
     gain.connect(ctx.destination);
 
     osc.start(now);

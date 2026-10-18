@@ -3,6 +3,7 @@ import { RouteProgressBar } from "@/components/nav/RouteProgressBar";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { LocaleToggle } from "@/components/ui/LocaleToggle";
 import { Logo } from "@/components/brand/Logo";
+import { BackButton } from "@/components/ui/BackButton";
 
 export default function AuthLayout({
   children,
@@ -15,7 +16,10 @@ export default function AuthLayout({
 
       {/* Top minimalistic header */}
       <header className="w-full px-6 py-4 flex items-center justify-between max-w-7xl mx-auto">
-        <Logo size="md" href="/" />
+        <div className="flex items-center gap-4">
+          <BackButton fallbackHref="/" label="Home" />
+          <Logo size="md" href="/" />
+        </div>
         <div className="flex items-center gap-2">
           <LocaleToggle />
           <ThemeToggle />

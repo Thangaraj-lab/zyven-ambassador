@@ -5,6 +5,7 @@ import { useRewards, useMyPoints, useMyTier } from "@/lib/data/hooks";
 import { TierBadge, type TierType } from "@/components/ui/TierBadge";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { Gift, Check, Lock, Sparkles } from "lucide-react";
+import { BackButton } from "@/components/ui/BackButton";
 
 export default function RewardsLadderPage() {
   const { data: rewards = [] } = useRewards();
@@ -14,7 +15,12 @@ export default function RewardsLadderPage() {
   const totalPoints = pointsData?.total ?? 0;
 
   return (
-    <div className="space-y-8 max-w-4xl mx-auto">
+    <div className="space-y-6 max-w-4xl mx-auto">
+      {/* Universal Back Navigation */}
+      <div>
+        <BackButton fallbackHref="/dashboard" label="Back to Dashboard" />
+      </div>
+
       <div>
         <span className="text-xs font-bold text-primary uppercase tracking-wider">
           Milestone Progression

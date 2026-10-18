@@ -29,6 +29,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { triggerFirecrackers } from "@/components/effects/FirecrackerCelebration";
+import { BackButton } from "@/components/ui/BackButton";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
 import { motion } from "motion/react";
@@ -471,12 +472,7 @@ export default function MissionDetailPage() {
     <div className="space-y-6 max-w-5xl mx-auto">
       {/* Back button */}
       <div>
-        <Link
-          href="/missions"
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-text-muted hover:text-primary transition-colors"
-        >
-          <ArrowLeft className="h-4 w-4" /> Back to Missions
-        </Link>
+        <BackButton fallbackHref="/missions" label="Back to Missions" />
       </div>
 
       {/* Grid: Left Summary, Right Guided Flow */}

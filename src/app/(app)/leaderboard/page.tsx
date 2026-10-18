@@ -7,6 +7,7 @@ import { LeaderboardRow, type LeaderboardUser } from "@/components/ui/Leaderboar
 import { Trophy, AlertCircle } from "lucide-react";
 import type { LeaderboardEntry, CollegeLeaderboardEntry } from "@/lib/data/types";
 import { useSearchParams } from "next/navigation";
+import { BackButton } from "@/components/ui/BackButton";
 
 export default function LeaderboardPage() {
   const searchParams = useSearchParams();
@@ -55,7 +56,12 @@ export default function LeaderboardPage() {
   const youEntry = ambassadors.find((a) => a.isYou);
 
   return (
-    <div className="space-y-8 max-w-4xl mx-auto pb-12">
+    <div className="space-y-6 max-w-4xl mx-auto pb-12">
+      {/* Universal Back Navigation */}
+      <div>
+        <BackButton fallbackHref="/dashboard" label="Back to Dashboard" />
+      </div>
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
