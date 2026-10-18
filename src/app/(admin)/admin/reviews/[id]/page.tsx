@@ -24,6 +24,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
+import { motion } from "motion/react";
 
 const REASON_PRESETS = [
   "Post URL is invalid or inaccessible",
@@ -46,6 +47,7 @@ export default function ReviewDetailPage() {
 
   const [reason, setReason] = useState("");
   const [isZoomed, setIsZoomed] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
 
   const mission = missions.find((m) => m.id === submission?.missionId);
 
@@ -60,7 +62,7 @@ export default function ReviewDetailPage() {
       if (!submission) return;
 
       if ((decision === "reject" || decision === "requestChanges") && !reason.trim()) {
-        toast.error("Please provide or select a reason for rejection");
+        toast.error("Please provide or select a reason for this decision");
         return;
       }
 
@@ -74,14 +76,21 @@ export default function ReviewDetailPage() {
         toast.success(
           decision === "approve"
             ? `Submission approved! +${mission?.points || 50} Points awarded.`
-            : "Review decision recorded."
+            : decision === "requestChanges"
+            ? "Changes requested from student."
+            : "Submission rejected."
         );
 
-        if (nextPendingId) {
-          router.push(`/admin/reviews/${nextPendingId}`);
-        } else {
-          router.push("/admin/reviews");
-        }
+        // Section 21: Current submission slides away
+        setIsExiting(true);
+        setTimeout(() => {
+          if (nextPendingId) {
+            router.push(`/admin/reviews/${nextPendingId}`);
+            setIsExiting(false);
+          } else {
+            router.push("/admin/reviews");
+          }
+        }, 220);
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : "Failed to process review";
         toast.error(msg);
@@ -90,7 +99,7 @@ export default function ReviewDetailPage() {
     [submission, reason, mission, nextPendingId, reviewSubmission, router]
   );
 
-  // Keyboard shortcuts (A = Approve, R = Reject)
+  // Section 21 Keyboard shortcuts (A = Approve, C = Changes, R = Reject)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       // Don't trigger if user is typing in textarea/input
@@ -104,6 +113,15 @@ export default function ReviewDetailPage() {
       if (e.key === "a" || e.key === "A") {
         e.preventDefault();
         handleDecision("approve");
+      }
+      if (e.key === "c" || e.key === "C") {
+        e.preventDefault();
+        if (reason) {
+          handleDecision("requestChanges");
+        } else {
+          setReason(REASON_PRESETS[0]);
+          toast.info("Preset reason selected. Press C again to request changes.");
+        }
       }
       if (e.key === "r" || e.key === "R") {
         e.preventDefault();
@@ -129,7 +147,11 @@ export default function ReviewDetailPage() {
   }
 
   return (
-    <div className="space-y-6 max-w-6xl mx-auto">
+    <motion.div
+      animate={isExiting ? { x: -80, opacity: 0 } : { x: 0, opacity: 1 }}
+      transition={{ duration: 0.22, ease: "easeOut" }}
+      className="space-y-6 max-w-6xl mx-auto"
+    >
       {/* Top Header */}
       <div className="flex items-center justify-between">
         <Link
@@ -351,6 +373,6 @@ export default function ReviewDetailPage() {
           </div>
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }
