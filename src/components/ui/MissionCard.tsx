@@ -148,8 +148,16 @@ export function MissionCard({
     openMissionPortal({
       slug: mission.slug,
       title: mission.title,
+      description: mission.description,
       points: mission.points,
       brand: mission.brand,
+      estimatedMinutes: mission.estimatedMinutes,
+      category: mission.category,
+      steps: mission.instructions?.map((inst) => ({
+        stepNumber: inst.stepNumber,
+        title: inst.title,
+        description: inst.description,
+      })),
     });
   };
 

@@ -274,8 +274,29 @@ export default function DashboardPage() {
               openMissionPortal({
                 slug: "linkedin-follow-post",
                 title: "Follow & Post on LinkedIn",
+                description:
+                  "Follow the official Zyven page and publish our student ambassador launch announcement to your network.",
                 points: 50,
                 brand: "linkedin",
+                category: "Social Media",
+                estimatedMinutes: 5,
+                steps: [
+                  {
+                    stepNumber: 1,
+                    title: "Follow Zyven Profile",
+                    description: "Open the official LinkedIn page and hit Follow to connect to our network.",
+                  },
+                  {
+                    stepNumber: 2,
+                    title: "Publish Launch Post",
+                    description: "Copy our pre-written announcement template and share it on your LinkedIn feed.",
+                  },
+                  {
+                    stepNumber: 3,
+                    title: "Submit URL for Verification",
+                    description: "Paste your live LinkedIn post URL to receive 50 points upon approval.",
+                  },
+                ],
               })
             }
             className="group relative block rounded-[1.25rem] border border-border bg-surface p-6 shadow-soft-sm transition-all duration-300 hover:shadow-glow hover:-translate-y-1 active:scale-[0.985] cursor-pointer overflow-hidden"
@@ -312,8 +333,29 @@ export default function DashboardPage() {
               openMissionPortal({
                 slug: "join-whatsapp-community",
                 title: "Join Zyven WhatsApp Community",
+                description:
+                  "Join the official Zyven Tamil Nadu student ambassador community on WhatsApp to receive real-time task alerts.",
                 points: 30,
                 brand: "whatsapp",
+                category: "Community",
+                estimatedMinutes: 2,
+                steps: [
+                  {
+                    stepNumber: 1,
+                    title: "Open Community Channel",
+                    description: "Access the private Tamil Nadu student ambassador WhatsApp group.",
+                  },
+                  {
+                    stepNumber: 2,
+                    title: "Introduce Yourself",
+                    description: "Share your college, department, and connect with fellow campus ambassadors.",
+                  },
+                  {
+                    stepNumber: 3,
+                    title: "Upload Membership Screenshot",
+                    description: "Capture your membership screen and submit it for verified point rewards.",
+                  },
+                ],
               })
             }
             className="group relative block rounded-[1.25rem] border border-border bg-surface p-6 shadow-soft-sm transition-all duration-300 hover:shadow-glow hover:-translate-y-1 active:scale-[0.985] cursor-pointer overflow-hidden"
