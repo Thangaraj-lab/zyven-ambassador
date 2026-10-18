@@ -29,25 +29,25 @@ export function MissionCard({
     switch (brand) {
       case "linkedin":
         return (
-          <div className="h-10 w-10 rounded-xl bg-[#0077B5]/10 text-[#0077B5] flex items-center justify-center font-bold text-base border border-[#0077B5]/20 shrink-0">
+          <div className="h-10 w-10 rounded-xl bg-[#0077B5]/10 text-[#0077B5] flex items-center justify-center font-bold text-base border border-[#0077B5]/20 shrink-0 group-hover:scale-[1.02] transition-transform duration-200">
             in
           </div>
         );
       case "whatsapp":
         return (
-          <div className="h-10 w-10 rounded-xl bg-[#25D366]/10 text-[#25D366] flex items-center justify-center font-bold text-sm border border-[#25D366]/20 shrink-0">
+          <div className="h-10 w-10 rounded-xl bg-[#25D366]/10 text-[#25D366] flex items-center justify-center font-bold text-sm border border-[#25D366]/20 shrink-0 group-hover:scale-[1.02] transition-transform duration-200">
             WA
           </div>
         );
       case "instagram":
         return (
-          <div className="h-10 w-10 rounded-xl bg-[#E1306C]/10 text-[#E1306C] flex items-center justify-center font-bold text-sm border border-[#E1306C]/20 shrink-0">
+          <div className="h-10 w-10 rounded-xl bg-[#E1306C]/10 text-[#E1306C] flex items-center justify-center font-bold text-sm border border-[#E1306C]/20 shrink-0 group-hover:scale-[1.02] transition-transform duration-200">
             IG
           </div>
         );
       default:
         return (
-          <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-sm border border-primary/20 shrink-0">
+          <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center font-bold text-sm border border-primary/20 shrink-0 group-hover:scale-[1.02] transition-transform duration-200">
             <Sparkles className="h-5 w-5" />
           </div>
         );
@@ -99,7 +99,7 @@ export function MissionCard({
           </span>
         </div>
 
-        <div className="flex items-center gap-1 font-bold text-primary group-hover:translate-x-0.5 transition-transform">
+        <div className="flex items-center gap-1 font-bold text-primary group-hover:translate-x-1 transition-transform">
           {isLocked ? (
             <span className="flex items-center gap-1 text-text-muted">
               <Lock className="h-3 w-3" /> Locked

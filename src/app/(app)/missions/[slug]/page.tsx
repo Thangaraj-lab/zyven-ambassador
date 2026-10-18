@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import {
   useMission,
   useMySubmissions,
@@ -30,20 +30,16 @@ import {
 import Link from "next/link";
 import { toast } from "sonner";
 import { useTranslations } from "next-intl";
-import { motion, AnimatePresence } from "motion/react";
-import confetti from "canvas-confetti";
-import { useMotionOK } from "@/lib/motion";
+import { motion } from "motion/react";
 
 export default function MissionDetailPage() {
   const params = useParams();
   const slug = params.slug as string;
-  const router = useRouter();
   const t = useTranslations("missions");
-  const motionOK = useMotionOK();
 
   const { data: mission, isLoading: missionLoading } = useMission(slug);
   const { data: mySubmissions = [] } = useMySubmissions();
-  const { mutateAsync: submitProof, isPending: isSubmitting } = useSubmitProof();
+  const { mutateAsync: submitProof } = useSubmitProof();
   const { mutateAsync: startMission } = useStartMission();
 
   // Active step in stepper
@@ -56,15 +52,18 @@ export default function MissionDetailPage() {
   const [followedConfirmed, setFollowedConfirmed] = useState(false);
   const [whatsappJoined, setWhatsappJoined] = useState(false);
 
-  // Submitted success animation overlay
-  const [showSuccessSheet, setShowSuccessSheet] = useState(false);
+  // Submission animation stages per Section 14: idle -> compressing -> loading -> success -> timeline
+  const [submitStage, setSubmitStage] = useState<"idle" | "compressing" | "loading" | "success">("idle");
+  const [justSubmitted, setJustSubmitted] = useState(false);
 
   const existingSubmission = mySubmissions.find(
     (s) => s.missionId === mission?.id
   );
 
   // Derive submission state
-  const missionState: MissionState = existingSubmission
+  const missionState: MissionState = justSubmitted
+    ? "UNDER_REVIEW"
+    : existingSubmission
     ? (existingSubmission.state as MissionState)
     : "AVAILABLE";
 
@@ -89,6 +88,7 @@ export default function MissionDetailPage() {
       : proofUrl.trim().length > 0;
 
   const canSubmit =
+    submitStage === "idle" &&
     (!mission.proofRequired.url || isLinkedInValid) &&
     (!mission.proofRequired.screenshot || !!screenshotDataUrl);
 
@@ -99,6 +99,14 @@ export default function MissionDetailPage() {
       return;
     }
 
+    // Step 1: Button compresses
+    setSubmitStage("compressing");
+
+    await new Promise((resolve) => setTimeout(resolve, 150));
+
+    // Step 2 & 3: Button enters loading state & form locks
+    setSubmitStage("loading");
+
     try {
       await submitProof({
         missionId: mission.id,
@@ -108,21 +116,23 @@ export default function MissionDetailPage() {
           : undefined,
       });
 
+      // Step 5 & 6: Button transforms into success state with drawn checkmark
+      setSubmitStage("success");
+
       // Haptic feedback
       if (typeof navigator !== "undefined" && navigator.vibrate) {
-        navigator.vibrate(15);
+        navigator.vibrate(20);
       }
 
-      setShowSuccessSheet(true);
-      if (motionOK) {
-        confetti({
-          particleCount: 30,
-          spread: 60,
-          origin: { y: 0.7 },
-          colors: ["#5B5BF0", "#8B5CF6", "#10B981"],
-        });
-      }
+      toast.success("Verification proof submitted for review");
+
+      // Step 7 & 8: Form card transitions smoothly into the timeline state
+      setTimeout(() => {
+        setJustSubmitted(true);
+        setSubmitStage("idle");
+      }, 900);
     } catch (err: unknown) {
+      setSubmitStage("idle");
       const msg = err instanceof Error ? err.message : "Failed to submit verification";
       toast.error(msg);
     }
@@ -280,16 +290,59 @@ export default function MissionDetailPage() {
             ℹ️ {t("verificationNote")}
           </div>
 
-          <Button
-            variant="primary"
-            size="md"
-            className="w-full font-bold gap-2"
-            disabled={!canSubmit}
-            isLoading={isSubmitting}
+          <motion.div
+            animate={
+              submitStage === "compressing"
+                ? { scale: 0.95 }
+                : submitStage === "success"
+                ? { scale: [0.98, 1.02, 1] }
+                : { scale: 1 }
+            }
+            transition={{ duration: 0.2 }}
+            className="w-full"
           >
-            <Send className="h-4 w-4" />
-            <span>Submit Verification Proof</span>
-          </Button>
+            <button
+              type="submit"
+              disabled={!canSubmit || submitStage !== "idle"}
+              className={`w-full h-12 rounded-[12px] font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer select-none ${
+                submitStage === "success"
+                  ? "bg-success text-white shadow-soft-sm"
+                  : "brand-gradient-bg text-white shadow-soft-sm hover:brightness-105 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+              }`}
+            >
+              {submitStage === "loading" ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin text-white" />
+                  <span>Submitting verification...</span>
+                </>
+              ) : submitStage === "success" ? (
+                <>
+                  <svg
+                    className="h-5 w-5 text-white"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <motion.path
+                      d="M20 6L9 17L4 12"
+                      initial={{ pathLength: 0 }}
+                      animate={{ pathLength: 1 }}
+                      transition={{ duration: 0.35, ease: "easeOut" }}
+                    />
+                  </svg>
+                  <span>Proof Submitted</span>
+                </>
+              ) : (
+                <>
+                  <Send className="h-4 w-4" />
+                  <span>Submit Verification Proof</span>
+                </>
+              )}
+            </button>
+          </motion.div>
         </form>
       ),
     },
@@ -349,16 +402,59 @@ export default function MissionDetailPage() {
             ℹ️ {t("verificationNote")}
           </div>
 
-          <Button
-            variant="primary"
-            size="md"
-            className="w-full font-bold gap-2"
-            disabled={!screenshotDataUrl}
-            isLoading={isSubmitting}
+          <motion.div
+            animate={
+              submitStage === "compressing"
+                ? { scale: 0.95 }
+                : submitStage === "success"
+                ? { scale: [0.98, 1.02, 1] }
+                : { scale: 1 }
+            }
+            transition={{ duration: 0.2 }}
+            className="w-full"
           >
-            <Send className="h-4 w-4" />
-            <span>Submit WhatsApp Screenshot</span>
-          </Button>
+            <button
+              type="submit"
+              disabled={!screenshotDataUrl || submitStage !== "idle"}
+              className={`w-full h-12 rounded-[12px] font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer select-none ${
+                submitStage === "success"
+                  ? "bg-success text-white shadow-soft-sm"
+                  : "brand-gradient-bg text-white shadow-soft-sm hover:brightness-105 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+              }`}
+            >
+              {submitStage === "loading" ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin text-white" />
+                  <span>Submitting verification...</span>
+                </>
+              ) : submitStage === "success" ? (
+                <>
+                  <svg
+                    className="h-5 w-5 text-white"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="3"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <motion.path
+                      d="M20 6L9 17L4 12"
+                      initial={{ pathLength: 0 }}
+                      animate={{ pathLength: 1 }}
+                      transition={{ duration: 0.35, ease: "easeOut" }}
+                    />
+                  </svg>
+                  <span>Proof Submitted</span>
+                </>
+              ) : (
+                <>
+                  <Send className="h-4 w-4" />
+                  <span>Submit WhatsApp Screenshot</span>
+                </>
+              )}
+            </button>
+          </motion.div>
         </form>
       ),
     },
@@ -546,45 +642,6 @@ export default function MissionDetailPage() {
           )}
         </div>
       </div>
-
-      {/* Submission Success Modal / Sheet */}
-      <AnimatePresence>
-        {showSuccessSheet && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="w-full max-w-sm rounded-[24px] bg-surface p-6 border border-border shadow-soft-lg text-center space-y-4"
-            >
-              <div className="h-16 w-16 rounded-full brand-gradient-bg text-white flex items-center justify-center mx-auto shadow-soft-md">
-                <Check className="h-8 w-8 stroke-[3]" />
-              </div>
-
-              <div className="space-y-1">
-                <h3 className="text-lg font-black text-text">
-                  Mission Submitted!
-                </h3>
-                <p className="text-xs text-text-muted">
-                  Your proof has been submitted for review. Verification usually takes up to 24 hours.
-                </p>
-              </div>
-
-              <Button
-                variant="primary"
-                size="md"
-                className="w-full font-bold"
-                onClick={() => {
-                  setShowSuccessSheet(false);
-                  router.refresh();
-                }}
-              >
-                Done
-              </Button>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
     </div>
   );
 }
