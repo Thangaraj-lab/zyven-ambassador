@@ -1,9 +1,20 @@
 "use client";
 
 import React, { useState } from "react";
+import Link from "next/link";
 import { ZyvenMark } from "@/components/brand/ZyvenMark";
+import { Zyven3DMark } from "@/components/brand/Zyven3DMark";
 import { Logo } from "@/components/brand/Logo";
 import { Button } from "@/components/ui/Button";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/Card";
+import { Dialog, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/Dialog";
+import { Sheet, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/Sheet";
+import { Input } from "@/components/ui/Input";
+import { Textarea } from "@/components/ui/Textarea";
+import { Select } from "@/components/ui/Select";
+import { Checkbox } from "@/components/ui/Checkbox";
+import { Skeleton } from "@/components/ui/Skeleton";
+import { Tabs } from "@/components/ui/Tabs";
 import { StatusBadge } from "@/components/ui/StatusBadge";
 import { PointsPill } from "@/components/ui/PointsPill";
 import { TierBadge } from "@/components/ui/TierBadge";
@@ -24,12 +35,17 @@ import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { LocaleToggle } from "@/components/ui/LocaleToggle";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { SEED_MISSIONS } from "@/lib/data/mock/seed";
-import { Trophy, Users, Zap, CheckCircle, ArrowLeft } from "lucide-react";
-import Link from "next/link";
+import { Trophy, Users, Zap, ArrowLeft, Mail, Search, Sparkles } from "lucide-react";
 
 export default function DesignSystemPage() {
   const [activeStep, setActiveStep] = useState(1);
   const [demoProgress, setDemoProgress] = useState(65);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [sheetOpen, setSheetOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState("all");
+  const [checked, setChecked] = useState(true);
+  const [inputValue, setInputValue] = useState("");
+  const [textareaValue, setTextareaValue] = useState("");
 
   const top3 = [
     {
@@ -59,9 +75,9 @@ export default function DesignSystemPage() {
   ] as const;
 
   return (
-    <div className="min-h-screen bg-bg text-text py-12 px-4 sm:px-8 max-w-7xl mx-auto">
+    <div className="min-h-screen bg-bg text-text py-12 px-4 sm:px-8 max-w-7xl mx-auto space-y-14">
       {/* Top Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-8 border-b border-border gap-4 mb-10">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-8 border-b border-border gap-4">
         <div>
           <Link
             href="/"
@@ -73,400 +89,412 @@ export default function DesignSystemPage() {
             Design System & Component Showcase
           </h1>
           <p className="text-sm text-text-muted mt-1">
-            Visual QA testbed for all tokens, variants, light & dark mode states.
+            Visual QA testbed for all tokens, variants, light & dark mode states, and 3D visual mark.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
-          <NotificationBell unreadCount={2} />
           <LocaleToggle />
           <ThemeToggle />
-          <Avatar name="Thangaraj MEC" size="sm" />
         </div>
       </div>
 
-      <div className="space-y-16">
-        {/* 1. Brand & Marks */}
-        <section className="space-y-4">
-          <SectionHeading
-            align="left"
-            eyebrow="Brand Identity"
-            title="Zyven Ribbon Mark & Logo"
-            description="2D flat geometric ribbon mark with dual-gradient styling."
-          />
-          <div className="p-6 rounded-2xl bg-surface border border-border flex flex-wrap items-center gap-8">
-            <div className="flex items-center gap-4">
-              <ZyvenMark size={24} />
-              <ZyvenMark size={36} />
-              <ZyvenMark size={52} />
-              <ZyvenMark size={72} />
-            </div>
-            <div className="h-10 w-px bg-border" />
-            <div className="flex items-center gap-6">
-              <Logo size="sm" href="" />
-              <Logo size="md" href="" showTagline />
-              <Logo size="lg" href="" />
-            </div>
-          </div>
-        </section>
+      {/* 01. Brand & Selective 3D Layer */}
+      <section className="space-y-6">
+        <SectionHeading
+          align="left"
+          eyebrow="01 Brand Identity & Selective 3D"
+          title="Brand Marks & Spatial Depth"
+          description="Flat 2D marks alongside the selective Three.js crystal mark with auto-pause and reduced-motion fallback."
+        />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <Card hoverable className="flex flex-col items-center justify-center p-8 text-center space-y-3">
+            <ZyvenMark size={56} />
+            <h4 className="font-bold text-sm text-text">2D Zyven Mark</h4>
+            <p className="text-xs text-text-muted">High-contrast SVG vector with brand violet gradient.</p>
+          </Card>
 
-        {/* 2. Buttons */}
-        <section className="space-y-4">
-          <SectionHeading
-            align="left"
-            eyebrow="Actions"
-            title="Buttons & States"
-            description="Primary gradient with hover sheen, secondary, outline, ghost, danger, and animated loading states."
-          />
-          <div className="p-6 rounded-2xl bg-surface border border-border space-y-6">
-            <div className="flex flex-wrap items-center gap-4">
-              <Button variant="primary" size="lg">
-                Primary Large
-              </Button>
-              <Button variant="primary" size="md">
-                Primary Gradient
-              </Button>
-              <Button variant="primary" size="sm">
-                Primary Small
-              </Button>
-              <Button variant="primary" size="md" isLoading>
-                Loading State
-              </Button>
-            </div>
+          <Card hoverable className="flex flex-col items-center justify-center p-8 text-center space-y-3">
+            <Logo size="lg" />
+            <h4 className="font-bold text-sm text-text">Primary Wordmark</h4>
+            <p className="text-xs text-text-muted">Plus Jakarta Sans geometric logotype with badge.</p>
+          </Card>
 
-            <div className="flex flex-wrap items-center gap-4">
-              <Button variant="secondary" size="md">
-                Secondary
-              </Button>
-              <Button variant="outline" size="md">
-                Outline
-              </Button>
-              <Button variant="ghost" size="md">
-                Ghost
-              </Button>
-              <Button variant="danger" size="md">
-                Danger Action
-              </Button>
-              <Button variant="primary" size="md" disabled>
-                Disabled
-              </Button>
-            </div>
-          </div>
-        </section>
+          <Card hoverable className="flex flex-col items-center justify-center p-6 text-center space-y-2 relative overflow-hidden">
+            <Zyven3DMark size={140} />
+            <h4 className="font-bold text-sm text-text flex items-center gap-1.5">
+              <Sparkles className="h-4 w-4 text-primary" />
+              <span>Selective 3D Mark</span>
+            </h4>
+            <p className="text-[11px] text-text-muted">Three.js interactive depth canvas. Pauses offscreen.</p>
+          </Card>
+        </div>
+      </section>
 
-        {/* 3. Status Badges (All 7 States) */}
-        <section className="space-y-4">
-          <SectionHeading
-            align="left"
-            eyebrow="Mission States"
-            title="Status Badges (7 Designed States)"
-            description="Every state has a distinct color, border, and flat 2D icon."
-          />
-          <div className="p-6 rounded-2xl bg-surface border border-border flex flex-wrap items-center gap-3">
-            <StatusBadge state="AVAILABLE" />
-            <StatusBadge state="STARTED" />
-            <StatusBadge state="SUBMITTED" />
-            <StatusBadge state="UNDER_REVIEW" />
-            <StatusBadge state="APPROVED" />
-            <StatusBadge state="REJECTED" />
-            <StatusBadge state="LOCKED" />
-          </div>
-        </section>
+      {/* 02. Primitives: Cards & Modals */}
+      <section className="space-y-6">
+        <SectionHeading
+          align="left"
+          eyebrow="02 Surfaces & Overlays"
+          title="Cards, Dialogs & Sheets"
+          description="Consistent 20px radius cards, soft backdrop modal dialogs, and smooth slide sheets."
+        />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card hoverable>
+            <CardHeader>
+              <CardTitle>Standard Surface Card (20px radius)</CardTitle>
+              <CardDescription>Hover micro-interaction lifts -3px with deepened shadow.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <p className="text-xs text-text-muted leading-relaxed">
+                Cards form the primary containment structure across the ambassador and student portals.
+              </p>
+            </CardContent>
+            <CardFooter className="justify-between">
+              <Button size="sm" variant="outline" onClick={() => setDialogOpen(true)}>
+                Open Dialog
+              </Button>
+              <Button size="sm" variant="primary" onClick={() => setSheetOpen(true)}>
+                Open Sheet
+              </Button>
+            </CardFooter>
+          </Card>
 
-        {/* 4. Points & Tiers */}
-        <section className="space-y-4">
-          <SectionHeading
-            align="left"
-            eyebrow="Rewards"
-            title="Points Pills & Tier Badges"
-            description="Badges for Bronze, Silver, Gold, Champion and point counters."
-          />
-          <div className="p-6 rounded-2xl bg-surface border border-border space-y-4">
-            <div className="flex flex-wrap items-center gap-3">
-              <PointsPill points={50} size="sm" />
-              <PointsPill points={100} size="md" />
-              <PointsPill points={500} size="lg" />
-            </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <TierBadge tier="bronze" size="sm" />
-              <TierBadge tier="silver" size="md" />
-              <TierBadge tier="gold" size="md" />
-              <TierBadge tier="champion" size="lg" />
-            </div>
-          </div>
-        </section>
-
-        {/* 5. Progress Bars & Animated Numbers */}
-        <section className="space-y-4">
-          <SectionHeading
-            align="left"
-            eyebrow="Feedback"
-            title="Animated Progress & Numbers"
-            description="Spring-interpolated progress bar with glowing leading edge."
-          />
-          <div className="p-6 rounded-2xl bg-surface border border-border space-y-6">
-            <div className="space-y-2">
-              <div className="flex justify-between text-xs font-bold">
-                <span>Milestone Progress</span>
-                <span className="text-primary font-bold">
-                  <AnimatedNumber value={demoProgress} suffix="%" />
-                </span>
+          <Card className="bg-surface-2 border-border/80">
+            <CardHeader>
+              <CardTitle>Skeleton Loaders</CardTitle>
+              <CardDescription>Content-shaped placeholders for zero layout shifts.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              <div className="flex items-center gap-3">
+                <Skeleton variant="circle" className="h-10 w-10" />
+                <div className="flex-1 space-y-2">
+                  <Skeleton variant="text" className="h-3 w-1/2" />
+                  <Skeleton variant="text" className="h-2.5 w-3/4" />
+                </div>
               </div>
-              <ProgressBar value={demoProgress} height={10} />
-            </div>
-            <div className="flex items-center gap-3">
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => setDemoProgress(30)}
-              >
-                Set 30%
-              </Button>
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => setDemoProgress(75)}
-              >
-                Set 75%
-              </Button>
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={() => setDemoProgress(100)}
-              >
-                Set 100%
-              </Button>
-            </div>
-          </div>
-        </section>
+              <Skeleton variant="rectangle" className="h-14 w-full" />
+            </CardContent>
+          </Card>
+        </div>
 
-        {/* 6. Stats Cards */}
-        <section className="space-y-4">
-          <SectionHeading
-            align="left"
-            eyebrow="Analytics"
-            title="Stat Cards"
-            description="Displaying key metrics on ambassador dashboard and admin console."
-          />
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Stat
-              label="Total Points"
-              value={80}
-              isNumber
-              icon={<Zap className="h-5 w-5" />}
-              subtext="Bronze tier unlocked"
-            />
-            <Stat
-              label="Campus Rank"
-              value="#24"
-              icon={<Trophy className="h-5 w-5" />}
-              subtext="Top 15% of cohort"
-            />
-            <Stat
-              label="Tasks Completed"
-              value="2 / 2"
-              icon={<CheckCircle className="h-5 w-5" />}
-              subtext="100% completion rate"
-            />
-            <Stat
-              label="Founding Cohort"
-              value={37}
-              isNumber
-              icon={<Users className="h-5 w-5" />}
-              subtext="Out of 100 ambassadors"
+        {/* Dialog Instance */}
+        <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+          <DialogHeader>
+            <DialogTitle>Level 4 Cinematic Dialog</DialogTitle>
+            <DialogDescription>
+              Accessible dialog with focus trap, backdrop blur, and smooth entrance.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-4 space-y-3">
+            <p className="text-xs text-text-muted leading-relaxed">
+              Used for mission confirmation, evidence zoom, tier unlock announcements, and account actions.
+            </p>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" size="sm" onClick={() => setDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="primary" size="sm" onClick={() => setDialogOpen(false)}>
+              Confirm Action
+            </Button>
+          </DialogFooter>
+        </Dialog>
+
+        {/* Sheet Instance */}
+        <Sheet open={sheetOpen} onOpenChange={setSheetOpen} position="right">
+          <SheetHeader>
+            <SheetTitle>Inspection Sheet</SheetTitle>
+            <SheetDescription>Slide-over drawer for deep proof inspect or filters.</SheetDescription>
+          </SheetHeader>
+          <div className="py-4 space-y-4">
+            <Input label="Search Ambassador" leftIcon={<Search className="h-4 w-4" />} placeholder="Filter by name..." />
+            <Select
+              label="Verification Status"
+              options={[
+                { value: "all", label: "All Submissions" },
+                { value: "pending", label: "Under Review" },
+                { value: "approved", label: "Approved" },
+              ]}
             />
           </div>
-        </section>
+        </Sheet>
+      </section>
 
-        {/* 7. Mission Cards */}
-        <section className="space-y-4">
-          <SectionHeading
-            align="left"
-            eyebrow="Missions"
-            title="Mission Cards"
-            description="Live cards with time estimates, points, and state-aware CTAs."
+      {/* 03. Form Controls & Inputs */}
+      <section className="space-y-6">
+        <SectionHeading
+          align="left"
+          eyebrow="03 Interactive Inputs"
+          title="Buttons, Inputs & Controls"
+          description="12px radius interactive primitives with Level 1 micro-interactions."
+        />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card className="space-y-4">
+            <h4 className="text-sm font-bold text-text">Button Hierarchy</h4>
+            <div className="flex flex-wrap gap-3">
+              <Button variant="primary">Primary Action</Button>
+              <Button variant="secondary">Secondary</Button>
+              <Button variant="outline">Outline</Button>
+              <Button variant="ghost">Ghost</Button>
+              <Button variant="danger">Danger</Button>
+              <Button variant="primary" isLoading>Loading</Button>
+            </div>
+          </Card>
+
+          <Card className="space-y-4">
+            <h4 className="text-sm font-bold text-text">Form Elements</h4>
+            <Input
+              label="Email Address"
+              type="email"
+              placeholder="thangaraj@mec.edu"
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              leftIcon={<Mail className="h-4 w-4" />}
+              hint="College email preferred"
+            />
+            <Textarea
+              label="Motivation"
+              rows={2}
+              placeholder="Why do you want to join..."
+              value={textareaValue}
+              onChange={(e) => setTextareaValue(e.target.value)}
+              charCount={textareaValue.length}
+              maxChars={100}
+            />
+            <Checkbox
+              checked={checked}
+              onCheckedChange={setChecked}
+              label="I agree to the Zyven Ambassador Code"
+              description="Micro-interaction animated checkmark"
+            />
+          </Card>
+        </div>
+      </section>
+
+      {/* 04. Tabs & Navigation */}
+      <section className="space-y-6">
+        <SectionHeading
+          align="left"
+          eyebrow="04 Navigation & Indicators"
+          title="Motion Tabs & Status Badges"
+        />
+        <div className="space-y-4">
+          <Tabs
+            tabs={[
+              { id: "all", label: "All Tasks", count: 6 },
+              { id: "active", label: "Live Missions", count: 2 },
+              { id: "completed", label: "Completed", count: 1 },
+            ]}
+            activeTab={activeTab}
+            onChange={setActiveTab}
+            variant="pills"
           />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <MissionCard
-              mission={SEED_MISSIONS[0]}
-              state="AVAILABLE"
-            />
-            <MissionCard
-              mission={SEED_MISSIONS[1]}
-              state="STARTED"
-            />
-            <MissionCard
-              mission={SEED_MISSIONS[2]}
-              state="LOCKED"
-            />
-            <MissionCard
-              mission={SEED_MISSIONS[3]}
-              state="LOCKED"
-            />
-          </div>
-        </section>
 
-        {/* 8. Leaderboard & Podium */}
-        <section className="space-y-4">
-          <SectionHeading
-            align="left"
-            eyebrow="Competition"
-            title="Podium & Leaderboard Rows"
-            description="Top 3 podium elevation and ranked list with sticky 'You' highlight."
+          <Tabs
+            tabs={[
+              { id: "all", label: "Individual Leaderboard" },
+              { id: "active", label: "College Battle" },
+            ]}
+            activeTab={activeTab}
+            onChange={setActiveTab}
+            variant="line"
+            layoutId="demo-line-tabs"
           />
-          <div className="p-6 rounded-2xl bg-surface border border-border space-y-8">
-            <PodiumCard topThree={[top3[0], top3[1], top3[2]]} />
+        </div>
 
-            <div className="space-y-2 max-w-xl mx-auto">
-              <LeaderboardRow
-                user={{
-                  id: "1",
-                  rank: 1,
-                  name: "Kavitha Rajan",
-                  college: "MEC",
-                  points: 420,
-                }}
-              />
-              <LeaderboardRow
-                user={{
-                  id: "2",
-                  rank: 2,
-                  name: "Siddharth Verma",
-                  college: "PSG",
-                  points: 390,
-                }}
-              />
-              <LeaderboardRow
-                user={{
-                  id: "24",
-                  rank: 24,
-                  name: "Thangaraj (You)",
-                  college: "Muthayammal Engineering College",
-                  points: 80,
-                  isYou: true,
-                }}
-              />
+        {/* Status Badges */}
+        <div className="flex flex-wrap gap-2.5 pt-2">
+          <StatusBadge state="AVAILABLE" />
+          <StatusBadge state="STARTED" />
+          <StatusBadge state="SUBMITTED" />
+          <StatusBadge state="UNDER_REVIEW" />
+          <StatusBadge state="APPROVED" />
+          <StatusBadge state="REJECTED" />
+          <StatusBadge state="LOCKED" />
+        </div>
+
+        {/* UI Accessories */}
+        <div className="flex flex-wrap items-center gap-4 pt-4 border-t border-border/60">
+          <PointsPill points={50} size="md" />
+          <PointsPill points={30} size="sm" />
+          <Avatar name="Kavitha Rajan" size="md" />
+          <Avatar name="Siddharth Verma" size="sm" />
+          <CopyButton textToCopy="https://zyven.org/join" label="Copy Link" />
+          <NotificationBell
+            notifications={[
+              {
+                id: "n1",
+                userId: "u1",
+                title: "Mission Approved",
+                body: "You earned 50 points!",
+                type: "submission_approved",
+                createdAt: "2026-10-18T10:00:00Z",
+                readAt: null,
+              },
+            ]}
+            unreadCount={1}
+          />
+        </div>
+      </section>
+
+      {/* 05. Points & Tiers */}
+      <section className="space-y-6">
+        <SectionHeading
+          align="left"
+          eyebrow="05 Gamification Engine"
+          title="Points, Tiers & Animated Numbers"
+        />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <Stat label="Total Points" value={80} icon={<Zap className="h-4 w-4" />} />
+          <Stat label="Current Rank" value="#12" icon={<Trophy className="h-4 w-4" />} />
+          <Stat label="Active Cohort" value={100} icon={<Users className="h-4 w-4" />} />
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4">
+          <Card className="flex flex-col items-center justify-center p-6 space-y-2 text-center">
+            <TierBadge tier="bronze" size="lg" />
+            <span className="text-xs font-semibold text-text-muted">Bronze (50 pts)</span>
+          </Card>
+          <Card className="flex flex-col items-center justify-center p-6 space-y-2 text-center">
+            <TierBadge tier="silver" size="lg" />
+            <span className="text-xs font-semibold text-text-muted">Silver (150 pts)</span>
+          </Card>
+          <Card className="flex flex-col items-center justify-center p-6 space-y-2 text-center">
+            <TierBadge tier="gold" size="lg" />
+            <span className="text-xs font-semibold text-text-muted">Gold (300 pts)</span>
+          </Card>
+          <Card className="flex flex-col items-center justify-center p-6 space-y-2 text-center">
+            <TierBadge tier="champion" size="lg" />
+            <span className="text-xs font-semibold text-text-muted">Champion (500 pts)</span>
+          </Card>
+        </div>
+
+        <div className="p-6 rounded-[20px] bg-surface border border-border space-y-4">
+          <div className="flex items-center justify-between">
+            <h4 className="text-sm font-bold text-text">Progress Bar & Live Counter</h4>
+            <div className="flex gap-2">
+              <Button size="sm" variant="outline" onClick={() => setDemoProgress(30)}>30%</Button>
+              <Button size="sm" variant="outline" onClick={() => setDemoProgress(65)}>65%</Button>
+              <Button size="sm" variant="outline" onClick={() => setDemoProgress(100)}>100%</Button>
             </div>
           </div>
-        </section>
-
-        {/* 9. Interactive Utilities: Stepper, Dropzone, CopyButton */}
-        <section className="space-y-4">
-          <SectionHeading
-            align="left"
-            eyebrow="Interactive Flow"
-            title="Guided Stepper & Verification Tools"
-            description="Step unlocking, clipboard copier, and screenshot dropzone with compression."
-          />
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="p-6 rounded-2xl bg-surface border border-border space-y-4">
-              <h4 className="text-sm font-bold text-text">Mission Guided Stepper</h4>
-              <Stepper
-                currentStep={activeStep}
-                onStepClick={setActiveStep}
-                steps={[
-                  {
-                    id: "s1",
-                    title: "Follow Zyven on LinkedIn",
-                    description: "Open profile and follow",
-                    content: (
-                      <div className="space-y-3">
-                        <p className="text-xs text-text-muted">
-                          Visit LinkedIn and follow our page.
-                        </p>
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          onClick={() => setActiveStep(1)}
-                        >
-                          Confirm Followed
-                        </Button>
-                      </div>
-                    ),
-                  },
-                  {
-                    id: "s2",
-                    title: "Copy Post Template",
-                    description: "Share announcement on feed",
-                    content: (
-                      <div className="space-y-3">
-                        <CopyButton
-                          textToCopy="🚀 Excited to join Zyven Ambassador program! #Zyven"
-                          label="Copy Post Template"
-                        />
-                        <Button
-                          variant="primary"
-                          size="sm"
-                          onClick={() => setActiveStep(2)}
-                        >
-                          Next: Submit Proof
-                        </Button>
-                      </div>
-                    ),
-                  },
-                  {
-                    id: "s3",
-                    title: "Submit Verification URL",
-                    description: "Paste live link",
-                    content: (
-                      <div className="space-y-3">
-                        <p className="text-xs text-text-muted">
-                          Paste your post URL to finish verification.
-                        </p>
-                      </div>
-                    ),
-                  },
-                ]}
-              />
-            </div>
-
-            <div className="p-6 rounded-2xl bg-surface border border-border space-y-4">
-              <h4 className="text-sm font-bold text-text">Screenshot Dropzone</h4>
-              <FileDropzone onImageSelected={() => {}} />
-
-              <h4 className="text-sm font-bold text-text pt-4">Timeline Component</h4>
-              <Timeline
-                events={[
-                  {
-                    id: "e1",
-                    title: "Mission Started",
-                    timestamp: "Oct 18, 10:00 AM",
-                    status: "completed",
-                  },
-                  {
-                    id: "e2",
-                    title: "Proof Submitted",
-                    timestamp: "Oct 18, 10:05 AM",
-                    description: "Post URL submitted for review",
-                    status: "completed",
-                  },
-                  {
-                    id: "e3",
-                    title: "Admin Review",
-                    description: "Under verification queue",
-                    status: "current",
-                  },
-                ]}
-              />
-            </div>
+          <ProgressBar value={demoProgress} />
+          <div className="flex items-center gap-2 text-sm text-text-muted">
+            <span>Live Count:</span>
+            <AnimatedNumber value={demoProgress * 5} className="font-extrabold text-primary text-xl" />
+            <span>pts</span>
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* 10. Empty State */}
-        <section className="space-y-4">
-          <SectionHeading
-            align="left"
-            eyebrow="Empty States"
-            title="First-run & Empty State Cards"
-          />
-          <EmptyState
-            title="No Submissions Yet"
-            description="You haven't completed any missions so far. Pick an active task from the list and start earning points today!"
-            actionLabel="Explore Live Missions"
-            onAction={() => {}}
-          />
-        </section>
-      </div>
+      {/* 06. Podium & Leaderboard */}
+      <section className="space-y-6">
+        <SectionHeading
+          align="left"
+          eyebrow="06 Social Proof & Ranks"
+          title="Podium & Row States"
+        />
+        <PodiumCard topThree={[top3[0], top3[1], top3[2]]} />
+
+        <div className="space-y-2.5">
+          <LeaderboardRow user={{ id: "1", rank: 1, name: "Kavitha Rajan", college: "MEC", points: 420, isYou: false }} />
+          <LeaderboardRow user={{ id: "12", rank: 12, name: "Thangaraj (You)", college: "MEC", points: 80, isYou: true }} />
+        </div>
+      </section>
+
+      {/* 07. Missions & Workflow */}
+      <section className="space-y-6">
+        <SectionHeading
+          align="left"
+          eyebrow="07 Mission Workflow"
+          title="Mission Cards & Steppers"
+        />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {SEED_MISSIONS.slice(0, 2).map((m) => (
+            <MissionCard key={m.id} mission={m} state="AVAILABLE" />
+          ))}
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <Card className="space-y-4">
+            <h4 className="text-sm font-bold text-text">Sequential Stepper</h4>
+            <Stepper
+              currentStep={activeStep}
+              onStepClick={setActiveStep}
+              steps={[
+                {
+                  id: "s1",
+                  title: "Follow & Copy",
+                  description: "Follow Zyven and copy post copy",
+                  content: (
+                    <div className="space-y-3">
+                      <p className="text-xs text-text-muted">
+                        Follow the official Zyven page on LinkedIn.
+                      </p>
+                      <Button size="sm" variant="primary" onClick={() => setActiveStep(2)}>
+                        Next: Create Post
+                      </Button>
+                    </div>
+                  ),
+                },
+                {
+                  id: "s2",
+                  title: "Create LinkedIn Post",
+                  description: "Share announcement",
+                  content: (
+                    <div className="space-y-3">
+                      <p className="text-xs text-text-muted">
+                        Publish your post on LinkedIn.
+                      </p>
+                      <Button size="sm" variant="primary" onClick={() => setActiveStep(3)}>
+                        Next: Submit Proof
+                      </Button>
+                    </div>
+                  ),
+                },
+                {
+                  id: "s3",
+                  title: "Submit URL",
+                  description: "Paste live link",
+                  content: (
+                    <div className="space-y-3">
+                      <p className="text-xs text-text-muted">Paste your post URL.</p>
+                    </div>
+                  ),
+                },
+              ]}
+            />
+          </Card>
+
+          <Card className="space-y-4">
+            <h4 className="text-sm font-bold text-text">Dropzone & Timeline</h4>
+            <FileDropzone onImageSelected={() => {}} />
+            <Timeline
+              events={[
+                { id: "e1", title: "Mission Started", timestamp: "Oct 18, 10:00 AM", status: "completed" },
+                { id: "e2", title: "Proof Submitted", timestamp: "Oct 18, 10:05 AM", description: "Post URL submitted for review", status: "completed" },
+                { id: "e3", title: "Admin Review", description: "Under verification queue", status: "current" },
+              ]}
+            />
+          </Card>
+        </div>
+      </section>
+
+      {/* 08. Empty State */}
+      <section className="space-y-4">
+        <SectionHeading
+          align="left"
+          eyebrow="08 Empty State Experience"
+          title="Actionable First-run Card"
+        />
+        <EmptyState
+          title="No Submissions Yet"
+          description="You haven't completed any missions so far. Pick an active task from the list and start earning points today!"
+          actionLabel="Explore Live Missions"
+          onAction={() => {}}
+        />
+      </section>
     </div>
   );
 }
