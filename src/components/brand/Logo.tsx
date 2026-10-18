@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { ZyvenMark } from "./ZyvenMark";
+import Image from "next/image";
 
 interface LogoProps {
   size?: "sm" | "md" | "lg";
@@ -15,24 +15,30 @@ export function Logo({
   className = "",
   showTagline = false,
 }: LogoProps) {
-  const markSizes = { sm: 24, md: 32, lg: 40 };
+  const markSizes = { sm: 26, md: 34, lg: 42 };
   const textSizes = {
     sm: "text-lg font-bold tracking-tight",
-    md: "text-2xl font-extrabold tracking-tight",
+    md: "text-2xl font-bold tracking-tight",
     lg: "text-3xl font-extrabold tracking-tight",
   };
 
   const content = (
-    <div className={`inline-flex items-center gap-2.5 select-none ${className}`}>
-      <ZyvenMark size={markSizes[size]} />
+    <div className={`inline-flex items-center gap-2 select-none ${className}`}>
+      <Image
+        src="/assets/z3d-crystal.png"
+        alt="Zyven"
+        width={markSizes[size]}
+        height={markSizes[size]}
+        className="object-contain drop-shadow"
+      />
       <div className="flex flex-col">
         <span
-          className={`font-display text-text leading-none ${textSizes[size]} flex items-center tracking-tight`}
+          className={`text-text font-bold leading-none ${textSizes[size]} flex items-center tracking-tight`}
         >
           Zyven
         </span>
         {showTagline && (
-          <span className="text-[10px] text-text-muted font-medium tracking-wide uppercase mt-0.5">
+          <span className="text-[10px] text-text-muted font-semibold tracking-wide uppercase mt-0.5">
             Ambassador
           </span>
         )}

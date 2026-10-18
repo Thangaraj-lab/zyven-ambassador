@@ -8,8 +8,10 @@
   --text: #0B1020;
   --text-muted: #5B6178;
   --primary: #5B5BF0;
-  --primary-2: #8B5CF6;
+  --primary-2: #7C3AED;
   --primary-fg: #FFFFFF;
+  --accent: #F4E8FF;
+  --accent-fg: #6B21A8;
   --success: #16A34A;
   --warning: #F59E0B;
   --danger: #E11D48;
@@ -17,22 +19,27 @@
   --tier-bronze: #C8864B;
   --tier-silver: #9CA3AF;
   --tier-gold: #E5B53A;
-  --brand-gradient: linear-gradient(135deg, #4F46E5 0%, #7C3AED 55%, #A78BFA 100%);
+  --brand-gradient: linear-gradient(120deg, #575ECF 0%, #7C3AED 50%, #BA78FA 100%);
+  --gradient-brand: linear-gradient(120deg, #575ECF 0%, #7C3AED 50%, #BA78FA 100%);
+  --gradient-glow: radial-gradient(60% 60% at 75% 25%, rgba(192, 132, 252, 0.25), transparent 70%), radial-gradient(50% 50% at 15% 85%, rgba(91, 91, 240, 0.18), transparent 70%);
+  --shadow-glow: 0 12px 30px -8px rgba(124, 58, 237, 0.45);
   --shadow-sm: 0 1px 2px 0 rgba(91, 91, 240, 0.05);
   --shadow-md: 0 4px 12px -2px rgba(91, 91, 240, 0.08), 0 2px 6px -1px rgba(11, 16, 32, 0.04);
   --shadow-lg: 0 12px 24px -4px rgba(91, 91, 240, 0.12), 0 4px 10px -2px rgba(11, 16, 32, 0.05);
 }
 
 .dark {
-  --bg: #070A16;
+  --bg: #070913;
   --surface: #0E1224;
-  --surface-2: #151A33;
-  --border: #232949;
+  --surface-2: #141933;
+  --border: #202747;
   --text: #F3F4FA;
-  --text-muted: #9AA1BF;
+  --text-muted: #8E96B8;
   --primary: #7C83FF;
-  --primary-2: #A78BFA;
+  --primary-2: #9F75FF;
   --primary-fg: #FFFFFF;
+  --accent: #261B3D;
+  --accent-fg: #E9D5FF;
   --success: #22C55E;
   --warning: #FBBF24;
   --danger: #F43F5E;
@@ -40,7 +47,10 @@
   --tier-bronze: #D99B65;
   --tier-silver: #B0B7C3;
   --tier-gold: #F0C454;
-  --brand-gradient: linear-gradient(135deg, #6366F1 0%, #8B5CF6 55%, #C084FC 100%);
+  --brand-gradient: linear-gradient(120deg, #6366F1 0%, #8B5CF6 50%, #C084FC 100%);
+  --gradient-brand: linear-gradient(120deg, #6366F1 0%, #8B5CF6 50%, #C084FC 100%);
+  --gradient-glow: radial-gradient(60% 60% at 75% 25%, rgba(192, 132, 252, 0.35), transparent 70%), radial-gradient(50% 50% at 15% 85%, rgba(99, 102, 241, 0.25), transparent 70%);
+  --shadow-glow: 0 12px 35px -6px rgba(139, 92, 246, 0.65);
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.35);
   --shadow-md: 0 4px 14px -2px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 14px 28px -4px rgba(0, 0, 0, 0.65);
@@ -56,6 +66,8 @@
   --color-primary: var(--primary);
   --color-primary-2: var(--primary-2);
   --color-primary-fg: var(--primary-fg);
+  --color-accent: var(--accent);
+  --color-accent-fg: var(--accent-fg);
   --color-success: var(--success);
   --color-warning: var(--warning);
   --color-danger: var(--danger);
@@ -63,7 +75,8 @@
   --color-tier-bronze: var(--tier-bronze);
   --color-tier-silver: var(--tier-silver);
   --color-tier-gold: var(--tier-gold);
-  --font-sans: var(--font-sans), system-ui, -apple-system, sans-serif;
+  --font-sans: var(--font-sans), "Plus Jakarta Sans", system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-display), "Fraunces", Georgia, serif;
   --font-tamil: var(--font-tamil), system-ui, sans-serif;
 }
 
@@ -87,14 +100,57 @@ body[lang="ta"] {
   line-height: 1.7;
 }
 
-.brand-gradient-bg {
-  background: var(--brand-gradient);
+.brand-gradient-bg,
+.bg-brand {
+  background-image: var(--brand-gradient);
 }
 
-.brand-gradient-text {
-  background: var(--brand-gradient);
+.brand-gradient-text,
+.text-brand {
+  background-image: var(--brand-gradient);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  color: transparent;
+}
+
+.bg-glow {
+  background-image: var(--gradient-glow);
+}
+
+.shadow-glow {
+  box-shadow: var(--shadow-glow);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+@keyframes floaty {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+@keyframes rise {
+  0% {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.float-slow {
+  animation: 6s ease-in-out infinite floaty;
+}
+
+.rise {
+  animation: 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) both rise;
 }
 
 .bg-radial-wash {
@@ -131,7 +187,6 @@ body[lang="ta"] {
   border: 1px solid rgba(35, 41, 73, 0.8);
 }
 
-/* Custom soft shadows */
 .shadow-soft-sm {
   box-shadow: var(--shadow-sm);
 }
@@ -144,7 +199,6 @@ body[lang="ta"] {
   box-shadow: var(--shadow-lg);
 }
 
-/* Tabular nums */
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }

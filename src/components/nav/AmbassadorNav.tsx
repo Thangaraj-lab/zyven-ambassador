@@ -4,7 +4,6 @@ import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Logo } from "@/components/brand/Logo";
-import { Avatar } from "@/components/ui/Avatar";
 import { NotificationBell } from "@/components/ui/NotificationBell";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { LocaleToggle } from "@/components/ui/LocaleToggle";
@@ -15,41 +14,64 @@ import {
   Trophy,
   Gift,
   User,
+  Users,
   LogOut,
-  ChevronDown,
 } from "lucide-react";
-import { motion, AnimatePresence } from "motion/react";
-import { useTranslations } from "next-intl";
+import { motion } from "motion/react";
 import { mockRepository } from "@/lib/data/mock/mockRepository";
 import { useRouter } from "next/navigation";
 
 export function AmbassadorNav() {
-  const t = useTranslations("nav");
   const pathname = usePathname();
   const router = useRouter();
   const { data: session } = useSession();
   const { data: notifications = [] } = useNotifications();
   const { mutate: markRead } = useMarkNotificationRead();
 
-  const [avatarMenuOpen, setAvatarMenuOpen] = useState(false);
   const [showMobileNav, setShowMobileNav] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
 
   const unreadCount = notifications.filter((n) => !n.readAt).length;
   const user = session?.user;
-  const isAmbassador = user?.role === "ambassador";
-  const userName = user?.name || "Ambassador";
+  const userName = user?.name || "Thangaraj";
 
   const navItems = [
     {
-      href: isAmbassador ? "/ambassador" : "/dashboard",
-      label: isAmbassador ? "Command" : "Home",
+      href: "/dashboard",
+      label: "Dashboard",
       icon: LayoutDashboard,
+      activeMatcher: (p: string) => p === "/dashboard" || p === "/ambassador",
     },
-    { href: "/missions", label: "Tasks", icon: Sparkles },
-    { href: "/leaderboard", label: "Rank", icon: Trophy },
-    { href: "/rewards", label: "Rewards", icon: Gift },
-    { href: "/profile", label: "Me", icon: User },
+    {
+      href: "/missions",
+      label: "My Tasks",
+      icon: Sparkles,
+      activeMatcher: (p: string) => p.startsWith("/missions"),
+    },
+    {
+      href: "/leaderboard",
+      label: "Leaderboard",
+      icon: Trophy,
+      activeMatcher: (p: string) => p.startsWith("/leaderboard"),
+    },
+    {
+      href: "/rewards",
+      label: "Rewards",
+      icon: Gift,
+      activeMatcher: (p: string) => p.startsWith("/rewards"),
+    },
+    {
+      href: "/missions/join-whatsapp-community",
+      label: "Community",
+      icon: Users,
+      activeMatcher: (p: string) => p.includes("whatsapp"),
+    },
+    {
+      href: "/profile",
+      label: "Profile",
+      icon: User,
+      activeMatcher: (p: string) => p.startsWith("/profile"),
+    },
   ];
 
   // Mobile scroll hide/show behavior
@@ -75,127 +97,74 @@ export function AmbassadorNav() {
 
   return (
     <>
-      {/* Desktop Slim Sticky Top Nav */}
-      <header className="sticky top-0 z-40 w-full glass-nav border-b border-border/80 transition-colors">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          {/* Brand Logo */}
-          <Logo size="md" href={isAmbassador ? "/ambassador" : "/dashboard"} showTagline />
+      {/* Desktop Left Sidebar matching Lovable Mockup */}
+      <aside className="hidden md:flex flex-col w-64 shrink-0 border-r border-border bg-surface/90 backdrop-blur-md sticky top-0 h-screen p-6 justify-between z-30">
+        <div className="space-y-8">
+          {/* Brand Logo with 3D Crystal Icon */}
+          <div className="px-2">
+            <Logo size="md" href="/dashboard" showTagline={false} />
+          </div>
 
-          {/* Desktop 5 Nav Items with LayoutId Pill */}
-          <nav className="hidden md:flex items-center gap-1">
+          {/* Navigation Items */}
+          <nav className="space-y-1.5">
             {navItems.map((item) => {
-              const isActive =
-                item.href === "/dashboard"
-                  ? pathname === "/dashboard"
-                  : item.href === "/ambassador"
-                  ? pathname === "/ambassador"
-                  : pathname.startsWith(item.href);
+              const isActive = item.activeMatcher(pathname);
 
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className="relative px-3.5 py-1.5 rounded-full text-xs lg:text-sm font-semibold transition-colors text-text"
+                  className={`flex items-center gap-3.5 px-4 py-3 rounded-2xl text-sm font-semibold transition-all ${
+                    isActive
+                      ? "brand-gradient-bg text-white shadow-soft-sm font-bold"
+                      : "text-text-muted hover:text-text hover:bg-surface-2"
+                  }`}
                 >
-                  {isActive && (
-                    <motion.div
-                      layoutId="ambassador-nav-pill"
-                      className="absolute inset-0 rounded-full brand-gradient-bg opacity-10"
-                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    />
-                  )}
-                  <span
-                    className={`relative z-10 flex items-center gap-2 ${
-                      isActive ? "text-primary font-bold" : "text-text-muted hover:text-text"
+                  <item.icon
+                    className={`h-4 w-4 shrink-0 ${
+                      isActive ? "text-white" : "text-text-muted"
                     }`}
-                  >
-                    <item.icon className="h-4 w-4" />
-                    <span>{item.label}</span>
-                  </span>
-                  {isActive && (
-                    <motion.div
-                      layoutId="ambassador-nav-underline"
-                      className="absolute bottom-0 left-3 right-3 h-0.5 brand-gradient-bg rounded-full"
-                      transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                    />
-                  )}
+                  />
+                  <span>{item.label}</span>
                 </Link>
               );
             })}
           </nav>
+        </div>
 
-          {/* Right Area: Locale + Theme + Bell + User Menu */}
-          <div className="flex items-center gap-2 sm:gap-3">
+        {/* Sidebar Footer Controls */}
+        <div className="pt-4 border-t border-border/80 space-y-3">
+          <div className="flex items-center justify-between px-2">
             <LocaleToggle />
             <ThemeToggle />
-            <NotificationBell
-              notifications={notifications}
-              unreadCount={unreadCount}
-              onMarkRead={(id) => markRead(id)}
-            />
-
-            {/* User Dropdown */}
-            <div className="relative">
-              <button
-                onClick={() => setAvatarMenuOpen(!avatarMenuOpen)}
-                className="flex items-center gap-2 p-1 pl-1.5 rounded-full bg-surface-2 border border-border hover:border-primary/40 transition-colors cursor-pointer"
-                aria-label="User menu"
-              >
-                <Avatar name={userName} src={user?.avatarUrl} size="sm" />
-                <span className="hidden sm:inline text-xs font-bold text-text truncate max-w-[100px]">
-                  {userName.split(" ")[0]}
-                </span>
-                <ChevronDown className="h-3.5 w-3.5 text-text-muted pr-1" />
-              </button>
-
-              <AnimatePresence>
-                {avatarMenuOpen && (
-                  <>
-                    <div
-                      className="fixed inset-0 z-40"
-                      onClick={() => setAvatarMenuOpen(false)}
-                    />
-                    <motion.div
-                      initial={{ opacity: 0, y: 8, scale: 0.95 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 8, scale: 0.95 }}
-                      className="absolute right-0 mt-2 w-56 rounded-2xl bg-surface border border-border shadow-soft-lg z-50 p-2"
-                    >
-                      <div className="p-2 border-b border-border/80">
-                        <p className="text-xs font-bold text-text truncate">
-                          {userName}
-                        </p>
-                        <p className="text-[11px] text-text-muted truncate">
-                          {user?.email}
-                        </p>
-                      </div>
-
-                      <div className="py-1">
-                        <Link
-                          href="/profile"
-                          onClick={() => setAvatarMenuOpen(false)}
-                          className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-text hover:bg-surface-2 rounded-xl transition-colors"
-                        >
-                          <User className="h-3.5 w-3.5 text-text-muted" />
-                          <span>{t("profile")}</span>
-                        </Link>
-                      </div>
-
-                      <div className="pt-1 border-t border-border/80">
-                        <button
-                          onClick={handleLogout}
-                          className="w-full flex items-center gap-2 px-3 py-2 text-xs font-semibold text-danger hover:bg-danger/10 rounded-xl transition-colors cursor-pointer"
-                        >
-                          <LogOut className="h-3.5 w-3.5" />
-                          <span>{t("logout")}</span>
-                        </button>
-                      </div>
-                    </motion.div>
-                  </>
-                )}
-              </AnimatePresence>
-            </div>
           </div>
+          <button
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-semibold text-danger hover:bg-danger/10 transition-colors cursor-pointer"
+          >
+            <LogOut className="h-4 w-4" />
+            <span>Sign Out</span>
+          </button>
+        </div>
+      </aside>
+
+      {/* Mobile Top Header */}
+      <header className="md:hidden sticky top-0 z-40 w-full glass-nav border-b border-border/80 px-4 h-16 flex items-center justify-between">
+        <Logo size="sm" href="/dashboard" showTagline={false} />
+        <div className="flex items-center gap-2">
+          <LocaleToggle />
+          <ThemeToggle />
+          <NotificationBell
+            notifications={notifications}
+            unreadCount={unreadCount}
+            onMarkRead={(id) => markRead(id)}
+          />
+          <Link
+            href="/profile"
+            className="grid h-8 w-8 place-items-center rounded-full bg-brand font-bold text-white text-xs"
+          >
+            {userName.charAt(0).toUpperCase()}
+          </Link>
         </div>
       </header>
 
@@ -207,13 +176,8 @@ export function AmbassadorNav() {
         style={{ paddingBottom: "max(0.5rem, env(safe-area-inset-bottom))" }}
       >
         <div className="flex items-center justify-around max-w-md mx-auto">
-          {navItems.map((item) => {
-            const isActive =
-              item.href === "/dashboard"
-                ? pathname === "/dashboard"
-                : item.href === "/ambassador"
-                ? pathname === "/ambassador"
-                : pathname.startsWith(item.href);
+          {navItems.slice(0, 5).map((item) => {
+            const isActive = item.activeMatcher(pathname);
 
             return (
               <Link

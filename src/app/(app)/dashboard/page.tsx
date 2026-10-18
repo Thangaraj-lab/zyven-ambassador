@@ -2,39 +2,39 @@
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import {
   useSession,
-  useMissions,
   useMySubmissions,
   useMyPoints,
   useMyRank,
   useMyTier,
 } from "@/lib/data/hooks";
-import { TierBadge } from "@/components/ui/TierBadge";
-import { ProgressBar } from "@/components/ui/ProgressBar";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
-import { Button } from "@/components/ui/Button";
-import { Card } from "@/components/ui/Card";
-import type { MissionState } from "@/components/ui/StatusBadge";
+import { ThemeToggle } from "@/components/ui/ThemeToggle";
+import { NotificationBell } from "@/components/ui/NotificationBell";
 import {
   Trophy,
-  Zap,
+  ChartColumn,
+  CheckCircle2,
+  Shield,
+  Search,
   ArrowRight,
   Clock,
   Sparkles,
   Users,
-  CheckCircle2,
   X,
 } from "lucide-react";
 import { motion, AnimatePresence } from "motion/react";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
-  const { data: missions = [] } = useMissions();
   const { data: submissions = [] } = useMySubmissions();
   const { data: pointsData } = useMyPoints();
   const { data: rankData } = useMyRank();
   const { data: tierData } = useMyTier();
+
+  const [searchQuery, setSearchQuery] = useState("");
 
   // Approval notification state
   const [approvalAlert, setApprovalAlert] = useState<{
@@ -47,17 +47,11 @@ export default function DashboardPage() {
   const [tierUpgrade, setTierUpgrade] = useState<string | null>(null);
 
   const user = session?.user;
-  const userName = user?.name || "Ambassador";
-  const totalPoints = pointsData?.total ?? 0;
-  const rank = rankData?.rank ?? 12;
-
-  // Time-aware greeting
-  const getTimeOfDay = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "MORNING";
-    if (hour < 17) return "AFTERNOON";
-    return "EVENING";
-  };
+  const userName = user?.name || "Thangaraj";
+  const totalPoints = pointsData?.total ?? 80;
+  const rank = rankData?.rank ?? 24;
+  const completedCount = submissions.filter((s) => s.state === "APPROVED").length || 2;
+  const totalAvailableCount = 2;
 
   // Recent approval detection
   useEffect(() => {
@@ -88,7 +82,7 @@ export default function DashboardPage() {
     }
   }, [pointsData]);
 
-  // Tier Upgrade Moment (Section 11)
+  // Tier Upgrade Moment
   useEffect(() => {
     if (!tierData) return;
     const tier = tierData.currentTier;
@@ -107,32 +101,9 @@ export default function DashboardPage() {
     }
   }, [tierData, totalPoints]);
 
-  // Mission States
-  const getMissionState = (missionId: string, status: string): MissionState => {
-    if (status === "coming_soon") return "LOCKED";
-    const sub = submissions.find((s) => s.missionId === missionId);
-    if (!sub) return "AVAILABLE";
-    if (sub.state === "APPROVED") return "APPROVED";
-    if (sub.state === "REJECTED") return "REJECTED";
-    if (sub.state === "SUBMITTED" || sub.state === "UNDER_REVIEW")
-      return "UNDER_REVIEW";
-    if (sub.state === "STARTED") return "STARTED";
-    return "AVAILABLE";
-  };
-
-  // Actionable Tasks
-  const actionableTasks = missions
-    .filter((m) => {
-      const st = getMissionState(m.id, m.status);
-      return st !== "APPROVED" && st !== "LOCKED";
-    })
-    .slice(0, 3);
-
-  const completedCount = submissions.filter((s) => s.state === "APPROVED").length;
-
   return (
-    <div className="space-y-10 max-w-5xl mx-auto">
-      {/* Approval Notification Banner (Section 15) */}
+    <div className="space-y-8 max-w-6xl mx-auto pb-12">
+      {/* Approval Notification Banner */}
       <AnimatePresence>
         {approvalAlert && approvalAlert.show && (
           <motion.div
@@ -163,293 +134,247 @@ export default function DashboardPage() {
             </button>
           </motion.div>
         )}
-      </AnimatePresence>
 
-      {/* Cinematic Tier Upgrade Overlay (Section 11) */}
-      <AnimatePresence>
         {tierUpgrade && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/60 backdrop-blur-md flex items-center justify-center p-4"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="p-5 rounded-[20px] brand-gradient-bg text-white shadow-soft-lg flex items-center justify-between gap-4"
           >
-            <motion.div
-              initial={{ scale: 0.9, y: 20 }}
-              animate={{ scale: 1, y: 0 }}
-              exit={{ scale: 0.95, y: 20 }}
-              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-              className="w-full max-w-md rounded-[28px] bg-surface border border-primary/40 p-8 text-center space-y-5 shadow-soft-lg relative overflow-hidden"
-            >
-              <div className="absolute inset-0 bg-radial-wash pointer-events-none opacity-80" />
-              <div className="relative z-10 flex flex-col items-center space-y-3">
-                <div className="h-20 w-20 rounded-full brand-gradient-bg p-1 shadow-soft-md flex items-center justify-center text-white">
-                  <Sparkles className="h-10 w-10" />
-                </div>
-                <span className="text-xs font-bold text-primary tracking-widest uppercase">
-                  Milestone Unlocked
+            <div className="flex items-center gap-3.5">
+              <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center font-black text-sm shrink-0">
+                <Trophy className="h-5 w-5 text-white" />
+              </div>
+              <div>
+                <span className="text-[11px] font-bold text-white/80 uppercase tracking-wider">
+                  Tier Unlocked!
                 </span>
-                <h2 className="text-3xl font-black text-text tracking-tight capitalize">
-                  {tierUpgrade} Tier
-                </h2>
-                <p className="text-xs text-text-muted max-w-xs">
-                  Your campus influence has elevated. You now hold priority status for Zyven tech events and merch drops.
-                </p>
-                <div className="pt-2">
-                  <TierBadge tier={tierUpgrade as "bronze" | "silver" | "gold" | "champion"} size="lg" />
-                </div>
+                <h4 className="text-sm font-bold text-white">
+                  Congratulations! You achieved {tierUpgrade.toUpperCase()} Ambassador Tier
+                </h4>
               </div>
-              <div className="relative z-10 pt-4">
-                <Button
-                  variant="primary"
-                  className="w-full font-bold"
-                  onClick={() => setTierUpgrade(null)}
-                >
-                  Continue to Command Center
-                </Button>
-              </div>
-            </motion.div>
+            </div>
+            <button
+              onClick={() => setTierUpgrade(null)}
+              className="text-white/80 hover:text-white p-1 cursor-pointer"
+              aria-label="Dismiss"
+            >
+              <X className="h-4 w-4" />
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* SECTION 10: PERSONAL COMMAND CENTER HERO */}
-      <div className="rounded-[28px] p-7 sm:p-10 bg-surface border border-border shadow-soft-md relative overflow-hidden">
-        {/* Subtle radial ambient expansion behind the points counter */}
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
-
-        {/* Top Header: Greeting & Active Dot */}
-        <div className="flex items-center justify-between pb-6 border-b border-border/70 relative z-10">
-          <div>
-            <span className="text-xs font-extrabold text-primary tracking-widest uppercase">
-              Good {getTimeOfDay()}, {userName}
-            </span>
-          </div>
-          <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-success/10 border border-success/20 text-success text-xs font-bold">
-            <span className="h-2 w-2 rounded-full bg-success animate-pulse" />
-            <span>Active</span>
-          </div>
+      {/* Top Search Bar & Controls */}
+      <div className="relative flex items-center gap-4">
+        <div className="flex flex-1 items-center gap-2.5 rounded-full border border-border bg-surface px-4 py-2.5 text-sm text-text-muted shadow-soft-sm focus-within:border-primary/50 transition-colors">
+          <Search className="h-4 w-4 text-text-muted shrink-0" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search tasks, announcements…"
+            className="w-full bg-transparent text-xs sm:text-sm text-text focus:outline-none placeholder:text-text-muted"
+          />
         </div>
-
-        {/* Hero Points Centerpiece */}
-        <div className="py-8 sm:py-10 flex flex-col items-center justify-center text-center relative z-10 space-y-2">
-          <div className="flex items-baseline justify-center gap-2">
-            <AnimatedNumber
-              value={totalPoints}
-              className="text-5xl sm:text-7xl font-black text-text tracking-tight tabular-nums"
-            />
-          </div>
-          <span className="text-xs sm:text-sm font-extrabold text-primary tracking-widest uppercase">
-            Points
-          </span>
-
-          {/* Divider with Next Tier & Leaderboard Rank */}
-          <div className="w-full max-w-md pt-5 space-y-3">
-            <div className="flex items-center justify-between text-xs font-bold text-text-muted">
-              <span>
-                {tierData?.pointsToNext && tierData.pointsToNext > 0
-                  ? `${tierData.pointsToNext} points to next tier`
-                  : "Maximum Tier Reached"}
-              </span>
-              <span className="flex items-center gap-1 text-text">
-                <Trophy className="h-3.5 w-3.5 text-primary" />
-                <span>#{rank} on leaderboard</span>
-              </span>
-            </div>
-            <ProgressBar value={tierData?.progressPercentage ?? 0} height="8px" />
-          </div>
-        </div>
+        <ThemeToggle />
+        <NotificationBell />
+        <Link
+          href="/profile"
+          className="grid h-10 w-10 place-items-center rounded-full bg-brand font-bold text-white shadow-soft-sm hover:brightness-105 transition-all text-sm cursor-pointer"
+        >
+          {userName.charAt(0).toUpperCase()}
+        </Link>
       </div>
 
-      {/* WHAT TO DO NEXT (First Viewport Priority - Section 10) */}
+      {/* Welcome Hero Section with 3D Crystal Z mark */}
+      <section className="rise relative flex items-center justify-between p-6 sm:p-10 rounded-[28px] bg-surface border border-border shadow-soft-md overflow-hidden">
+        <div className="pointer-events-none absolute inset-0 bg-glow opacity-60" />
+        <div className="relative z-10 space-y-1">
+          <p className="text-base sm:text-lg text-text-muted font-medium">Welcome back,</p>
+          <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-semibold tracking-tight text-text">
+            {userName} 👋
+          </h1>
+          <p className="mt-2 text-xs sm:text-sm font-semibold text-primary">
+            Zyven Student Ambassador
+          </p>
+        </div>
+
+        <div className="relative z-10 hidden sm:block">
+          <Image
+            src="/assets/z3d-crystal.png"
+            alt="Zyven 3D Crystal Mark"
+            width={190}
+            height={190}
+            className="float-slow h-36 w-36 sm:h-44 sm:w-44 object-contain drop-shadow-2xl"
+            priority
+          />
+        </div>
+      </section>
+
+      {/* 4 Stat Cards */}
+      <section className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        {/* Card 1: Total Points */}
+        <div className="rounded-[1.25rem] border border-border bg-surface p-6 text-center shadow-soft-sm transition-transform hover:-translate-y-1 group">
+          <Trophy className="mx-auto h-8 w-8 text-warning group-hover:scale-110 transition-transform" />
+          <div className="mt-3 text-3xl font-black text-text tabular-nums">
+            <AnimatedNumber value={totalPoints} />
+          </div>
+          <div className="text-xs text-text-muted font-medium mt-1">Total Points</div>
+        </div>
+
+        {/* Card 2: Your Rank */}
+        <div className="rounded-[1.25rem] border border-border bg-surface p-6 text-center shadow-soft-sm transition-transform hover:-translate-y-1 group">
+          <ChartColumn className="mx-auto h-8 w-8 text-primary group-hover:scale-110 transition-transform" />
+          <div className="mt-3 text-3xl font-black text-text tabular-nums">
+            #{rank}
+          </div>
+          <div className="text-xs text-text-muted font-medium mt-1">Your Rank</div>
+        </div>
+
+        {/* Card 3: Tasks Completed */}
+        <div className="rounded-[1.25rem] border border-border bg-surface p-6 text-center shadow-soft-sm transition-transform hover:-translate-y-1 group">
+          <CheckCircle2 className="mx-auto h-8 w-8 text-success group-hover:scale-110 transition-transform" />
+          <div className="mt-3 text-3xl font-black text-text tabular-nums">
+            {completedCount} / {totalAvailableCount}
+          </div>
+          <div className="text-xs text-text-muted font-medium mt-1">Tasks Completed</div>
+        </div>
+
+        {/* Card 4: Current Tier */}
+        <div className="rounded-[1.25rem] border border-border bg-surface p-6 text-center shadow-soft-sm transition-transform hover:-translate-y-1 group">
+          <Shield className="mx-auto h-8 w-8 text-warning group-hover:scale-110 transition-transform" />
+          <div className="mt-3 text-3xl font-black text-text capitalize">
+            {tierData?.currentTier || "Bronze"}
+          </div>
+          <div className="text-xs text-text-muted font-medium mt-1">Current Tier</div>
+        </div>
+      </section>
+
+      {/* Active Tasks Section */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-sm font-extrabold text-text uppercase tracking-wider">
-              What To Do Next
-            </h2>
-            <p className="text-xs text-text-muted">High-priority tasks ready for submission</p>
-          </div>
-          <Link href="/missions" className="text-xs font-semibold text-primary hover:underline">
-            View all tasks →
+          <h2 className="text-lg font-bold text-text">Active Tasks</h2>
+          <Link
+            href="/missions"
+            className="flex items-center gap-1 text-xs sm:text-sm font-bold text-primary hover:underline"
+          >
+            <span>View All</span>
+            <ArrowRight className="h-4 w-4" />
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {actionableTasks.map((task) => (
-            <Link key={task.id} href={`/missions/${task.slug}`} className="block group">
-              <Card
-                hoverable
-                className="h-full flex flex-col justify-between p-5 border-border group-hover:border-primary/40"
-              >
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-extrabold text-primary uppercase tracking-wider">
-                      {task.brand.toUpperCase()}
-                    </span>
-                    <span className="text-xs font-bold text-success">
-                      +{task.points} PTS
-                    </span>
-                  </div>
-                  <h3 className="text-sm font-bold text-text group-hover:text-primary transition-colors line-clamp-1">
-                    {task.title}
-                  </h3>
-                  <p className="text-xs text-text-muted line-clamp-2 leading-relaxed">
-                    {task.description}
-                  </p>
+        <div className="grid gap-4 md:grid-cols-2">
+          {/* Task 1: LinkedIn Follow & Post */}
+          <Link
+            href="/missions/linkedin-follow-post"
+            className="group block rounded-[1.25rem] border border-border bg-surface p-6 shadow-soft-sm transition-all hover:shadow-glow hover:-translate-y-0.5 cursor-pointer"
+          >
+            <div className="flex items-start gap-4">
+              <div className="grid h-12 w-12 place-items-center rounded-xl bg-accent shrink-0">
+                <span className="font-black text-[#0077B5] text-lg">in</span>
+              </div>
+              <div className="flex-1">
+                <div className="font-bold text-base text-text group-hover:text-primary transition-colors">
+                  Follow &amp; Post on LinkedIn
                 </div>
+                <span className="mt-2 inline-block rounded-full bg-accent px-3 py-1 text-xs font-bold text-accent-fg">
+                  +50 Points
+                </span>
+              </div>
+            </div>
 
-                <div className="pt-4 mt-3 border-t border-border/60 flex items-center justify-between text-xs text-text-muted">
-                  <span className="flex items-center gap-1 font-medium">
-                    <Clock className="h-3 w-3" />
-                    {task.estimatedMinutes} min
-                  </span>
-                  <span className="flex items-center gap-1 font-bold text-primary group-hover:translate-x-1 transition-transform">
-                    <span>Start task</span>
-                    <ArrowRight className="h-3.5 w-3.5" />
-                  </span>
+            <div className="mt-6 flex items-center justify-between pt-3 border-t border-border/60">
+              <span className="flex items-center gap-1.5 text-xs text-text-muted font-medium">
+                <Clock className="h-3.5 w-3.5 text-primary" />
+                <span>~ 5 mins</span>
+              </span>
+              <div className="grid h-10 w-10 place-items-center rounded-full bg-brand text-white shadow-soft-sm transition-transform group-hover:translate-x-1">
+                <ArrowRight className="h-4 w-4" />
+              </div>
+            </div>
+          </Link>
+
+          {/* Task 2: Join WhatsApp Community */}
+          <Link
+            href="/missions/join-whatsapp-community"
+            className="group block rounded-[1.25rem] border border-border bg-surface p-6 shadow-soft-sm transition-all hover:shadow-glow hover:-translate-y-0.5 cursor-pointer"
+          >
+            <div className="flex items-start gap-4">
+              <div className="grid h-12 w-12 place-items-center rounded-xl bg-accent shrink-0">
+                <span className="font-black text-[#25D366] text-sm">WA</span>
+              </div>
+              <div className="flex-1">
+                <div className="font-bold text-base text-text group-hover:text-primary transition-colors">
+                  Join Zyven WhatsApp Community
                 </div>
-              </Card>
-            </Link>
-          ))}
+                <span className="mt-2 inline-block rounded-full bg-accent px-3 py-1 text-xs font-bold text-accent-fg">
+                  +30 Points
+                </span>
+              </div>
+            </div>
+
+            <div className="mt-6 flex items-center justify-between pt-3 border-t border-border/60">
+              <span className="flex items-center gap-1.5 text-xs text-text-muted font-medium">
+                <Clock className="h-3.5 w-3.5 text-primary" />
+                <span>~ 2 mins</span>
+              </span>
+              <div className="grid h-10 w-10 place-items-center rounded-full bg-brand text-white shadow-soft-sm transition-transform group-hover:translate-x-1">
+                <ArrowRight className="h-4 w-4" />
+              </div>
+            </div>
+          </Link>
         </div>
       </section>
 
-      {/* YOUR PROGRESS (Tier Progression Ladder - Section 10) */}
-      <section className="space-y-4">
-        <h2 className="text-sm font-extrabold text-text uppercase tracking-wider">
-          Your Progress
-        </h2>
-
-        <Card className="p-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border/70">
-            <div className="flex items-center gap-3">
-              <TierBadge tier={tierData?.currentTier ?? "bronze"} size="lg" />
-              <div>
-                <h3 className="text-base font-bold text-text capitalize">
-                  {tierData?.currentTier ?? "bronze"} Tier
-                </h3>
-                <p className="text-xs text-text-muted">
-                  {completedCount} task{completedCount === 1 ? "" : "s"} verified
-                </p>
-              </div>
-            </div>
-
-            <Link href="/rewards">
-              <Button size="sm" variant="outline" className="gap-1.5">
-                <span>View Rewards Ladder</span>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Button>
-            </Link>
-          </div>
-
-          <div className="pt-4 grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
-            <div className="p-3 rounded-xl bg-surface-2/60 border border-border/60">
-              <span className="block text-[10px] font-bold text-text-muted uppercase">Bronze</span>
-              <span className="text-xs font-extrabold text-text">50 Pts</span>
-            </div>
-            <div className="p-3 rounded-xl bg-surface-2/60 border border-border/60">
-              <span className="block text-[10px] font-bold text-text-muted uppercase">Silver</span>
-              <span className="text-xs font-extrabold text-text">150 Pts</span>
-            </div>
-            <div className="p-3 rounded-xl bg-surface-2/60 border border-border/60">
-              <span className="block text-[10px] font-bold text-text-muted uppercase">Gold</span>
-              <span className="text-xs font-extrabold text-text">300 Pts</span>
-            </div>
-            <div className="p-3 rounded-xl bg-surface-2/60 border border-border/60">
-              <span className="block text-[10px] font-bold text-text-muted uppercase">Champion</span>
-              <span className="text-xs font-extrabold text-text">500 Pts</span>
-            </div>
-          </div>
-        </Card>
-      </section>
-
-      {/* TWO COLUMN BOTTOM SECTION: YOUR TEAM & RECENT ACTIVITY (Section 10) */}
+      {/* Two-column Bottom: Campus Team & Points Activity */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Left: Your Team */}
-        <Card className="flex flex-col justify-between">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-border/70">
-              <span className="text-xs font-extrabold text-text uppercase tracking-wider">
-                Your Team
-              </span>
-              <Users className="h-4 w-4 text-primary" />
-            </div>
-
-            <div>
-              <h3 className="text-lg font-bold text-text">
-                Kongu Engineering College
-              </h3>
-              <p className="text-xs text-text-muted">Campus Ambassador Cohort</p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3 pt-1">
-              <div className="p-3 rounded-xl bg-surface-2 border border-border/60">
-                <span className="block text-[10px] text-text-muted font-bold uppercase">Team Rank</span>
-                <span className="text-lg font-black text-text">#2 in State</span>
-              </div>
-              <div className="p-3 rounded-xl bg-surface-2 border border-border/60">
-                <span className="block text-[10px] text-text-muted font-bold uppercase">Active Members</span>
-                <span className="text-lg font-black text-text">24 Leaders</span>
-              </div>
-            </div>
+        {/* Campus Team */}
+        <div className="p-6 rounded-[24px] bg-surface border border-border shadow-soft-sm space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-text-muted uppercase tracking-wider">
+              Your Campus Team
+            </span>
+            <Users className="h-4 w-4 text-primary" />
           </div>
-
-          <div className="pt-4 border-t border-border/70 mt-4">
-            <Link href="/leaderboard" className="w-full">
-              <Button size="sm" variant="secondary" className="w-full justify-between">
-                <span>View College Battle</span>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Button>
-            </Link>
+          <div>
+            <h3 className="text-lg font-black text-text">
+              {session?.profile?.college || "Muthayammal Engineering College"}
+            </h3>
+            <p className="text-xs text-text-muted mt-0.5">
+              Ranked #2 with 1,240 pts • 24 active ambassadors
+            </p>
           </div>
-        </Card>
+          <Link href="/leaderboard?tab=college" className="inline-block w-full">
+            <button className="w-full py-2.5 rounded-xl border border-border bg-surface-2 text-xs font-bold text-text hover:bg-surface transition-colors cursor-pointer">
+              View College Standings
+            </button>
+          </Link>
+        </div>
 
-        {/* Right: Recent Activity */}
-        <Card className="flex flex-col justify-between">
-          <div className="space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-border/70">
-              <span className="text-xs font-extrabold text-text uppercase tracking-wider">
-                Recent Activity
-              </span>
-              <Zap className="h-4 w-4 text-warning" />
-            </div>
-
-            <div className="space-y-3">
-              {pointsData?.transactions && pointsData.transactions.length > 0 ? (
-                pointsData.transactions.slice(-3).reverse().map((tx) => (
-                  <div
-                    key={tx.id}
-                    className="flex items-center justify-between p-3 rounded-xl bg-surface-2/60 border border-border/50 text-xs"
-                  >
-                    <div className="min-w-0 pr-2">
-                      <h4 className="font-bold text-text truncate">{tx.reason}</h4>
-                      <span className="text-[10px] text-text-muted">
-                        {new Date(tx.createdAt).toLocaleDateString()}
-                      </span>
-                    </div>
-                    <span className="font-extrabold text-success shrink-0">
-                      +{tx.points} PTS
-                    </span>
-                  </div>
-                ))
-              ) : (
-                <div className="py-6 text-center text-xs text-text-muted">
-                  No verified points yet. Complete your first task to start your ledger!
-                </div>
-              )}
-            </div>
+        {/* Milestone Progression */}
+        <div className="p-6 rounded-[24px] bg-surface border border-border shadow-soft-sm space-y-4">
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-bold text-text-muted uppercase tracking-wider">
+              Next Reward Status
+            </span>
+            <Sparkles className="h-4 w-4 text-primary" />
           </div>
-
-          <div className="pt-4 border-t border-border/70 mt-4">
-            <Link href="/profile" className="w-full">
-              <Button size="sm" variant="secondary" className="w-full justify-between">
-                <span>View Full Points Ledger</span>
-                <ArrowRight className="h-3.5 w-3.5" />
-              </Button>
-            </Link>
+          <div>
+            <h3 className="text-lg font-black text-text">
+              Silver Status • 150 Points
+            </h3>
+            <p className="text-xs text-text-muted mt-0.5">
+              Unlock official Zyven ambassador merchandise box & priority invitations.
+            </p>
           </div>
-        </Card>
+          <Link href="/rewards" className="inline-block w-full">
+            <button className="w-full py-2.5 rounded-xl brand-gradient-bg text-xs font-bold text-white hover:brightness-105 transition-all shadow-soft-sm cursor-pointer">
+              Explore Milestone Perks
+            </button>
+          </Link>
+        </div>
       </div>
     </div>
   );

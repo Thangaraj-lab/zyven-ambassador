@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Noto_Sans_Tamil } from "next/font/google";
+import { Plus_Jakarta_Sans, Noto_Sans_Tamil, Fraunces } from "next/font/google";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 import { DevPanel } from "@/components/dev/DevPanel";
@@ -12,6 +12,13 @@ const plusJakarta = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-sans",
   weight: ["400", "500", "600", "700", "800"],
+  display: "swap",
+});
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  variable: "--font-display",
+  weight: ["500", "600", "700"],
   display: "swap",
 });
 
@@ -56,7 +63,7 @@ export default async function RootLayout({
     <html
       lang={locale}
       suppressHydrationWarning
-      className={`${plusJakarta.variable} ${notoSansTamil.variable}`}
+      className={`${plusJakarta.variable} ${fraunces.variable} ${notoSansTamil.variable}`}
     >
       <body className="min-h-screen bg-bg text-text font-sans antialiased selection:bg-primary/20 selection:text-primary">
         <NextIntlClientProvider messages={messages} locale={locale}>

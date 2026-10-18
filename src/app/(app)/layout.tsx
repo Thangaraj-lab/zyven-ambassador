@@ -49,10 +49,10 @@ export default function AppLayout({
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-bg text-text pb-20 md:pb-8">
+    <div className="min-h-screen flex flex-col md:flex-row bg-bg text-text pb-20 md:pb-0">
       <RouteProgressBar />
       <AmbassadorNav />
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <main className="flex-1 min-w-0 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full">
         {children}
       </main>
     </div>
