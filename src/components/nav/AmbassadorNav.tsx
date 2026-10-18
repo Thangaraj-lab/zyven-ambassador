@@ -36,13 +36,20 @@ export function AmbassadorNav() {
   const [lastScrollY, setLastScrollY] = useState(0);
 
   const unreadCount = notifications.filter((n) => !n.readAt).length;
+  const user = session?.user;
+  const isAmbassador = user?.role === "ambassador";
+  const userName = user?.name || "Ambassador";
 
   const navItems = [
-    { href: "/dashboard", label: t("dashboard"), icon: LayoutDashboard },
-    { href: "/missions", label: t("missions"), icon: Sparkles },
-    { href: "/leaderboard", label: t("leaderboard"), icon: Trophy },
-    { href: "/rewards", label: t("rewards"), icon: Gift },
-    { href: "/profile", label: t("profile"), icon: User },
+    {
+      href: isAmbassador ? "/ambassador" : "/dashboard",
+      label: isAmbassador ? "Command" : "Home",
+      icon: LayoutDashboard,
+    },
+    { href: "/missions", label: "Tasks", icon: Sparkles },
+    { href: "/leaderboard", label: "Rank", icon: Trophy },
+    { href: "/rewards", label: "Rewards", icon: Gift },
+    { href: "/profile", label: "Me", icon: User },
   ];
 
   // Mobile scroll hide/show behavior
@@ -66,16 +73,13 @@ export function AmbassadorNav() {
     router.push("/login");
   };
 
-  const user = session?.user;
-  const userName = user?.name || "Ambassador";
-
   return (
     <>
       {/* Desktop Slim Sticky Top Nav */}
       <header className="sticky top-0 z-40 w-full glass-nav border-b border-border/80 transition-colors">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           {/* Brand Logo */}
-          <Logo size="md" href="/dashboard" showTagline />
+          <Logo size="md" href={isAmbassador ? "/ambassador" : "/dashboard"} showTagline />
 
           {/* Desktop 5 Nav Items with LayoutId Pill */}
           <nav className="hidden md:flex items-center gap-1">
@@ -83,6 +87,8 @@ export function AmbassadorNav() {
               const isActive =
                 item.href === "/dashboard"
                   ? pathname === "/dashboard"
+                  : item.href === "/ambassador"
+                  ? pathname === "/ambassador"
                   : pathname.startsWith(item.href);
 
               return (
@@ -205,6 +211,8 @@ export function AmbassadorNav() {
             const isActive =
               item.href === "/dashboard"
                 ? pathname === "/dashboard"
+                : item.href === "/ambassador"
+                ? pathname === "/ambassador"
                 : pathname.startsWith(item.href);
 
             return (

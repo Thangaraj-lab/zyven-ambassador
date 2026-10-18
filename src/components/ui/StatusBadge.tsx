@@ -17,6 +17,7 @@ export type MissionState =
   | "UNDER_REVIEW"
   | "APPROVED"
   | "REJECTED"
+  | "CHANGES_REQUESTED"
   | "LOCKED";
 
 interface StatusBadgeProps {
@@ -74,6 +75,13 @@ export function StatusBadge({
       bg: "bg-danger/10",
       text: "text-danger",
       border: "border-danger/25",
+      icon: <AlertCircle className="h-3.5 w-3.5" />,
+    },
+    CHANGES_REQUESTED: {
+      label: "Changes Requested",
+      bg: "bg-warning/10",
+      text: "text-warning",
+      border: "border-warning/25",
       icon: <AlertCircle className="h-3.5 w-3.5" />,
     },
     LOCKED: {
