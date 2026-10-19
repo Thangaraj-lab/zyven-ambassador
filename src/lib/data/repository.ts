@@ -94,6 +94,40 @@ export interface Repository {
   getAdminStats(): Promise<AdminStats>;
   getAuditLog(): Promise<AuditLog[]>;
 
+  // Team & Ambassador Management
+  getMyTeam(): Promise<import("./types").Team | null>;
+  listTeams(): Promise<import("./types").Team[]>;
+  createTeam(data: { name: string; college: string; ambassadorId: string }): Promise<import("./types").Team>;
+  joinTeam(inviteCode: string): Promise<import("./types").Team>;
+
+  // Ambassador Tasks & Approval
+  createAmbassadorTask(data: Partial<Mission>): Promise<Mission>;
+  approveTask(taskId: string): Promise<Mission>;
+  rejectTask(taskId: string, reason?: string): Promise<Mission>;
+  setTaskStatus(taskId: string, status: "live" | "paused" | "archived"): Promise<Mission>;
+
+  // User & Role Management
+  listUsers(params?: { role?: string; status?: string; search?: string }): Promise<
+    Array<{ user: User; profile?: AmbassadorProfile | null; points?: number; status?: string }>
+  >;
+  setUserRole(userId: string, role: "student" | "ambassador" | "admin"): Promise<User>;
+  setUserStatus(userId: string, status: "active" | "suspended" | "pending"): Promise<void>;
+
+  // Announcements & Directory
+  publishAnnouncement(data: {
+    title: string;
+    body: string;
+    audience?: "all" | "team" | "ambassadors";
+    teamId?: string;
+    pinned?: boolean;
+  }): Promise<Announcement>;
+  listColleges(): Promise<import("./types").College[]>;
+  upsertCollege(data: Partial<import("./types").College>): Promise<import("./types").College>;
+
+  // Platform Settings
+  getPlatformSettings(): Promise<import("./types").PlatformSettings>;
+  updatePlatformSettings(settings: Partial<import("./types").PlatformSettings>): Promise<import("./types").PlatformSettings>;
+
   // Dev & Testing
   resetSeed(): Promise<void>;
   setSubmissionState(

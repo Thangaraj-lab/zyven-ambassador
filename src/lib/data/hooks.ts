@@ -268,3 +268,240 @@ export function useMarkNotificationRead() {
     },
   });
 }
+
+// Team & Ambassador Hooks
+export function useMyTeam() {
+  useStoreSync();
+  return useQuery({
+    queryKey: ["myTeam"],
+    queryFn: async () => {
+      const repo = await getRepository();
+      return repo.getMyTeam();
+    },
+  });
+}
+
+export function useTeams() {
+  useStoreSync();
+  return useQuery({
+    queryKey: ["teams"],
+    queryFn: async () => {
+      const repo = await getRepository();
+      return repo.listTeams();
+    },
+  });
+}
+
+export function useCreateTeam() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: { name: string; college: string; ambassadorId: string }) => {
+      const repo = await getRepository();
+      return repo.createTeam(data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["teams"] });
+      queryClient.invalidateQueries({ queryKey: ["myTeam"] });
+      queryClient.invalidateQueries({ queryKey: ["auditLog"] });
+    },
+  });
+}
+
+export function useJoinTeam() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (inviteCode: string) => {
+      const repo = await getRepository();
+      return repo.joinTeam(inviteCode);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["teams"] });
+      queryClient.invalidateQueries({ queryKey: ["myTeam"] });
+    },
+  });
+}
+
+// Ambassador Task Hooks
+export function useCreateAmbassadorTask() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: Partial<import("./types").Mission>) => {
+      const repo = await getRepository();
+      return repo.createAmbassadorTask(data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["missions"] });
+      queryClient.invalidateQueries({ queryKey: ["auditLog"] });
+    },
+  });
+}
+
+export function useApproveTask() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (taskId: string) => {
+      const repo = await getRepository();
+      return repo.approveTask(taskId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["missions"] });
+      queryClient.invalidateQueries({ queryKey: ["auditLog"] });
+    },
+  });
+}
+
+export function useRejectTask() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({ taskId, reason }: { taskId: string; reason?: string }) => {
+      const repo = await getRepository();
+      return repo.rejectTask(taskId, reason);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["missions"] });
+      queryClient.invalidateQueries({ queryKey: ["auditLog"] });
+    },
+  });
+}
+
+export function useSetTaskStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      taskId,
+      status,
+    }: {
+      taskId: string;
+      status: "live" | "paused" | "archived";
+    }) => {
+      const repo = await getRepository();
+      return repo.setTaskStatus(taskId, status);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["missions"] });
+      queryClient.invalidateQueries({ queryKey: ["auditLog"] });
+    },
+  });
+}
+
+// Admin Users & Role Hooks
+export function useAdminUsers(params?: { role?: string; status?: string; search?: string }) {
+  useStoreSync();
+  return useQuery({
+    queryKey: ["adminUsers", params],
+    queryFn: async () => {
+      const repo = await getRepository();
+      return repo.listUsers(params);
+    },
+  });
+}
+
+export function useSetUserRole() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      userId,
+      role,
+    }: {
+      userId: string;
+      role: "student" | "ambassador" | "admin";
+    }) => {
+      const repo = await getRepository();
+      return repo.setUserRole(userId, role);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["adminUsers"] });
+      queryClient.invalidateQueries({ queryKey: ["session"] });
+      queryClient.invalidateQueries({ queryKey: ["auditLog"] });
+    },
+  });
+}
+
+export function useSetUserStatus() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async ({
+      userId,
+      status,
+    }: {
+      userId: string;
+      status: "active" | "suspended" | "pending";
+    }) => {
+      const repo = await getRepository();
+      return repo.setUserStatus(userId, status);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["adminUsers"] });
+      queryClient.invalidateQueries({ queryKey: ["auditLog"] });
+    },
+  });
+}
+
+// Announcements & Directory Hooks
+export function usePublishAnnouncement() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (data: {
+      title: string;
+      body: string;
+      audience?: "all" | "team" | "ambassadors";
+      teamId?: string;
+      pinned?: boolean;
+    }) => {
+      const repo = await getRepository();
+      return repo.publishAnnouncement(data);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["announcements"] });
+      queryClient.invalidateQueries({ queryKey: ["auditLog"] });
+    },
+  });
+}
+
+export function useColleges() {
+  useStoreSync();
+  return useQuery({
+    queryKey: ["colleges"],
+    queryFn: async () => {
+      const repo = await getRepository();
+      return repo.listColleges();
+    },
+  });
+}
+
+export function usePlatformSettings() {
+  useStoreSync();
+  return useQuery({
+    queryKey: ["platformSettings"],
+    queryFn: async () => {
+      const repo = await getRepository();
+      return repo.getPlatformSettings();
+    },
+  });
+}
+
+export function useUpdatePlatformSettings() {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (settings: Partial<import("./types").PlatformSettings>) => {
+      const repo = await getRepository();
+      return repo.updatePlatformSettings(settings);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["platformSettings"] });
+      queryClient.invalidateQueries({ queryKey: ["auditLog"] });
+    },
+  });
+}
+
+export function useAuditLogs() {
+  useStoreSync();
+  return useQuery({
+    queryKey: ["auditLog"],
+    queryFn: async () => {
+      const repo = await getRepository();
+      return repo.getAuditLog();
+    },
+  });
+}
+

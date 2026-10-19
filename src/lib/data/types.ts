@@ -57,9 +57,11 @@ export type MissionStep = z.infer<typeof MissionStepSchema>;
 
 export const MissionStatusSchema = z.enum([
   "draft",
+  "pending_approval",
   "live",
   "paused",
   "archived",
+  "rejected",
   "coming_soon",
 ]);
 export type MissionStatus = z.infer<typeof MissionStatusSchema>;
@@ -97,6 +99,10 @@ export const MissionSchema = z.object({
   verification: z.enum(["manual", "auto"]),
   externalUrl: z.string().optional(),
   brand: BrandTypeSchema,
+  teamId: z.string().optional(),
+  createdById: z.string().optional(),
+  audience: z.enum(["everyone", "own_team", "specific_members"]).optional(),
+  feedback: z.string().optional(),
   postTemplate: z
     .object({
       en: z.string(),
@@ -105,6 +111,28 @@ export const MissionSchema = z.object({
     .optional(),
 });
 export type Mission = z.infer<typeof MissionSchema>;
+
+export const TeamSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  college: z.string(),
+  ambassadorId: z.string(),
+  ambassadorName: z.string().optional(),
+  inviteCode: z.string(),
+  memberCount: z.number(),
+  totalPoints: z.number(),
+  createdAt: z.string(),
+  status: z.enum(["active", "archived"]),
+});
+export type Team = z.infer<typeof TeamSchema>;
+
+export const PlatformSettingsSchema = z.object({
+  maxAmbassadorTaskPoints: z.number().default(25),
+  allowAmbassadorReview: z.boolean().default(true),
+  requireScreenshotCompression: z.boolean().default(true),
+  maintenanceMode: z.boolean().default(false),
+});
+export type PlatformSettings = z.infer<typeof PlatformSettingsSchema>;
 
 export const SubmissionStateSchema = z.enum([
   "STARTED",
@@ -120,6 +148,9 @@ export const SubmissionSchema = z.object({
   id: z.string(),
   missionId: z.string(),
   ambassadorId: z.string(),
+  teamId: z.string().optional(),
+  studentName: z.string().optional(),
+  college: z.string().optional(),
   state: SubmissionStateSchema,
   proofUrl: z.string().optional(),
   normalizedUrl: z.string().optional(),
@@ -165,6 +196,10 @@ export const NotificationSchema = z.object({
     "deadline_soon",
     "submission_approved",
     "submission_rejected",
+    "changes_requested",
+    "task_approved",
+    "task_rejected",
+    "team_joined",
     "points_awarded",
     "rank_changed",
     "reward_unlocked",
@@ -184,15 +219,22 @@ export const AnnouncementSchema = z.object({
   body: z.string(),
   createdAt: z.string(),
   pinned: z.boolean(),
+  audience: z.enum(["all", "team", "ambassadors"]).optional(),
+  teamId: z.string().optional(),
+  authorName: z.string().optional(),
 });
 export type Announcement = z.infer<typeof AnnouncementSchema>;
 
 export const AuditLogSchema = z.object({
   id: z.string(),
   actorId: z.string(),
+  actorName: z.string().optional(),
   action: z.string(),
   entity: z.string(),
   entityId: z.string(),
+  target: z.string().optional(),
+  result: z.string().optional(),
+  metadata: z.record(z.string(), z.unknown()).optional(),
   createdAt: z.string(),
 });
 export type AuditLog = z.infer<typeof AuditLogSchema>;

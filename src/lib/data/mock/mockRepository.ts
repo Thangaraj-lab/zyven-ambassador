@@ -7,6 +7,7 @@ import type {
   PointTransaction,
   Notification,
   AuditLog,
+  Announcement,
   LeaderboardEntry,
   CollegeLeaderboardEntry,
   Tier,
@@ -925,5 +926,462 @@ export const mockRepository: Repository = {
       ],
       currentUserId: thangarajId,
     }));
+  },
+
+  // Team & Ambassador Management
+  async getMyTeam() {
+    await delay(150);
+    const { currentUserId, teams } = mockStore.getState();
+    if (!currentUserId) return teams[0] || null;
+    const team = teams.find((t) => t.ambassadorId === currentUserId);
+    return team || teams[0] || null;
+  },
+
+  async listTeams() {
+    await delay(150);
+    return mockStore.getState().teams;
+  },
+
+  async createTeam(data: { name: string; college: string; ambassadorId: string }) {
+    await delay(250);
+    const { users, currentUserId } = mockStore.getState();
+    const ambassador = users.find((u) => u.id === data.ambassadorId);
+    const inviteCode = `ZYV-${data.college.substring(0, 3).toUpperCase()}-${Math.floor(1000 + Math.random() * 9000)}`;
+
+    const newTeam: import("../types").Team = {
+      id: `team-${Date.now()}`,
+      name: data.name,
+      college: data.college,
+      ambassadorId: data.ambassadorId,
+      ambassadorName: ambassador?.name || "Ambassador",
+      inviteCode,
+      memberCount: 1,
+      totalPoints: 0,
+      createdAt: new Date().toISOString(),
+      status: "active",
+    };
+
+    const auditLog: AuditLog = {
+      id: `audit-${Date.now()}`,
+      actorId: currentUserId || ADMIN_USER.id,
+      actorName: "Admin Operations",
+      action: "CREATE_TEAM",
+      entity: "Team",
+      entityId: newTeam.id,
+      target: newTeam.name,
+      result: "SUCCESS",
+      metadata: { college: newTeam.college, inviteCode },
+      createdAt: new Date().toISOString(),
+    };
+
+    mockStore.setState((prev) => ({
+      teams: [newTeam, ...prev.teams],
+      auditLogs: [auditLog, ...prev.auditLogs],
+    }));
+
+    return newTeam;
+  },
+
+  async joinTeam(inviteCode: string) {
+    await delay(200);
+    const { teams, currentUserId } = mockStore.getState();
+    const team = teams.find((t) => t.inviteCode.toUpperCase() === inviteCode.trim().toUpperCase());
+    if (!team) throw new Error("Invalid team invite code");
+
+    const updatedTeam = {
+      ...team,
+      memberCount: team.memberCount + 1,
+    };
+
+    mockStore.setState((prev) => ({
+      teams: prev.teams.map((t) => (t.id === team.id ? updatedTeam : t)),
+      notifications: [
+        {
+          id: `notif-${Date.now()}`,
+          userId: team.ambassadorId,
+          type: "team_joined" as const,
+          title: "New Student Joined Your Team!",
+          body: `A new student has joined ${team.name} via invite code.`,
+          createdAt: new Date().toISOString(),
+          href: "/ambassador/team",
+        },
+        ...prev.notifications,
+      ],
+    }));
+
+    return updatedTeam;
+  },
+
+  // Ambassador Tasks & Approval
+  async createAmbassadorTask(data: Partial<Mission>) {
+    await delay(300);
+    const { currentUserId, platformSettings } = mockStore.getState();
+    const cappedPoints = Math.min(
+      data.points || 20,
+      platformSettings.maxAmbassadorTaskPoints || 25
+    );
+
+    const newTask: Mission = {
+      id: `mission-amb-${Date.now()}`,
+      slug: (data.title || "ambassador-task").toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+      title: data.title || "Campus Initiative",
+      titleTa: data.titleTa || data.title || "வளாக பணி",
+      description: data.description || "Ambassador campus task for team members.",
+      descriptionTa: data.descriptionTa || "வளாக பணி விளக்கம்",
+      category: data.category || "Campus",
+      instructions: data.instructions || [
+        {
+          stepNumber: 1,
+          title: "Participate in Initiative",
+          description: "Follow the guidelines provided by your student ambassador.",
+        },
+        {
+          stepNumber: 2,
+          title: "Submit Evidence",
+          description: "Provide proof link or screenshot for ambassador review.",
+        },
+      ],
+      points: cappedPoints,
+      difficulty: data.difficulty || "Easy",
+      estimatedMinutes: data.estimatedMinutes || 5,
+      startsAt: new Date().toISOString(),
+      status: "pending_approval",
+      proofTypes: data.proofTypes || ["url", "screenshot"],
+      proofRequired: data.proofRequired || { url: true, screenshot: false },
+      verification: "manual",
+      externalUrl: data.externalUrl,
+      brand: data.brand || "college",
+      teamId: data.teamId,
+      createdById: currentUserId || undefined,
+      audience: data.audience || "own_team",
+      postTemplate: data.postTemplate,
+    };
+
+    const auditLog: AuditLog = {
+      id: `audit-${Date.now()}`,
+      actorId: currentUserId || "ambassador",
+      actorName: "Ambassador",
+      action: "CREATE_AMBASSADOR_TASK",
+      entity: "Mission",
+      entityId: newTask.id,
+      target: newTask.title,
+      result: "PENDING_APPROVAL",
+      metadata: { points: cappedPoints, audience: newTask.audience },
+      createdAt: new Date().toISOString(),
+    };
+
+    mockStore.setState((prev) => ({
+      missions: [newTask, ...prev.missions],
+      auditLogs: [auditLog, ...prev.auditLogs],
+    }));
+
+    return newTask;
+  },
+
+  async approveTask(taskId: string) {
+    await delay(250);
+    const { missions, currentUserId } = mockStore.getState();
+    const task = missions.find((m) => m.id === taskId);
+    if (!task) throw new Error("Task not found");
+
+    const approvedTask: Mission = {
+      ...task,
+      status: "live",
+    };
+
+    const auditLog: AuditLog = {
+      id: `audit-${Date.now()}`,
+      actorId: currentUserId || ADMIN_USER.id,
+      actorName: "Admin Operations",
+      action: "APPROVE_TASK",
+      entity: "Mission",
+      entityId: task.id,
+      target: task.title,
+      result: "APPROVED_TO_LIVE",
+      createdAt: new Date().toISOString(),
+    };
+
+    const notifications: Notification[] = task.createdById
+      ? [
+          {
+            id: `notif-${Date.now()}`,
+            userId: task.createdById,
+            type: "task_approved" as const,
+            title: "Task Approved by Admin!",
+            body: `Your team task "${task.title}" is now LIVE for students.`,
+            createdAt: new Date().toISOString(),
+            href: "/ambassador/tasks",
+          },
+        ]
+      : [];
+
+    mockStore.setState((prev) => ({
+      missions: prev.missions.map((m) => (m.id === taskId ? approvedTask : m)),
+      notifications: [...notifications, ...prev.notifications],
+      auditLogs: [auditLog, ...prev.auditLogs],
+    }));
+
+    return approvedTask;
+  },
+
+  async rejectTask(taskId: string, reason?: string) {
+    await delay(250);
+    const { missions, currentUserId } = mockStore.getState();
+    const task = missions.find((m) => m.id === taskId);
+    if (!task) throw new Error("Task not found");
+
+    const rejectedTask: Mission = {
+      ...task,
+      status: "rejected",
+      feedback: reason || "Task did not meet guidelines.",
+    };
+
+    const auditLog: AuditLog = {
+      id: `audit-${Date.now()}`,
+      actorId: currentUserId || ADMIN_USER.id,
+      actorName: "Admin Operations",
+      action: "REJECT_TASK",
+      entity: "Mission",
+      entityId: task.id,
+      target: task.title,
+      result: "REJECTED",
+      metadata: { reason },
+      createdAt: new Date().toISOString(),
+    };
+
+    const notifications: Notification[] = task.createdById
+      ? [
+          {
+            id: `notif-${Date.now()}`,
+            userId: task.createdById,
+            type: "task_rejected" as const,
+            title: "Task Changes Requested",
+            body: `Task "${task.title}": ${reason || "Please revise your instructions."}`,
+            createdAt: new Date().toISOString(),
+            href: "/ambassador/tasks",
+          },
+        ]
+      : [];
+
+    mockStore.setState((prev) => ({
+      missions: prev.missions.map((m) => (m.id === taskId ? rejectedTask : m)),
+      notifications: [...notifications, ...prev.notifications],
+      auditLogs: [auditLog, ...prev.auditLogs],
+    }));
+
+    return rejectedTask;
+  },
+
+  async setTaskStatus(taskId: string, status: "live" | "paused" | "archived") {
+    await delay(200);
+    const { missions, currentUserId } = mockStore.getState();
+    const task = missions.find((m) => m.id === taskId);
+    if (!task) throw new Error("Task not found");
+
+    const updatedTask: Mission = {
+      ...task,
+      status,
+    };
+
+    mockStore.setState((prev) => ({
+      missions: prev.missions.map((m) => (m.id === taskId ? updatedTask : m)),
+      auditLogs: [
+        {
+          id: `audit-${Date.now()}`,
+          actorId: currentUserId || ADMIN_USER.id,
+          actorName: "User",
+          action: "SET_TASK_STATUS",
+          entity: "Mission",
+          entityId: taskId,
+          target: task.title,
+          result: status.toUpperCase(),
+          createdAt: new Date().toISOString(),
+        },
+        ...prev.auditLogs,
+      ],
+    }));
+
+    return updatedTask;
+  },
+
+  // User & Role Management
+  async listUsers(params?: { role?: string; status?: string; search?: string }) {
+    await delay(200);
+    const { users, profiles, pointTransactions } = mockStore.getState();
+
+    let list = users.map((user) => {
+      const profile = profiles.find((p) => p.userId === user.id) || null;
+      const points = pointTransactions
+        .filter((t) => t.ambassadorId === user.id)
+        .reduce((sum, t) => sum + t.points, 0);
+      return {
+        user,
+        profile,
+        points,
+        status: profile?.status || "active",
+      };
+    });
+
+    if (params?.role) {
+      list = list.filter((item) => item.user.role === params.role);
+    }
+    if (params?.status) {
+      list = list.filter((item) => item.status === params.status);
+    }
+    if (params?.search) {
+      const q = params.search.toLowerCase();
+      list = list.filter(
+        (item) =>
+          item.user.name.toLowerCase().includes(q) ||
+          item.user.email.toLowerCase().includes(q) ||
+          (item.profile?.college && item.profile.college.toLowerCase().includes(q))
+      );
+    }
+
+    return list;
+  },
+
+  async setUserRole(userId: string, role: "student" | "ambassador" | "admin") {
+    await delay(300);
+    const { users, currentUserId } = mockStore.getState();
+    const user = users.find((u) => u.id === userId);
+    if (!user) throw new Error("User not found");
+
+    const updatedUser = { ...user, role };
+
+    const auditLog: AuditLog = {
+      id: `audit-${Date.now()}`,
+      actorId: currentUserId || ADMIN_USER.id,
+      actorName: "Admin Operations",
+      action: "CHANGE_USER_ROLE",
+      entity: "User",
+      entityId: userId,
+      target: user.name,
+      result: `ROLE_CHANGED_TO_${role.toUpperCase()}`,
+      metadata: { previousRole: user.role, newRole: role },
+      createdAt: new Date().toISOString(),
+    };
+
+    mockStore.setState((prev) => ({
+      users: prev.users.map((u) => (u.id === userId ? updatedUser : u)),
+      auditLogs: [auditLog, ...prev.auditLogs],
+    }));
+
+    return updatedUser;
+  },
+
+  async setUserStatus(userId: string, status: "active" | "suspended" | "pending") {
+    await delay(250);
+    const { profiles, currentUserId } = mockStore.getState();
+    mockStore.setState((prev) => ({
+      profiles: prev.profiles.map((p) =>
+        p.userId === userId ? { ...p, status } : p
+      ),
+      auditLogs: [
+        {
+          id: `audit-${Date.now()}`,
+          actorId: currentUserId || ADMIN_USER.id,
+          actorName: "Admin Operations",
+          action: "SET_USER_STATUS",
+          entity: "AmbassadorProfile",
+          entityId: userId,
+          result: status.toUpperCase(),
+          createdAt: new Date().toISOString(),
+        },
+        ...prev.auditLogs,
+      ],
+    }));
+  },
+
+  // Announcements & Directory
+  async publishAnnouncement(data: {
+    title: string;
+    body: string;
+    audience?: "all" | "team" | "ambassadors";
+    teamId?: string;
+    pinned?: boolean;
+  }) {
+    await delay(250);
+    const { currentUserId, users } = mockStore.getState();
+    const author = users.find((u) => u.id === currentUserId);
+
+    const announcement: Announcement = {
+      id: `ann-${Date.now()}`,
+      title: data.title,
+      body: data.body,
+      createdAt: new Date().toISOString(),
+      pinned: data.pinned ?? false,
+      audience: data.audience || "all",
+      teamId: data.teamId,
+      authorName: author?.name || "Zyven Operations",
+    };
+
+    mockStore.setState((prev) => ({
+      announcements: [announcement, ...prev.announcements],
+      auditLogs: [
+        {
+          id: `audit-${Date.now()}`,
+          actorId: currentUserId || ADMIN_USER.id,
+          actorName: author?.name || "Admin",
+          action: "PUBLISH_ANNOUNCEMENT",
+          entity: "Announcement",
+          entityId: announcement.id,
+          target: announcement.title,
+          result: "PUBLISHED",
+          createdAt: new Date().toISOString(),
+        },
+        ...prev.auditLogs,
+      ],
+    }));
+
+    return announcement;
+  },
+
+  async listColleges() {
+    await delay(150);
+    return SEED_COLLEGES;
+  },
+
+  async upsertCollege(data: Partial<import("../types").College>) {
+    await delay(200);
+    const college = {
+      id: data.id || `col-${Date.now()}`,
+      name: data.name || "Engineering College",
+      shortName: data.shortName || "COL",
+      color: data.color || "#5B5BF0",
+    };
+    return college;
+  },
+
+  // Platform Settings
+  async getPlatformSettings() {
+    await delay(100);
+    return mockStore.getState().platformSettings;
+  },
+
+  async updatePlatformSettings(settings: Partial<import("../types").PlatformSettings>) {
+    await delay(250);
+    const { platformSettings, currentUserId } = mockStore.getState();
+    const updated = { ...platformSettings, ...settings };
+
+    mockStore.setState((prev) => ({
+      platformSettings: updated,
+      auditLogs: [
+        {
+          id: `audit-${Date.now()}`,
+          actorId: currentUserId || ADMIN_USER.id,
+          actorName: "Admin Operations",
+          action: "UPDATE_PLATFORM_SETTINGS",
+          entity: "PlatformSettings",
+          entityId: "platform-settings",
+          result: "SETTINGS_UPDATED",
+          metadata: settings as Record<string, unknown>,
+          createdAt: new Date().toISOString(),
+        },
+        ...prev.auditLogs,
+      ],
+    }));
+
+    return updated;
   },
 };

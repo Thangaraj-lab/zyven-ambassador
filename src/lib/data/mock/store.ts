@@ -29,6 +29,8 @@ export interface MockStoreState {
   notifications: Notification[];
   announcements: Announcement[];
   auditLogs: AuditLog[];
+  teams: import("../types").Team[];
+  platformSettings: import("../types").PlatformSettings;
   currentUserId: string | null;
   approvalRequired: boolean;
   seenTiers: string[];
@@ -103,12 +105,47 @@ class MockStore {
         {
           id: "audit-init",
           actorId: ADMIN_USER.id,
+          actorName: ADMIN_USER.name,
           action: "INITIALIZE_PORTAL",
           entity: "System",
           entityId: "system",
+          result: "SUCCESS",
+          metadata: { version: "2.0.0", platform: "Zyven Ambassador Cloud" },
           createdAt: "2026-10-01T00:00:00Z",
         },
       ],
+      teams: [
+        {
+          id: "team-mec-alpha",
+          name: "MEC Zyven Alpha Squad",
+          college: "Muthayammal Engineering College",
+          ambassadorId: CURRENT_USER.id,
+          ambassadorName: CURRENT_USER.name,
+          inviteCode: "ZYV-MEC-2026",
+          memberCount: 8,
+          totalPoints: 420,
+          createdAt: "2026-10-01T00:00:00Z",
+          status: "active",
+        },
+        {
+          id: "team-psg-prime",
+          name: "PSG Tech Innovators",
+          college: "PSG College of Technology",
+          ambassadorId: "demo-amb-1",
+          ambassadorName: "Kavitha R",
+          inviteCode: "ZYV-PSG-2026",
+          memberCount: 12,
+          totalPoints: 680,
+          createdAt: "2026-10-02T00:00:00Z",
+          status: "active",
+        },
+      ],
+      platformSettings: {
+        maxAmbassadorTaskPoints: 25,
+        allowAmbassadorReview: true,
+        requireScreenshotCompression: true,
+        maintenanceMode: false,
+      },
       currentUserId: CURRENT_USER.id,
       approvalRequired: false,
       seenTiers: [],

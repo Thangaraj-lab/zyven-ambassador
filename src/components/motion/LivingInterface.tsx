@@ -26,7 +26,10 @@ export function LivingInterfaceProvider({ children }: { children: React.ReactNod
 
   const rafRef = useRef<number | null>(null);
 
+  const [mounted, setMounted] = React.useState(false);
+
   useEffect(() => {
+    setMounted(true);
     if (!motionOK) return;
     if (typeof window === "undefined") return;
 
@@ -54,7 +57,7 @@ export function LivingInterfaceProvider({ children }: { children: React.ReactNod
     <LivingInterfaceContext.Provider value={{ mouseX: smoothX, mouseY: smoothY }}>
       <div className="relative min-h-screen">
         {/* Living Ambient Light Field (Subtle cursor-following aura) */}
-        {motionOK && (
+        {mounted && motionOK && (
           <motion.div
             style={{
               left: smoothX,

@@ -49,6 +49,16 @@ export default function AppLayout({
     );
   }
 
+  const isAmbassadorRoute = pathname.startsWith("/ambassador");
+
+  if (isAmbassadorRoute) {
+    return (
+      <div className="min-h-screen bg-bg text-text">
+        <WorldTransition>{children}</WorldTransition>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col md:flex-row bg-bg text-text pb-20 md:pb-0">
       <RouteProgressBar />
