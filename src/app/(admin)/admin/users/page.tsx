@@ -80,8 +80,8 @@ export default function AdminUsersPage() {
       );
       setSelectedUser(null);
       setTargetRole(null);
-    } catch {
-      toast.error("Failed to update role");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to update role");
     }
   };
 
