@@ -27,8 +27,11 @@ export default function LoginPage() {
 
   const redirectByRole = (role: string) => {
     let destination = "/dashboard";
-    if (nextUrl) {
-      destination = nextUrl;
+    const safeNext = nextUrl && nextUrl.startsWith("/") && !nextUrl.startsWith("//")
+      ? nextUrl
+      : null;
+    if (safeNext) {
+      destination = safeNext;
     } else if (role === "admin") {
       destination = "/admin";
     } else if (role === "ambassador") {
