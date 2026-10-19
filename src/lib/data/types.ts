@@ -198,6 +198,8 @@ export type SubmissionState = z.infer<typeof SubmissionStateSchema>;
 export const SubmissionSchema = z.object({
   id: z.string(),
   missionId: z.string(),
+  taskTitle: z.string().optional(),
+  taskPoints: z.number().optional(),
   ambassadorId: z.string(),
   teamId: z.string().optional(),
   studentName: z.string().optional(),

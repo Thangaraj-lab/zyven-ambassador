@@ -121,9 +121,12 @@ function submissionFromRow(row: Row): Submission {
     return typeof metadata.screenshotDataUrl === "string" || typeof item.filePath === "string";
   });
   const screenshotMetadata = screenshotItem?.metadata?.screenshotDataUrl;
+  const task = row.tasks && !Array.isArray(row.tasks) ? row.tasks as Row : null;
   return {
     id: asString(row.id),
     missionId: asString(row.task_id),
+    taskTitle: task ? asString(task.title) : undefined,
+    taskPoints: task ? asNumber(task.points) : undefined,
     ambassadorId: asString(row.student_id),
     studentName: typeof row.student_name === "string" ? row.student_name : undefined,
     state: state as Submission["state"],
@@ -140,7 +143,7 @@ function submissionFromRow(row: Row): Submission {
 }
 
 async function submissionsWithProofs(query: ReturnType<ReturnType<typeof client>["from"]>) {
-  const { data, error } = await query.select("*, submission_items(*)").order("created_at", { ascending: false });
+  const { data, error } = await query.select("*, submission_items(*), tasks(title, points)").order("created_at", { ascending: false });
   if (error) throw error;
   const rows = (data ?? []) as Row[];
   const studentIds = [...new Set(rows.map((row) => asString(row.student_id)).filter(Boolean))];

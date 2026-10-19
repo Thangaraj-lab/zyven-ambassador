@@ -57,7 +57,9 @@ export default function DashboardPage() {
   const totalPoints = pointsData?.total ?? 0;
   const rank = rankData?.rank ?? 1;
   const completedCount = submissions.filter((s) => s.state === "APPROVED").length;
-  const totalAvailableCount = liveMissions.length;
+  // Include completed historical tasks in the denominator so the card never
+  // reports an impossible value such as "3 / 1" after older tasks leave live.
+  const totalAvailableCount = Math.max(missions.length, completedCount);
 
   // Recent approval detection
   useEffect(() => {

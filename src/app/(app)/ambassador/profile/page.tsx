@@ -123,14 +123,14 @@ export default function AmbassadorProfilePage() {
             <div className="text-[11px] font-semibold text-text-muted">Total Points</div>
             <div className="text-lg font-black text-amber-400 mt-1 flex items-center gap-1">
               <Sparkles className="w-4 h-4" />
-              {pointsData?.total || 420} pts
+              {pointsData?.total ?? 0} pts
             </div>
           </div>
 
           <div className="p-4 rounded-xl bg-surface-elevated/40 border border-border/40">
             <div className="text-[11px] font-semibold text-text-muted">Squad Name</div>
             <div className="text-sm font-bold text-text truncate mt-1">
-              {myTeam?.name || "MEC Alpha"}
+              {myTeam?.name || "Solo Ambassador"}
             </div>
           </div>
 
@@ -138,7 +138,7 @@ export default function AmbassadorProfilePage() {
             <div className="text-[11px] font-semibold text-text-muted">Squad Members</div>
             <div className="text-lg font-black text-primary mt-1 flex items-center gap-1">
               <Users className="w-4 h-4" />
-              {myTeam?.memberCount || 8}
+              {myTeam?.memberCount ?? 1}
             </div>
           </div>
 
@@ -162,7 +162,7 @@ export default function AmbassadorProfilePage() {
               <Mail className="w-4 h-4 text-text-muted shrink-0" />
               <div className="truncate">
                 <div className="text-[10px] text-text-muted font-semibold">Campus Email</div>
-                <div className="font-bold text-text truncate">{user?.email || "thangaraj.mec@zyven.student"}</div>
+                <div className="font-bold text-text truncate">{user?.email || "Not provided"}</div>
               </div>
             </div>
 
@@ -170,7 +170,7 @@ export default function AmbassadorProfilePage() {
               <Phone className="w-4 h-4 text-text-muted shrink-0" />
               <div>
                 <div className="text-[10px] text-text-muted font-semibold">Phone Number</div>
-                <div className="font-bold text-text">{user?.phone || "+91 98765 43210"}</div>
+                <div className="font-bold text-text">{user?.phone || "Not provided"}</div>
               </div>
             </div>
 
@@ -179,7 +179,7 @@ export default function AmbassadorProfilePage() {
               <div>
                 <div className="text-[10px] text-text-muted font-semibold">Department & Year</div>
                 <div className="font-bold text-text">
-                  {profile?.department || "CSBS"} • {profile?.year || "2nd Year"}
+                  {profile?.department || "Not provided"} • {profile?.year || "Not provided"}
                 </div>
               </div>
             </div>
@@ -188,7 +188,7 @@ export default function AmbassadorProfilePage() {
               <ShieldCheck className="w-4 h-4 text-text-muted shrink-0" />
               <div>
                 <div className="text-[10px] text-text-muted font-semibold">Student ID</div>
-                <div className="font-bold text-text">{profile?.studentId || "23CB042"}</div>
+              <div className="font-bold text-text">{profile?.studentId || "Not provided"}</div>
               </div>
             </div>
           </div>
@@ -220,6 +220,25 @@ export default function AmbassadorProfilePage() {
             </div>
           </div>
         )}
+
+        <section id="settings" className="space-y-3 pt-4 scroll-mt-6">
+          <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider">
+            Account Settings
+          </h3>
+          <div className="p-4 rounded-xl bg-surface-elevated/30 border border-border/40 text-sm text-text-muted">
+            Your account role, campus assignment, and verification status are managed by the Zyvex admin team.
+            Use Sign Out to end this device session.
+          </div>
+        </section>
+
+        <section id="help" className="space-y-3 pt-4 scroll-mt-6">
+          <h3 className="text-xs font-bold text-text-muted uppercase tracking-wider">
+            Help &amp; Guide
+          </h3>
+          <div className="p-4 rounded-xl bg-surface-elevated/30 border border-border/40 text-sm text-text-muted">
+            Create tasks from Task Studio, review submissions from Submissions, and contact your platform admin if a task or account needs correction.
+          </div>
+        </section>
       </div>
     </div>
   );

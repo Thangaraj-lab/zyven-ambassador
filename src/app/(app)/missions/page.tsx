@@ -30,9 +30,17 @@ export default function MissionsListPage() {
     return "AVAILABLE";
   };
 
-  const liveMissions = missions.filter((m) => m.status === "live");
+  // Students can see live tasks plus historical tasks they previously
+  // submitted (the repository exposes those through the submission RLS
+  // policy). This keeps Completed and In Review filters consistent with the
+  // student's profile history.
+  const visibleMissions = missions.filter(
+    (mission) =>
+      mission.status === "live" ||
+      submissions.some((submission) => submission.missionId === mission.id)
+  );
 
-  const filteredMissions = liveMissions.filter((mission) => {
+  const filteredMissions = visibleMissions.filter((mission) => {
     const state = getMissionState(mission.id, mission.status);
 
     if (activeFilter === "all") return true;

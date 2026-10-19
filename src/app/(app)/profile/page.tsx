@@ -7,7 +7,6 @@ import {
   useMyRank,
   useMyTier,
   useMySubmissions,
-  useMissions,
 } from "@/lib/data/hooks";
 import { Avatar } from "@/components/ui/Avatar";
 import { TierBadge } from "@/components/ui/TierBadge";
@@ -35,7 +34,6 @@ export default function ProfilePage() {
   const { data: rankData } = useMyRank();
   const { data: tierData } = useMyTier();
   const { data: submissions = [] } = useMySubmissions();
-  const { data: missions = [] } = useMissions();
 
   const [activeTab, setActiveTab] = useState<
     "about" | "missions" | "ledger"
@@ -287,7 +285,6 @@ export default function ProfilePage() {
             </div>
           ) : (
             completedSubmissions.map((sub) => {
-              const mission = missions.find((m) => m.id === sub.missionId);
               return (
                 <div
                   key={sub.id}
@@ -299,7 +296,7 @@ export default function ProfilePage() {
                     </div>
                     <div>
                       <h4 className="text-sm font-bold text-text">
-                        {mission?.title || "Mission"}
+                        {sub.taskTitle || "Completed task"}
                       </h4>
                       <span className="text-xs text-text-muted">
                         Verified by Admin
@@ -308,7 +305,7 @@ export default function ProfilePage() {
                   </div>
 
                   <span className="text-sm font-bold text-success tabular-nums">
-                    +{mission?.points || 50} pts
+                    +{sub.taskPoints ?? 0} pts
                   </span>
                 </div>
               );
