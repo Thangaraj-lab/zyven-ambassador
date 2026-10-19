@@ -17,6 +17,7 @@ export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const nextUrl = searchParams.get("next");
+  const authError = searchParams.get("error");
 
   // Selected login intent (ONLY Student or Ambassador visible in UI)
   const [selectedRole, setSelectedRole] = useState<"student" | "ambassador">("student");
@@ -53,9 +54,12 @@ export default function LoginPage() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: "google",
         options: {
-          redirectTo: `${window.location.origin}/auth/callback${
-            nextUrl ? `?next=${encodeURIComponent(nextUrl)}` : ""
-          }`,
+          redirectTo: (() => {
+            const callbackUrl = new URL("/auth/callback", window.location.origin);
+            if (nextUrl) callbackUrl.searchParams.set("next", nextUrl);
+            callbackUrl.searchParams.set("intent", selectedRole);
+            return callbackUrl.toString();
+          })(),
         },
       });
 
@@ -197,6 +201,11 @@ export default function LoginPage() {
           <p className="text-xs sm:text-sm text-text-muted mt-1">
             Choose your role and sign in to your workspace.
           </p>
+          {authError === "ambassador_access_required" && (
+            <p className="mt-3 rounded-xl border border-warning/30 bg-warning/10 px-3 py-2 text-xs font-semibold text-warning">
+              This Google account is registered as a student. An administrator must approve it as an ambassador before ambassador access is available.
+            </p>
+          )}
         </div>
 
         {/* STRICT PUBLIC ROLE SELECTION TABS (Student & Ambassador ONLY) */}

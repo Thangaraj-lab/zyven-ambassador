@@ -5,6 +5,7 @@ export async function GET(request: Request) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
   const next = searchParams.get("next") ?? "/dashboard";
+  const intent = searchParams.get("intent");
 
   if (code) {
     const supabase = await getSupabaseServerClient();
@@ -31,6 +32,13 @@ export async function GET(request: Request) {
 
           if (profile?.status === "suspended") {
             return NextResponse.redirect(`${origin}/login?error=account_suspended`);
+          }
+
+          // The selected login intent is only a routing/access hint. The
+          // profile role remains authoritative, so a student account can
+          // never be promoted by changing a URL parameter.
+          if (intent === "ambassador" && profile.role === "student") {
+            return NextResponse.redirect(`${origin}/login?error=ambassador_access_required`);
           }
 
           if (profile?.role === "admin") {

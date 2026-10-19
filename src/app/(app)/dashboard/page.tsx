@@ -173,7 +173,7 @@ export default function DashboardPage() {
       </AnimatePresence>
 
       {/* Top Search Bar & Controls */}
-      <div className="relative flex items-center gap-4">
+      <div className="relative hidden items-center gap-4 md:flex">
         <div className="flex flex-1 items-center gap-2.5 rounded-full border border-border bg-surface px-4 py-2.5 text-sm text-text-muted shadow-soft-sm focus-within:border-primary/50 transition-colors">
           <Search className="h-4 w-4 text-text-muted shrink-0" />
           <input
