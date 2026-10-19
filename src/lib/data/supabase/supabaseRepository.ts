@@ -221,7 +221,29 @@ export const supabaseRepository: Repository = {
   async getAuditLog(): Promise<AuditLog[]> { const { data, error } = await client().from("audit_logs").select("*").order("created_at", { ascending: false }); if (error) throw error; return ((data ?? []) as Row[]).map((row) => ({ id: asString(row.id), actorId: asString(row.actor_id), action: asString(row.action), entity: asString(row.entity_type), entityId: asString(row.entity_id), metadata: (row.metadata as Record<string, unknown>) ?? {}, createdAt: asString(row.created_at) })); },
   async getMyTeam() { return null; }, async listTeams() { return []; }, async createTeam() { throw new Error("Teams are not part of the Zyven production portal."); }, async joinTeam() { throw new Error("Teams are not part of the Zyven production portal."); },
   async createAmbassadorTask() { throw new Error("Use the Task Studio server action."); }, async approveTask() { throw new Error("Use the admin task approval action."); }, async rejectTask() { throw new Error("Use the admin task review action."); }, async setTaskStatus() { throw new Error("Use the Task Studio server action."); },
-  async listUsers() { return []; }, async setUserRole() { throw new Error("Use the admin role action."); }, async setUserStatus() { throw new Error("Use the admin status action."); },
+  async listUsers(params) {
+    let query = client().from("profiles").select("*, colleges(name, code)").order("created_at", { ascending: false });
+    if (params?.role) query = query.eq("role", params.role);
+    if (params?.status) query = query.eq("status", params.status);
+    const { data, error } = await query;
+    if (error) throw error;
+    const profiles = (data ?? []) as Row[];
+    const { data: points, error: pointsError } = await client().from("point_transactions").select("student_id, amount");
+    if (pointsError) throw pointsError;
+    const totals = new Map<string, number>();
+    for (const point of (points ?? []) as Row[]) {
+      const id = asString(point.student_id);
+      totals.set(id, (totals.get(id) ?? 0) + asNumber(point.amount));
+    }
+    return profiles
+      .filter((profile) => !params?.search || `${asString(profile.full_name)} ${asString(profile.email)} ${asString(profile.id)}`.toLowerCase().includes(params.search.toLowerCase()))
+      .map((profile) => ({
+        user: userFromProfile(profile),
+        profile: ambassadorProfileFromRow(profile),
+        points: totals.get(asString(profile.id)) ?? 0,
+        status: asString(profile.status, "active"),
+      }));
+  }, async setUserRole() { throw new Error("Use the admin role action."); }, async setUserStatus() { throw new Error("Use the admin status action."); },
   async publishAnnouncement() { throw new Error("Use the announcement server action."); },
   async listColleges() { const { data, error } = await client().from("colleges").select("*").eq("status", "active").order("name"); if (error) throw error; return ((data ?? []) as Row[]).map((row) => ({ id: asString(row.id), name: asString(row.name), shortName: asString(row.code), color: "var(--primary)" })); },
   async upsertCollege() { throw new Error("College management is restricted to administrators."); },
