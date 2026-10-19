@@ -37,3 +37,16 @@ USING (
 WITH CHECK (
     public.can_manage_task_audience(task_audiences.task_id)
 );
+
+DROP POLICY IF EXISTS "Students can update own in-progress submissions" ON public.submissions;
+CREATE POLICY "Students can update own in-progress submissions"
+ON public.submissions
+FOR UPDATE TO authenticated
+USING (
+    student_id = auth.uid()
+    AND status IN ('in_progress', 'changes_requested')
+)
+WITH CHECK (
+    student_id = auth.uid()
+    AND status IN ('in_progress', 'submitted', 'changes_requested')
+);

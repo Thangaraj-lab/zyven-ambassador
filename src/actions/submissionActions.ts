@@ -100,13 +100,14 @@ export async function submitTaskProofAction(taskId: string, items: z.infer<typeo
     sub = created;
   } else {
     // Update status to submitted
-    await supabase
+    const { error: updateError } = await supabase
       .from("submissions")
       .update({
         status: "submitted",
         submitted_at: new Date().toISOString(),
       })
       .eq("id", sub.id);
+    if (updateError) throw new Error(updateError.message || "Failed to submit task proof.");
   }
 
   const currentSub = sub as { id: string; status: string };
@@ -121,7 +122,8 @@ export async function submitTaskProofAction(taskId: string, items: z.infer<typeo
       file_path: item.filePath || null,
       metadata: item.metadata || {},
     }));
-    await supabase.from("submission_items").insert(rows);
+    const { error: itemError } = await supabase.from("submission_items").insert(rows);
+    if (itemError) throw new Error(itemError.message || "Failed to save task proof.");
   }
 
   revalidatePath(`/missions/${taskId}`);
