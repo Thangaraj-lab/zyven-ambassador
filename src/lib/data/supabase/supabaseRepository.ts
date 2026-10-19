@@ -198,7 +198,22 @@ export const supabaseRepository: Repository = {
   async getAnnouncements() { const { data, error } = await client().from("announcements").select("*").order("published_at", { ascending: false }); if (error) throw error; return ((data ?? []) as Row[]).map((row) => ({ id: asString(row.id), title: asString(row.title), body: asString(row.content), createdAt: asString(row.published_at), pinned: false, audience: "all" })); },
   async listSubmissions() { const { data, error } = await client().from("submissions").select("*").order("created_at", { ascending: false }); if (error) throw error; return ((data ?? []) as Row[]).map(submissionFromRow); },
   async reviewSubmission({ submissionId, decision, reason }) { const action = decision === "approve" ? "approved" : decision === "reject" ? "rejected" : "changes_requested"; const { error } = await client().rpc("review_submission", { p_submission_id: submissionId, p_action: action, p_reason: reason ?? "" }); if (error) throw error; const submission = await this.getSubmission(submissionId); if (!submission) throw new Error("Submission not found."); return submission; },
-  async listAmbassadors() { return []; },
+  async listAmbassadors(params) {
+    let query = client().from("profiles").select("*, colleges(name, code)").eq("role", "ambassador").order("created_at", { ascending: false });
+    if (params?.status) query = query.eq("status", params.status);
+    const { data, error } = await query;
+    if (error) throw error;
+    const profiles = (data ?? []) as Row[];
+    const { data: points, error: pointsError } = await client().from("point_transactions").select("student_id, amount");
+    if (pointsError) throw pointsError;
+    const totals = new Map<string, number>();
+    for (const point of (points ?? []) as Row[]) totals.set(asString(point.student_id), (totals.get(asString(point.student_id)) ?? 0) + asNumber(point.amount));
+    return profiles.filter((profile) => !params?.search || `${asString(profile.full_name)} ${asString(profile.email)}`.toLowerCase().includes(params.search.toLowerCase())).map((profile) => ({
+      user: userFromProfile(profile),
+      profile: ambassadorProfileFromRow(profile),
+      totalPoints: totals.get(asString(profile.id)) ?? 0,
+    }));
+  },
   async setAmbassadorStatus() { throw new Error("Use the admin user-management view."); },
   async listMissions() { return this.getMissions(); },
   async upsertMission() { throw new Error("Use the Ambassador Task Studio."); },

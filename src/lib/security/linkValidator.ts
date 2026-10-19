@@ -131,3 +131,7 @@ export function normalizeSubmissionUrl(rawUrl: string): string {
     return rawUrl.trim().toLowerCase();
   }
 }
+
+export function validateLinkedInUrl(url: string): boolean {
+  return validateTaskSubmissionUrl(url, "linkedin").isValid;
+}

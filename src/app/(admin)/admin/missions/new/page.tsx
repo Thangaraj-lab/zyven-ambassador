@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { mockRepository } from "@/lib/data/mock/mockRepository";
+import { createTaskAction } from "@/actions/taskActions";
 import { Button } from "@/components/ui/Button";
 import { PointsPill } from "@/components/ui/PointsPill";
 import { Input } from "@/components/ui/Input";
@@ -82,31 +82,16 @@ export default function TaskCreationStudioPage() {
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/(^-|-$)/g, "");
 
-      await mockRepository.upsertMission({
+      await createTaskAction({
         title,
-        titleTa: titleTa || title,
+        shortDescription: description,
         description,
-        descriptionTa: description,
-        slug: slug || `mission-${Date.now()}`,
-        brand,
         category,
-        estimatedMinutes: Number(estimatedMinutes),
+        taskType: requireScreenshot ? "SCREENSHOT" : "URL",
         points: Number(points),
-        status: isDraft ? "coming_soon" : "live",
-        difficulty,
-        proofTypes: [
-          ...(requireUrl ? ["url" as const] : []),
-          ...(requireScreenshot ? ["screenshot" as const] : []),
-        ],
-        proofRequired: {
-          url: requireUrl,
-          screenshot: requireScreenshot,
-        },
-        postTemplate: {
-          en: postTemplateEn,
-          ta: postTemplateEn,
-        },
-        verification: "manual",
+        estimatedMinutes: Number(estimatedMinutes),
+        audience: targetColleges === "all" ? "all_students" : "college",
+        submitForApproval: !isDraft,
       });
 
       toast.success(isDraft ? "Task saved as draft" : "Task published to ambassador network!");

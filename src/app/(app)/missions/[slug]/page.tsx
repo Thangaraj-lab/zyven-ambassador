@@ -15,7 +15,7 @@ import { Button } from "@/components/ui/Button";
 import { CopyButton } from "@/components/ui/CopyButton";
 import { FileDropzone } from "@/components/ui/FileDropzone";
 import { Timeline } from "@/components/ui/Timeline";
-import { validateLinkedInUrl } from "@/lib/data/mock/mockRepository";
+import { validateLinkedInUrl } from "@/lib/security/linkValidator";
 import {
   Clock,
   ArrowLeft,

@@ -8,7 +8,7 @@ import {
   useSetTaskStatus,
   usePlatformSettings,
 } from "@/lib/data/hooks";
-import { mockRepository } from "@/lib/data/mock/mockRepository";
+import { createTaskAction } from "@/actions/taskActions";
 import { Button } from "@/components/ui/Button";
 import { PointsPill } from "@/components/ui/PointsPill";
 import {
@@ -130,34 +130,16 @@ export default function AdminTasksPage() {
         .replace(/[^a-z0-9]+/g, "-")
         .replace(/(^-|-$)+/g, "");
 
-      await mockRepository.upsertMission({
-        slug,
+      await createTaskAction({
         title: newTitle.trim(),
-        titleTa: newTitle.trim(),
+        shortDescription: newDescription.trim(),
         description: newDescription.trim(),
-        descriptionTa: newDescription.trim(),
         category: newCategory,
+        taskType: "URL",
         points: Number(newPoints),
-        difficulty: "Medium",
         estimatedMinutes: 15,
-        startsAt: new Date().toISOString(),
-        status: "live",
-        proofTypes: ["url"],
-        proofRequired: { url: true, screenshot: false },
-        verification: "manual",
-        brand: "event",
-        instructions: [
-          {
-            stepNumber: 1,
-            title: "Task Briefing",
-            description: newDescription.trim(),
-          },
-          {
-            stepNumber: 2,
-            title: "Submit Verification",
-            description: "Provide the required proof link or screenshot.",
-          },
-        ],
+        audience: "all_students",
+        submitForApproval: false,
       });
 
       toast.success(`Global task "${newTitle}" created and live!`);

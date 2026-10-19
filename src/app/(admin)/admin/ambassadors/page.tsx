@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useAdminAmbassadors } from "@/lib/data/hooks";
-import { mockRepository } from "@/lib/data/mock/mockRepository";
+import { setUserStatusAction } from "@/actions/adminActions";
 import { Avatar } from "@/components/ui/Avatar";
 import { Button } from "@/components/ui/Button";
 import { Search, X, Zap } from "lucide-react";
@@ -26,7 +26,7 @@ export default function AdminAmbassadorsPage() {
   const handleStatusToggle = async (userId: string, currentStatus: string) => {
     try {
       const nextStatus = currentStatus === "active" ? "suspended" : "active";
-      await mockRepository.setAmbassadorStatus(userId, nextStatus);
+      await setUserStatusAction(userId, nextStatus);
       toast.success(
         `Ambassador ${nextStatus === "active" ? "reactivated" : "suspended"}`
       );

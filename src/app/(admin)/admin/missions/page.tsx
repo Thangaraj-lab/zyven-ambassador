@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import { useMissions } from "@/lib/data/hooks";
-import { mockRepository } from "@/lib/data/mock/mockRepository";
+import { createTaskAction } from "@/actions/taskActions";
 import { Button } from "@/components/ui/Button";
 import { PointsPill } from "@/components/ui/PointsPill";
 import { Plus, Clock, Edit, X, Check } from "lucide-react";
@@ -56,19 +56,17 @@ export default function AdminMissionsPage() {
 
     setIsSaving(true);
     try {
-      await mockRepository.upsertMission({
-        id: editingMission?.id,
+      if (editingMission?.id) throw new Error("Editing existing missions is available from the Task Studio.");
+      await createTaskAction({
         title,
-        titleTa: titleTa || title,
+        shortDescription: description,
         description,
-        descriptionTa: description,
+        category: "Social Media",
+        taskType: "URL",
         points: Number(points),
         estimatedMinutes: Number(estimatedMinutes),
-        status,
-        brand,
-        proofTypes: ["url"],
-        proofRequired: { url: true, screenshot: false },
-        verification: "manual",
+        audience: "all_students",
+        submitForApproval: status !== "draft",
       });
 
       toast.success(
