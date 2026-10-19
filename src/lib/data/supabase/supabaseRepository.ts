@@ -139,15 +139,20 @@ export const supabaseRepository: Repository = {
   async updateProfile(data) {
     const profile = await currentProfile();
     if (!profile) throw new Error("Authentication required.");
-    const { data: updated, error } = await client().from("profiles").update({
-      full_name: data.userId ? undefined : undefined,
-    }).eq("id", profile.id).select("*").single();
+    const updates: Record<string, string> = {};
+    if (typeof data.department === "string") updates.department = data.department;
+    if (typeof data.year === "string") updates.year = data.year;
+    if (typeof data.city === "string") updates.city = data.city;
+    if (typeof data.whyJoin === "string") updates.bio = data.whyJoin;
+
+    const { data: updated, error } = await client()
+      .from("profiles")
+      .update(updates)
+      .eq("id", profile.id)
+      .select("*, colleges(name, code)")
+      .single();
     if (error) throw error;
-    return {
-      userId: asString(updated.id), college: "", department: asString(updated.department), year: asString(updated.year),
-      city: asString(updated.city), interests: [], skills: [], whyJoin: asString(updated.bio),
-      status: asString(updated.status) as AmbassadorProfile["status"], joinedAt: asString(updated.created_at), cohortNumber: 1,
-    };
+    return ambassadorProfileFromRow(updated as Row);
   },
   async getMe() {
     const profile = await currentProfile();
