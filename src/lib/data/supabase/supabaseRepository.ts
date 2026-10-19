@@ -142,8 +142,10 @@ function submissionFromRow(row: Row): Submission {
   };
 }
 
-async function submissionsWithProofs(query: ReturnType<ReturnType<typeof client>["from"]>) {
-  const { data, error } = await query.select("*, submission_items(*), tasks(title, points)").order("created_at", { ascending: false });
+async function submissionsWithProofs(query: ReturnType<ReturnType<typeof client>["from"]>, submissionId?: string) {
+  let selected = query.select("*, submission_items(*), tasks(title, points)");
+  if (submissionId) selected = selected.eq("id", submissionId);
+  const { data, error } = await selected.order("created_at", { ascending: false });
   if (error) throw error;
   const rows = (await Promise.all(((data ?? []) as Row[]).map(async (row) => {
     const items = Array.isArray(row.submission_items) ? await Promise.all((row.submission_items as Row[]).map(async (item) => {
@@ -242,7 +244,7 @@ export const supabaseRepository: Repository = {
     return submissionFromRow(submission as Row);
   },
   async getMySubmissions() { return submissionsWithProofs(client().from("submissions")); },
-  async getSubmission(id) { const rows = await submissionsWithProofs(client().from("submissions").eq("id", id)); return rows[0] ?? null; },
+  async getSubmission(id) { const rows = await submissionsWithProofs(client().from("submissions"), id); return rows[0] ?? null; },
   async getMyPoints() { const { data, error } = await client().from("point_transactions").select("*").order("created_at", { ascending: false }); if (error) throw error; const rows = (data ?? []) as Row[]; return { total: rows.reduce((total, row) => total + asNumber(row.amount), 0), transactions: rows.map((row) => ({ id: asString(row.id), ambassadorId: asString(row.student_id), submissionId: asString(row.submission_id), missionId: "", points: asNumber(row.amount), reason: asString(row.reason), createdAt: asString(row.created_at) })) }; },
   async getMyRank() { const profile = await currentProfile(); const leaderboard = await this.getLeaderboard({ scope: "individual" }) as LeaderboardEntry[]; const rank = leaderboard.find((entry) => entry.ambassadorId === profile?.id)?.rank ?? 0; return { rank, totalAmbassadors: leaderboard.length }; },
   async getLeaderboard({ scope }) {
