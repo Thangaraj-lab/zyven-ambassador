@@ -50,3 +50,15 @@ WITH CHECK (
     student_id = auth.uid()
     AND status IN ('in_progress', 'submitted', 'changes_requested')
 );
+
+DROP POLICY IF EXISTS "Ambassadors can insert own drafts" ON public.tasks;
+CREATE POLICY "Ambassadors can insert own drafts"
+ON public.tasks
+FOR INSERT TO authenticated
+WITH CHECK (
+    auth.uid() = created_by
+    AND (
+        public.is_admin()
+        OR (public.is_ambassador() AND status IN ('draft', 'pending_approval'))
+    )
+);
