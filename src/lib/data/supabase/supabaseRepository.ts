@@ -104,16 +104,51 @@ function missionFromRow(task: Row, requirements: Row[] = [], steps: Row[] = []):
 function submissionFromRow(row: Row): Submission {
   const status = asString(row.status);
   const state = status === "in_progress" ? "STARTED" : status === "submitted" ? "UNDER_REVIEW" : status.toUpperCase();
+  const proofItems = Array.isArray(row.submission_items)
+    ? (row.submission_items as Row[]).map((item) => ({
+        id: asString(item.id),
+        requirementId: typeof item.requirement_id === "string" ? item.requirement_id : null,
+        textValue: typeof item.text_value === "string" ? item.text_value : null,
+        urlValue: typeof item.url_value === "string" ? item.url_value : null,
+        filePath: typeof item.file_path === "string" ? item.file_path : null,
+        metadata: (item.metadata as Record<string, unknown>) ?? {},
+      }))
+    : [];
+  const urlItem = proofItems.find((item) => item.urlValue);
+  const noteItem = proofItems.find((item) => item.textValue);
+  const screenshotItem = proofItems.find((item) => {
+    const metadata = item.metadata ?? {};
+    return typeof metadata.screenshotDataUrl === "string" || typeof item.filePath === "string";
+  });
+  const screenshotMetadata = screenshotItem?.metadata?.screenshotDataUrl;
   return {
     id: asString(row.id),
     missionId: asString(row.task_id),
-    ambassadorId: asString(row.reviewed_by),
+    ambassadorId: asString(row.student_id),
+    studentName: typeof row.student_name === "string" ? row.student_name : undefined,
     state: state as Submission["state"],
+    proofUrl: urlItem?.urlValue ?? undefined,
+    normalizedUrl: typeof urlItem?.metadata?.normalizedUrl === "string" ? urlItem.metadata.normalizedUrl : undefined,
+    screenshotDataUrl: typeof screenshotMetadata === "string" ? screenshotMetadata : undefined,
+    note: noteItem?.textValue ?? undefined,
+    proofItems,
     submittedAt: typeof row.submitted_at === "string" ? row.submitted_at : undefined,
     reviewedAt: typeof row.reviewed_at === "string" ? row.reviewed_at : undefined,
     reviewerId: typeof row.reviewed_by === "string" ? row.reviewed_by : undefined,
     reviewReason: typeof row.review_reason === "string" ? row.review_reason : undefined,
   };
+}
+
+async function submissionsWithProofs(query: ReturnType<ReturnType<typeof client>["from"]>) {
+  const { data, error } = await query.select("*, submission_items(*)").order("created_at", { ascending: false });
+  if (error) throw error;
+  const rows = (data ?? []) as Row[];
+  const studentIds = [...new Set(rows.map((row) => asString(row.student_id)).filter(Boolean))];
+  if (studentIds.length === 0) return rows.map(submissionFromRow);
+  const { data: profiles, error: profileError } = await client().from("profiles").select("id, full_name").in("id", studentIds);
+  if (profileError) throw profileError;
+  const names = new Map(((profiles ?? []) as Row[]).map((profile) => [asString(profile.id), asString(profile.full_name)]));
+  return rows.map((row) => submissionFromRow({ ...row, student_name: names.get(asString(row.student_id)) }));
 }
 
 async function currentProfile(): Promise<Row | null> {
@@ -173,14 +208,19 @@ export const supabaseRepository: Repository = {
     const profile = await currentProfile(); if (!profile) throw new Error("Authentication required.");
     const { data: submission, error } = await client().from("submissions").upsert({ task_id: data.missionId, student_id: profile.id, status: "submitted", submitted_at: new Date().toISOString() }, { onConflict: "task_id,student_id" }).select("*").single();
     if (error) throw error;
-    if (data.proofUrl || data.note) {
-      const { error: itemError } = await client().from("submission_items").insert({ submission_id: submission.id, url_value: data.proofUrl ?? null, text_value: data.note ?? null });
+    if (data.proofUrl || data.note || data.screenshotDataUrl) {
+      const { error: itemError } = await client().from("submission_items").insert({
+        submission_id: submission.id,
+        url_value: data.proofUrl ?? null,
+        text_value: data.note ?? null,
+        metadata: data.screenshotDataUrl ? { screenshotDataUrl: data.screenshotDataUrl } : {},
+      });
       if (itemError) throw itemError;
     }
     return submissionFromRow(submission as Row);
   },
-  async getMySubmissions() { const { data, error } = await client().from("submissions").select("*").order("created_at", { ascending: false }); if (error) throw error; return ((data ?? []) as Row[]).map(submissionFromRow); },
-  async getSubmission(id) { const { data, error } = await client().from("submissions").select("*").eq("id", id).maybeSingle(); if (error) throw error; return data ? submissionFromRow(data as Row) : null; },
+  async getMySubmissions() { return submissionsWithProofs(client().from("submissions")); },
+  async getSubmission(id) { const rows = await submissionsWithProofs(client().from("submissions").eq("id", id)); return rows[0] ?? null; },
   async getMyPoints() { const { data, error } = await client().from("point_transactions").select("*").order("created_at", { ascending: false }); if (error) throw error; const rows = (data ?? []) as Row[]; return { total: rows.reduce((total, row) => total + asNumber(row.amount), 0), transactions: rows.map((row) => ({ id: asString(row.id), ambassadorId: asString(row.student_id), submissionId: asString(row.submission_id), missionId: "", points: asNumber(row.amount), reason: asString(row.reason), createdAt: asString(row.created_at) })) }; },
   async getMyRank() { const profile = await currentProfile(); const leaderboard = await this.getLeaderboard({ scope: "individual" }) as LeaderboardEntry[]; const rank = leaderboard.find((entry) => entry.ambassadorId === profile?.id)?.rank ?? 0; return { rank, totalAmbassadors: leaderboard.length }; },
   async getLeaderboard({ scope }) {
@@ -201,7 +241,7 @@ export const supabaseRepository: Repository = {
   async getNotifications() { const { data, error } = await client().from("notifications").select("*").order("created_at", { ascending: false }); if (error) throw error; return ((data ?? []) as Row[]).map((row) => ({ id: asString(row.id), userId: asString(row.user_id), type: asString(row.type, "announcement") as Notification["type"], title: asString(row.title), body: asString(row.body), createdAt: asString(row.created_at), readAt: typeof row.read_at === "string" ? row.read_at : null })); },
   async markNotificationRead(id) { const { error } = await client().from("notifications").update({ read_at: new Date().toISOString() }).eq("id", id); if (error) throw error; },
   async getAnnouncements() { const { data, error } = await client().from("announcements").select("*").order("published_at", { ascending: false }); if (error) throw error; return ((data ?? []) as Row[]).map((row) => ({ id: asString(row.id), title: asString(row.title), body: asString(row.content), createdAt: asString(row.published_at), pinned: false, audience: "all" })); },
-  async listSubmissions() { const { data, error } = await client().from("submissions").select("*").order("created_at", { ascending: false }); if (error) throw error; return ((data ?? []) as Row[]).map(submissionFromRow); },
+  async listSubmissions() { return submissionsWithProofs(client().from("submissions")); },
   async reviewSubmission({ submissionId, decision, reason }) { const action = decision === "approve" ? "approved" : decision === "reject" ? "rejected" : "changes_requested"; const { error } = await client().rpc("review_submission", { p_submission_id: submissionId, p_action: action, p_reason: reason ?? "" }); if (error) throw error; const submission = await this.getSubmission(submissionId); if (!submission) throw new Error("Submission not found."); return submission; },
   async listAmbassadors(params) {
     let query = client().from("profiles").select("*, colleges(name, code)").eq("role", "ambassador").order("created_at", { ascending: false });

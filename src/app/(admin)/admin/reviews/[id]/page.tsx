@@ -255,6 +255,29 @@ export default function ReviewDetailPage() {
               <p className="text-text-muted">{submission.note}</p>
             </div>
           )}
+
+          {submission.proofItems && submission.proofItems.length > 0 && (
+            <div className="p-4 rounded-xl bg-surface-2 border border-border space-y-3">
+              <span className="text-xs font-bold text-text block">
+                Original uploaded evidence ({submission.proofItems.length} item{submission.proofItems.length === 1 ? "" : "s"}):
+              </span>
+              {submission.proofItems.map((item, index) => (
+                <div key={item.id || index} className="rounded-lg border border-border/60 bg-bg p-3 space-y-1.5 text-xs">
+                  <div className="font-semibold text-text">Evidence {index + 1}</div>
+                  {item.urlValue && (
+                    <a href={item.urlValue} target="_blank" rel="noopener noreferrer" className="block break-all text-primary hover:underline">
+                      {item.urlValue}
+                    </a>
+                  )}
+                  {item.filePath && <div className="break-all text-text-muted">File: {item.filePath}</div>}
+                  {item.textValue && <div className="whitespace-pre-wrap text-text-muted">{item.textValue}</div>}
+                  {item.metadata && Object.keys(item.metadata).filter((key) => key !== "screenshotDataUrl").length > 0 && (
+                    <pre className="overflow-x-auto whitespace-pre-wrap text-[10px] text-text-muted">{JSON.stringify(Object.fromEntries(Object.entries(item.metadata).filter(([key]) => key !== "screenshotDataUrl")), null, 2)}</pre>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Right Column: Decision Panel */}
