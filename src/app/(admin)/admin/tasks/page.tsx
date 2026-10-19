@@ -41,7 +41,7 @@ export default function AdminTasksPage() {
     useSetTaskStatus();
 
   const [activeTab, setActiveTab] = useState<
-    "ALL" | "PENDING" | "LIVE" | "PAUSED" | "REJECTED"
+    "ALL" | "PENDING" | "LIVE" | "PAUSED" | "REJECTED" | "ARCHIVED"
   >("PENDING");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -60,6 +60,8 @@ export default function AdminTasksPage() {
   // Filter tasks
   const filteredMissions = useMemo(() => {
     return missions.filter((m) => {
+      if (activeTab !== "ARCHIVED" && m.status === "archived") return false;
+      if (activeTab === "ARCHIVED" && m.status !== "archived") return false;
       if (activeTab === "PENDING" && m.status !== "pending_approval") return false;
       if (activeTab === "LIVE" && m.status !== "live") return false;
       if (activeTab === "PAUSED" && m.status !== "paused") return false;
@@ -82,6 +84,8 @@ export default function AdminTasksPage() {
   ).length;
   const liveCount = missions.filter((m) => m.status === "live").length;
   const pausedCount = missions.filter((m) => m.status === "paused").length;
+  const archivedCount = missions.filter((m) => m.status === "archived").length;
+  const activeTaskCount = missions.length - archivedCount;
 
   const handleApprove = async (id: string, title: string) => {
     try {
@@ -229,8 +233,9 @@ export default function AdminTasksPage() {
           {[
             { id: "PENDING", label: `Pending Approval (${pendingCount})` },
             { id: "LIVE", label: `Live (${liveCount})` },
-            { id: "ALL", label: `All Tasks (${missions.length})` },
+            { id: "ALL", label: `All Tasks (${activeTaskCount})` },
             { id: "PAUSED", label: `Paused (${pausedCount})` },
+            { id: "ARCHIVED", label: `Archived (${archivedCount})` },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -275,6 +280,7 @@ export default function AdminTasksPage() {
             const isLive = task.status === "live";
             const isPaused = task.status === "paused";
             const isRejected = task.status === "rejected";
+            const isArchived = task.status === "archived";
 
             return (
               <div
@@ -294,8 +300,10 @@ export default function AdminTasksPage() {
                             ? "bg-amber-500/10 text-amber-400 border border-amber-500/20"
                             : isLive
                             ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"
-                            : isPaused
+                          : isPaused
                             ? "bg-sky-500/10 text-sky-400 border border-sky-500/20"
+                            : isArchived
+                            ? "bg-slate-500/10 text-slate-400 border border-slate-500/20"
                             : "bg-rose-500/10 text-rose-400 border border-rose-500/20"
                         }`}
                       >
@@ -305,6 +313,8 @@ export default function AdminTasksPage() {
                           ? "Live & Active"
                           : isPaused
                           ? "Paused"
+                          : isArchived
+                          ? "Archived"
                           : "Rejected"}
                       </span>
                       <span className="text-xs font-semibold text-text-muted">
@@ -370,7 +380,7 @@ export default function AdminTasksPage() {
                           <span>Reject</span>
                         </Button>
                       </>
-                    ) : (
+                    ) : isArchived ? null : (
                       <>
                         {isLive && (
                           <Button

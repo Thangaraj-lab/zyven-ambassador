@@ -25,6 +25,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { toast } from "sonner";
 import { motion } from "motion/react";
+import { SubmissionEvidence } from "@/components/submissions/SubmissionEvidence";
 
 const REASON_PRESETS = [
   "Post URL is invalid or inaccessible",
@@ -39,7 +40,7 @@ export default function ReviewDetailPage() {
   const id = params.id as string;
   const router = useRouter();
 
-  const { data: submission, isLoading: subLoading } = useSubmission(id);
+  const { data: submission, isLoading: subLoading, isError: subError, error: submissionError, refetch } = useSubmission(id);
   const { data: missions = [] } = useMissions();
   const { data: allSubmissions = [] } = useAdminSubmissions();
   const { mutateAsync: reviewSubmission, isPending: isReviewing } =
@@ -138,10 +139,26 @@ export default function ReviewDetailPage() {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [handleDecision, reason]);
 
-  if (subLoading || !submission) {
+  if (subLoading) {
     return (
       <div className="min-h-[50vh] flex items-center justify-center">
         <Loader2 className="h-8 w-8 text-primary animate-spin" />
+      </div>
+    );
+  }
+
+  if (subError || !submission) {
+    return (
+      <div className="min-h-[50vh] flex items-center justify-center p-6">
+        <div className="max-w-md rounded-2xl border border-border bg-surface p-6 text-center space-y-3">
+          <AlertTriangle className="mx-auto h-8 w-8 text-warning" />
+          <h1 className="text-base font-bold text-text">Submission could not be loaded</h1>
+          <p className="text-xs text-text-muted">{submissionError instanceof Error ? submissionError.message : "This submission may have been removed or you may not have permission to review it."}</p>
+          <div className="flex items-center justify-center gap-2">
+            <Button variant="outline" size="sm" onClick={() => refetch()}>Try again</Button>
+            <Link href="/admin/reviews" className="inline-flex items-center rounded-lg bg-primary px-3 py-2 text-xs font-bold text-white">Back to queue</Link>
+          </div>
+        </div>
       </div>
     );
   }
@@ -256,28 +273,7 @@ export default function ReviewDetailPage() {
             </div>
           )}
 
-          {submission.proofItems && submission.proofItems.length > 0 && (
-            <div className="p-4 rounded-xl bg-surface-2 border border-border space-y-3">
-              <span className="text-xs font-bold text-text block">
-                Original uploaded evidence ({submission.proofItems.length} item{submission.proofItems.length === 1 ? "" : "s"}):
-              </span>
-              {submission.proofItems.map((item, index) => (
-                <div key={item.id || index} className="rounded-lg border border-border/60 bg-bg p-3 space-y-1.5 text-xs">
-                  <div className="font-semibold text-text">Evidence {index + 1}</div>
-                  {item.urlValue && (
-                    <a href={item.urlValue} target="_blank" rel="noopener noreferrer" className="block break-all text-primary hover:underline">
-                      {item.urlValue}
-                    </a>
-                  )}
-                  {item.filePath && <div className="break-all text-text-muted">File: {item.filePath}</div>}
-                  {item.textValue && <div className="whitespace-pre-wrap text-text-muted">{item.textValue}</div>}
-                  {item.metadata && Object.keys(item.metadata).filter((key) => key !== "screenshotDataUrl").length > 0 && (
-                    <pre className="overflow-x-auto whitespace-pre-wrap text-[10px] text-text-muted">{JSON.stringify(Object.fromEntries(Object.entries(item.metadata).filter(([key]) => key !== "screenshotDataUrl")), null, 2)}</pre>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
+          <SubmissionEvidence items={submission.proofItems} />
         </div>
 
         {/* Right Column: Decision Panel */}

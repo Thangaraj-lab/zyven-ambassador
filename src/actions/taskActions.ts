@@ -172,3 +172,31 @@ export async function resumeTaskAction(taskId: string) {
   revalidatePath("/missions");
   return { success: true };
 }
+
+export async function archiveTaskAction(taskId: string) {
+  const profile = await requireAmbassador();
+  const supabase = await getSupabaseServerClient();
+  if (!supabase) throw new Error("Database connection unavailable.");
+
+  const query = supabase
+    .from("tasks")
+    .update({ status: "archived", updated_at: new Date().toISOString() })
+    .eq("id", taskId);
+  if (profile.role !== "admin") query.eq("created_by", profile.id);
+
+  const { error } = await query;
+  if (error) throw new Error(error.message);
+
+  await supabase.from("audit_logs").insert({
+    actor_id: profile.id,
+    action: "archive_task",
+    entity_type: "task",
+    entity_id: taskId,
+  });
+
+  revalidatePath("/admin/tasks");
+  revalidatePath("/ambassador/tasks");
+  revalidatePath("/ambassador");
+  revalidatePath("/missions");
+  return { success: true };
+}

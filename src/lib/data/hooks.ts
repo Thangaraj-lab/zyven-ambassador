@@ -10,6 +10,7 @@ import {
   rejectTaskAction,
   pauseTaskAction,
   resumeTaskAction,
+  archiveTaskAction,
 } from "@/actions/taskActions";
 import { setUserRoleAction, setUserStatusAction } from "@/actions/adminActions";
 
@@ -395,6 +396,7 @@ export function useSetTaskStatus() {
       status: "live" | "paused" | "archived";
     }) => {
       if (status === "live") return resumeTaskAction(taskId);
+      if (status === "archived") return archiveTaskAction(taskId);
       return pauseTaskAction(taskId);
     },
     onSuccess: () => {

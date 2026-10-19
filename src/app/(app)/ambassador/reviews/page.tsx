@@ -27,6 +27,7 @@ import {
   Award,
 } from "lucide-react";
 import { toast } from "sonner";
+import { SubmissionEvidence } from "@/components/submissions/SubmissionEvidence";
 import { motion, AnimatePresence } from "motion/react";
 import type { Submission } from "@/lib/data/types";
 
@@ -538,28 +539,7 @@ export default function AmbassadorReviewsPage() {
                   </div>
                 )}
 
-                {activeSubmission.proofItems && activeSubmission.proofItems.length > 0 && (
-                  <div className="p-4 rounded-xl bg-surface-elevated/40 border border-border/60 space-y-3">
-                    <div className="text-[11px] font-semibold text-text-muted">
-                      Original uploaded evidence ({activeSubmission.proofItems.length} item{activeSubmission.proofItems.length === 1 ? "" : "s"})
-                    </div>
-                    {activeSubmission.proofItems.map((item, index) => (
-                      <div key={item.id || index} className="rounded-lg border border-border/50 bg-surface/60 p-3 space-y-1.5 text-xs">
-                        <div className="font-semibold text-text">Evidence {index + 1}</div>
-                        {item.urlValue && (
-                          <a href={item.urlValue} target="_blank" rel="noopener noreferrer" className="block break-all text-primary hover:underline">
-                            {item.urlValue}
-                          </a>
-                        )}
-                        {item.filePath && <div className="break-all text-text-muted">File: {item.filePath}</div>}
-                        {item.textValue && <div className="whitespace-pre-wrap text-text-muted">{item.textValue}</div>}
-                        {item.metadata && Object.keys(item.metadata).filter((key) => key !== "screenshotDataUrl").length > 0 && (
-                          <pre className="overflow-x-auto whitespace-pre-wrap text-[10px] text-text-muted">{JSON.stringify(Object.fromEntries(Object.entries(item.metadata).filter(([key]) => key !== "screenshotDataUrl")), null, 2)}</pre>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-                )}
+                <SubmissionEvidence items={activeSubmission.proofItems} />
               </div>
 
               {/* Timeline Reconstruction */}

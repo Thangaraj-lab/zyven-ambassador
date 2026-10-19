@@ -145,7 +145,25 @@ function submissionFromRow(row: Row): Submission {
 async function submissionsWithProofs(query: ReturnType<ReturnType<typeof client>["from"]>) {
   const { data, error } = await query.select("*, submission_items(*), tasks(title, points)").order("created_at", { ascending: false });
   if (error) throw error;
-  const rows = (data ?? []) as Row[];
+  const rows = (await Promise.all(((data ?? []) as Row[]).map(async (row) => {
+    const items = Array.isArray(row.submission_items) ? await Promise.all((row.submission_items as Row[]).map(async (item) => {
+      const filePath = typeof item.file_path === "string" ? item.file_path : "";
+      if (!filePath) return item;
+      if (filePath.startsWith("http")) {
+        return { ...item, metadata: { ...((item.metadata as Record<string, unknown>) ?? {}), fileUrl: filePath } };
+      }
+      try {
+        const { data: signed, error: signedError } = await client().storage.from("proofs").createSignedUrl(filePath, 3600);
+        if (!signedError && signed?.signedUrl) {
+          return { ...item, metadata: { ...((item.metadata as Record<string, unknown>) ?? {}), signedUrl: signed.signedUrl } };
+        }
+      } catch {
+        // Keep the original path visible when a secure preview cannot be generated.
+      }
+      return item;
+    })) : [];
+    return { ...row, submission_items: items };
+  }))) as Row[];
   const studentIds = [...new Set(rows.map((row) => asString(row.student_id)).filter(Boolean))];
   if (studentIds.length === 0) return rows.map(submissionFromRow);
   const { data: profiles, error: profileError } = await client().from("profiles").select("id, full_name").in("id", studentIds);
