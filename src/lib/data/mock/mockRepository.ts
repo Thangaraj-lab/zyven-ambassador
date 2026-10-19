@@ -1,6 +1,8 @@
 import type { Repository } from "../repository";
 import type {
   User,
+  MissionType,
+  TaskAudience,
   AmbassadorProfile,
   Mission,
   Submission,
@@ -1143,8 +1145,8 @@ export const mockRepository: Repository = {
       estimatedMinutes: data.estimatedMinutes || 5,
       startsAt: new Date().toISOString(),
       status: "pending_approval",
-      taskType: (data.taskType as any) || "url",
-      audience: (data.audience as any) || "public",
+      taskType: (data.taskType as MissionType) || "url",
+      audience: (data.audience as TaskAudience) || "public",
       googleFormUrl: data.googleFormUrl,
       googleSpreadsheetUrl: data.googleSpreadsheetUrl,
       collegeId: data.collegeId,

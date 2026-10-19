@@ -8,7 +8,7 @@ import {
   useReviewSubmission,
   useMyTeam,
 } from "@/lib/data/hooks";
-import { StatusBadge } from "@/components/ui/StatusBadge";
+import { StatusBadge, type MissionState } from "@/components/ui/StatusBadge";
 import { Button } from "@/components/ui/Button";
 import { Timeline, type TimelineEvent } from "@/components/ui/Timeline";
 import {
@@ -84,13 +84,16 @@ export default function AmbassadorReviewsPage() {
   }, [allSubmissions, activeTab, searchQuery, missionMap]);
 
   // Set default selected submission
+  // The selected item is derived from asynchronous query data and must be synchronized once it arrives.
   useEffect(() => {
     if (!selectedSubId && filteredSubmissions.length > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedSubId(filteredSubmissions[0].id);
     } else if (
       selectedSubId &&
       !filteredSubmissions.some((s) => s.id === selectedSubId)
     ) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedSubId(filteredSubmissions[0]?.id || null);
     }
   }, [filteredSubmissions, selectedSubId]);
@@ -384,7 +387,7 @@ export default function AmbassadorReviewsPage() {
                           </div>
                         </div>
                       </div>
-                      <StatusBadge state={sub.state as any} />
+                      <StatusBadge state={sub.state as MissionState} />
                     </div>
 
                     <div className="text-xs font-semibold text-text line-clamp-1 mb-1">
@@ -454,7 +457,7 @@ export default function AmbassadorReviewsPage() {
                 </div>
 
                 <div className="flex flex-col items-end gap-1.5 shrink-0">
-                  <StatusBadge state={activeSubmission.state as any} />
+                   <StatusBadge state={activeSubmission.state as MissionState} />
                   <div className="flex items-center gap-1 text-xs font-bold text-primary bg-primary/10 px-2.5 py-1 rounded-lg border border-primary/20">
                     <Award className="w-3.5 h-3.5" />
                     +{activeMission?.points || 25} Points

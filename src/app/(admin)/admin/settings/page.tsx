@@ -28,11 +28,16 @@ export default function AdminSettingsPage() {
   const [requireCompression, setRequireCompression] = useState(true);
   const [maintenance, setMaintenance] = useState(false);
 
+  // Populate editable controls when the server-backed settings query resolves.
   useEffect(() => {
     if (settings) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setMaxPoints(settings.maxAmbassadorTaskPoints || 25);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setAllowReview(settings.allowAmbassadorReview ?? true);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setRequireCompression(settings.requireScreenshotCompression ?? true);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setMaintenance(settings.maintenanceMode ?? false);
     }
   }, [settings]);

@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { BackButton } from "@/components/ui/BackButton";
 import { useCreateAmbassadorTask, usePlatformSettings, useColleges } from "@/lib/data/hooks";
+import type { MissionType } from "@/lib/data/types";
 import {
   Sparkles,
   ArrowRight,
@@ -131,7 +132,7 @@ export default function CreateAmbassadorTaskPage() {
         description: shortDescription,
         descriptionTa: detailedDescription || shortDescription,
         category,
-        taskType: taskType as any,
+        taskType: taskType as MissionType,
         brand,
         estimatedMinutes: Number(estimatedMinutes),
         externalUrl: externalUrl || undefined,

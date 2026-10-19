@@ -23,7 +23,9 @@ export function TiltCard({
   const [isHovered, setIsHovered] = useState(false);
   const [mounted, setMounted] = useState(false);
 
+  // Mount state prevents hydration differences before pointer interactions are enabled.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
 

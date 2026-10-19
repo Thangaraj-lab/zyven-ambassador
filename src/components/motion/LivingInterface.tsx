@@ -28,7 +28,9 @@ export function LivingInterfaceProvider({ children }: { children: React.ReactNod
 
   const [mounted, setMounted] = React.useState(false);
 
+  // Mount state gates browser-only pointer listeners after hydration.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
     if (!motionOK) return;
     if (typeof window === "undefined") return;

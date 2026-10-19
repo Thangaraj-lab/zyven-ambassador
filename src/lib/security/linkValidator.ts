@@ -125,7 +125,7 @@ export function normalizeSubmissionUrl(rawUrl: string): string {
     trackingParams.forEach((param) => url.searchParams.delete(param));
 
     // Strip trailing slash
-    let cleanPath = url.pathname.replace(/\/+$/, "");
+    const cleanPath = url.pathname.replace(/\/+$/, "");
     return `${url.protocol}//${url.hostname}${cleanPath}${url.search ? url.search : ""}`;
   } catch {
     return rawUrl.trim().toLowerCase();
