@@ -12,6 +12,7 @@
    - `20261019000000_zyven_core_schema.sql`
    - `20261019000001_zyven_rpc_and_rls.sql`
    - `20261019000002_zyven_launch_tasks.sql`
+   - `20261019000003_auth_hardening_and_launch.sql`
 3. Confirm private bucket `proofs` exists under Supabase Storage.
 4. Enable Supabase Realtime for `tasks`, `submissions`, `point_transactions`, `notifications`.
 5. Configure Auth URL redirects:

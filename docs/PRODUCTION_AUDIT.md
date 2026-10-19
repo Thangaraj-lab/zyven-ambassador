@@ -25,3 +25,4 @@
 - `20261019000000_zyven_core_schema.sql`: 18 core tables, indexes, constraints, platform settings.
 - `20261019000001_zyven_rpc_and_rls.sql`: RLS policies, atomic `review_submission` RPC, storage policies.
 - `20261019000002_zyven_launch_tasks.sql`: Seed for the 2 official launch tasks.
+- `20261019000003_auth_hardening_and_launch.sql`: Auth hardening and launch safety updates.

@@ -20,7 +20,7 @@
 - Cloudflare Turnstile token validation integrated for signup and authentication.
 
 ## 5. Security Headers
-Configured via `src/middleware.ts`:
+Configured via `src/proxy.ts` (Next.js 16 proxy convention):
 - `X-Content-Type-Options: nosniff`
 - `X-Frame-Options: DENY`
 - `Referrer-Policy: strict-origin-when-cross-origin`

@@ -1,7 +1,8 @@
-# Supabase Repository Implementation (Future Phase)
+# Supabase Repository Adapter
 
-This directory is reserved for the production Supabase repository adapter.
-When backend migration occurs:
-1. Implement `supabaseRepository.ts` against the `Repository` interface defined in `src/lib/data/repository.ts`.
-2. Flip `NEXT_PUBLIC_USE_MOCK=false` in `.env.local`.
-3. Points calculations, ledger transactions, and atomic approvals map to Supabase SQL views and SECURITY DEFINER PostgreSQL functions with zero changes required to UI components.
+The adapter contains the read paths that are safe to use from the production UI. Mutations that require role checks or atomic transactions use the server actions and PostgreSQL RPCs in this repository.
+
+Before enabling production mode:
+1. Apply every SQL migration in `supabase/migrations/`.
+2. Put the real Supabase URL and anon/public key in `.env.local`.
+3. Set `NEXT_PUBLIC_USE_MOCK=false` and test each role end to end.
