@@ -4,6 +4,13 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { getRepository } from "./repository";
 import { mockStore } from "./mock/store";
+import {
+  createTaskAction,
+  approveTaskAction,
+  rejectTaskAction,
+  pauseTaskAction,
+  resumeTaskAction,
+} from "@/actions/taskActions";
 
 
 // Auto invalidate queries when mockStore updates
@@ -326,8 +333,21 @@ export function useCreateAmbassadorTask() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (data: Partial<import("./types").Mission>) => {
-      const repo = await getRepository();
-      return repo.createAmbassadorTask(data);
+      const result = await createTaskAction({
+        title: data.title || "",
+        shortDescription: data.description,
+        description: data.description || "",
+        category: data.category || "Social Media",
+        taskType: String(data.taskType || "HYBRID").toUpperCase() as never,
+        points: Number(data.points || 5),
+        estimatedMinutes: Number(data.estimatedMinutes || 10),
+        audience: data.audience === "college" ? "college" : data.audience === "selected_students" ? "selected_students" : data.audience === "all_students" ? "all_students" : "public",
+        collegeId: data.collegeId,
+        googleFormUrl: data.googleFormUrl,
+        googleSpreadsheetUrl: data.googleSpreadsheetUrl,
+        submitForApproval: data.status === "pending_approval",
+      });
+      return result.task as unknown as import("./types").Mission;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["missions"] });
@@ -340,8 +360,8 @@ export function useApproveTask() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async (taskId: string) => {
-      const repo = await getRepository();
-      return repo.approveTask(taskId);
+      const result = await approveTaskAction(taskId);
+      return result;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["missions"] });
@@ -354,8 +374,7 @@ export function useRejectTask() {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async ({ taskId, reason }: { taskId: string; reason?: string }) => {
-      const repo = await getRepository();
-      return repo.rejectTask(taskId, reason);
+      return rejectTaskAction(taskId, reason || "");
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["missions"] });
@@ -374,8 +393,8 @@ export function useSetTaskStatus() {
       taskId: string;
       status: "live" | "paused" | "archived";
     }) => {
-      const repo = await getRepository();
-      return repo.setTaskStatus(taskId, status);
+      if (status === "live") return resumeTaskAction(taskId);
+      return pauseTaskAction(taskId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["missions"] });
