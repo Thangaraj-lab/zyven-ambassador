@@ -8,14 +8,24 @@
 
 ### 1. Supabase Setup
 1. Create a production Supabase project at [supabase.com](https://supabase.com).
-2. Execute SQL migrations in `supabase/migrations/`:
+2. Authenticate the Supabase CLI and link this project:
+   ```bash
+   supabase login
+   supabase link --project-ref waytzdemvxwlkrejkjki
+   ```
+3. Apply the tracked migrations from the repository:
+   ```bash
+   supabase db push
+   ```
+   This is the permanent deployment path; it records migration versions and prevents accidental re-execution.
+4. The migrations are also available in `supabase/migrations/`:
    - `20261019000000_zyven_core_schema.sql`
    - `20261019000001_zyven_rpc_and_rls.sql`
    - `20261019000002_zyven_launch_tasks.sql`
    - `20261019000003_auth_hardening_and_launch.sql`
-3. Confirm private bucket `proofs` exists under Supabase Storage.
-4. Enable Supabase Realtime for `tasks`, `submissions`, `point_transactions`, `notifications`.
-5. Configure Auth URL redirects:
+5. Confirm private bucket `proofs` exists under Supabase Storage.
+6. Enable Supabase Realtime for `tasks`, `submissions`, `point_transactions`, `notifications`.
+7. Configure Auth URL redirects:
    - `https://your-domain.vercel.app/auth/callback`
    - `https://your-domain.vercel.app/**`
 

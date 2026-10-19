@@ -66,47 +66,47 @@ $$;
 -- ============================================================
 
 -- PROFILES
-CREATE POLICY "Public profiles are viewable by authenticated users"
-ON public.profiles FOR SELECT TO authenticated
+DROP POLICY IF EXISTS "Public profiles are viewable by authenticated users" ON public.profiles;
+CREATE POLICY "Public profiles are viewable by authenticated users" ON public.profiles FOR SELECT TO authenticated
 USING (true);
 
-CREATE POLICY "Users can update their own non-role profile attributes"
-ON public.profiles FOR UPDATE TO authenticated
+DROP POLICY IF EXISTS "Users can update their own non-role profile attributes" ON public.profiles;
+CREATE POLICY "Users can update their own non-role profile attributes" ON public.profiles FOR UPDATE TO authenticated
 USING (auth.uid() = id)
 WITH CHECK (
     auth.uid() = id
     AND role = (SELECT role FROM public.profiles WHERE id = auth.uid()) -- Cannot change own role
 );
 
-CREATE POLICY "Admins have full access to profiles"
-ON public.profiles FOR ALL TO authenticated
+DROP POLICY IF EXISTS "Admins have full access to profiles" ON public.profiles;
+CREATE POLICY "Admins have full access to profiles" ON public.profiles FOR ALL TO authenticated
 USING (public.is_admin());
 
 -- COLLEGES
-CREATE POLICY "Colleges are readable by everyone authenticated"
-ON public.colleges FOR SELECT TO authenticated
+DROP POLICY IF EXISTS "Colleges are readable by everyone authenticated" ON public.colleges;
+CREATE POLICY "Colleges are readable by everyone authenticated" ON public.colleges FOR SELECT TO authenticated
 USING (true);
 
-CREATE POLICY "Admins manage colleges"
-ON public.colleges FOR ALL TO authenticated
+DROP POLICY IF EXISTS "Admins manage colleges" ON public.colleges;
+CREATE POLICY "Admins manage colleges" ON public.colleges FOR ALL TO authenticated
 USING (public.is_admin());
 
 -- AMBASSADOR REQUESTS
-CREATE POLICY "Students can view own requests"
-ON public.ambassador_requests FOR SELECT TO authenticated
+DROP POLICY IF EXISTS "Students can view own requests" ON public.ambassador_requests;
+CREATE POLICY "Students can view own requests" ON public.ambassador_requests FOR SELECT TO authenticated
 USING (student_id = auth.uid() OR public.is_admin());
 
-CREATE POLICY "Students can insert own request"
-ON public.ambassador_requests FOR INSERT TO authenticated
+DROP POLICY IF EXISTS "Students can insert own request" ON public.ambassador_requests;
+CREATE POLICY "Students can insert own request" ON public.ambassador_requests FOR INSERT TO authenticated
 WITH CHECK (student_id = auth.uid() AND public.current_user_role() = 'student');
 
-CREATE POLICY "Admins can update ambassador requests"
-ON public.ambassador_requests FOR UPDATE TO authenticated
+DROP POLICY IF EXISTS "Admins can update ambassador requests" ON public.ambassador_requests;
+CREATE POLICY "Admins can update ambassador requests" ON public.ambassador_requests FOR UPDATE TO authenticated
 USING (public.is_admin());
 
 -- TASKS
-CREATE POLICY "Students see live tasks within valid dates"
-ON public.tasks FOR SELECT TO authenticated
+DROP POLICY IF EXISTS "Students see live tasks within valid dates" ON public.tasks;
+CREATE POLICY "Students see live tasks within valid dates" ON public.tasks FOR SELECT TO authenticated
 USING (
     status = 'live' 
     AND start_at <= timezone('utc'::text, now())
@@ -115,70 +115,70 @@ USING (
     OR public.is_admin()
 );
 
-CREATE POLICY "Ambassadors can insert own drafts"
-ON public.tasks FOR INSERT TO authenticated
+DROP POLICY IF EXISTS "Ambassadors can insert own drafts" ON public.tasks;
+CREATE POLICY "Ambassadors can insert own drafts" ON public.tasks FOR INSERT TO authenticated
 WITH CHECK (
     auth.uid() = created_by 
     AND (public.is_ambassador() OR public.is_admin())
 );
 
-CREATE POLICY "Ambassadors can update own non-live tasks"
-ON public.tasks FOR UPDATE TO authenticated
+DROP POLICY IF EXISTS "Ambassadors can update own non-live tasks" ON public.tasks;
+CREATE POLICY "Ambassadors can update own non-live tasks" ON public.tasks FOR UPDATE TO authenticated
 USING (
     auth.uid() = created_by 
     AND status IN ('draft', 'changes_requested', 'paused')
     OR public.is_admin()
 );
 
-CREATE POLICY "Admins have full control over tasks"
-ON public.tasks FOR ALL TO authenticated
+DROP POLICY IF EXISTS "Admins have full control over tasks" ON public.tasks;
+CREATE POLICY "Admins have full control over tasks" ON public.tasks FOR ALL TO authenticated
 USING (public.is_admin());
 
 -- TASK REQUIREMENTS & STEPS
-CREATE POLICY "Requirements readable for viewable tasks"
-ON public.task_requirements FOR SELECT TO authenticated
+DROP POLICY IF EXISTS "Requirements readable for viewable tasks" ON public.task_requirements;
+CREATE POLICY "Requirements readable for viewable tasks" ON public.task_requirements FOR SELECT TO authenticated
 USING (true);
 
-CREATE POLICY "Creators manage their task requirements"
-ON public.task_requirements FOR ALL TO authenticated
+DROP POLICY IF EXISTS "Creators manage their task requirements" ON public.task_requirements;
+CREATE POLICY "Creators manage their task requirements" ON public.task_requirements FOR ALL TO authenticated
 USING (
     EXISTS (SELECT 1 FROM public.tasks WHERE id = task_id AND created_by = auth.uid())
     OR public.is_admin()
 );
 
-CREATE POLICY "Steps readable for viewable tasks"
-ON public.task_steps FOR SELECT TO authenticated
+DROP POLICY IF EXISTS "Steps readable for viewable tasks" ON public.task_steps;
+CREATE POLICY "Steps readable for viewable tasks" ON public.task_steps FOR SELECT TO authenticated
 USING (true);
 
-CREATE POLICY "Creators manage their task steps"
-ON public.task_steps FOR ALL TO authenticated
+DROP POLICY IF EXISTS "Creators manage their task steps" ON public.task_steps;
+CREATE POLICY "Creators manage their task steps" ON public.task_steps FOR ALL TO authenticated
 USING (
     EXISTS (SELECT 1 FROM public.tasks WHERE id = task_id AND created_by = auth.uid())
     OR public.is_admin()
 );
 
 -- SUBMISSIONS
-CREATE POLICY "Students can view own submissions"
-ON public.submissions FOR SELECT TO authenticated
+DROP POLICY IF EXISTS "Students can view own submissions" ON public.submissions;
+CREATE POLICY "Students can view own submissions" ON public.submissions FOR SELECT TO authenticated
 USING (
     student_id = auth.uid()
     OR EXISTS (SELECT 1 FROM public.tasks WHERE id = task_id AND created_by = auth.uid())
     OR public.is_admin()
 );
 
-CREATE POLICY "Students can insert own submissions"
-ON public.submissions FOR INSERT TO authenticated
+DROP POLICY IF EXISTS "Students can insert own submissions" ON public.submissions;
+CREATE POLICY "Students can insert own submissions" ON public.submissions FOR INSERT TO authenticated
 WITH CHECK (student_id = auth.uid() AND public.current_user_role() = 'student');
 
-CREATE POLICY "Students can update own in-progress submissions"
-ON public.submissions FOR UPDATE TO authenticated
+DROP POLICY IF EXISTS "Students can update own in-progress submissions" ON public.submissions;
+CREATE POLICY "Students can update own in-progress submissions" ON public.submissions FOR UPDATE TO authenticated
 USING (
     student_id = auth.uid() AND status IN ('in_progress', 'changes_requested')
 );
 
 -- SUBMISSION ITEMS
-CREATE POLICY "Submission items accessible by owner, task creator, or admin"
-ON public.submission_items FOR SELECT TO authenticated
+DROP POLICY IF EXISTS "Submission items accessible by owner, task creator, or admin" ON public.submission_items;
+CREATE POLICY "Submission items accessible by owner, task creator, or admin" ON public.submission_items FOR SELECT TO authenticated
 USING (
     EXISTS (SELECT 1 FROM public.submissions WHERE id = submission_id AND student_id = auth.uid())
     OR EXISTS (
@@ -189,47 +189,47 @@ USING (
     OR public.is_admin()
 );
 
-CREATE POLICY "Students can insert submission items for own submission"
-ON public.submission_items FOR INSERT TO authenticated
+DROP POLICY IF EXISTS "Students can insert submission items for own submission" ON public.submission_items;
+CREATE POLICY "Students can insert submission items for own submission" ON public.submission_items FOR INSERT TO authenticated
 WITH CHECK (
     EXISTS (SELECT 1 FROM public.submissions WHERE id = submission_id AND student_id = auth.uid())
 );
 
 -- POINT TRANSACTIONS (Append-only, strictly immutable to client)
-CREATE POLICY "Users can read own point transactions"
-ON public.point_transactions FOR SELECT TO authenticated
+DROP POLICY IF EXISTS "Users can read own point transactions" ON public.point_transactions;
+CREATE POLICY "Users can read own point transactions" ON public.point_transactions FOR SELECT TO authenticated
 USING (student_id = auth.uid() OR public.is_admin());
 
 -- TIERS & REWARDS
-CREATE POLICY "Tiers readable by all"
-ON public.tiers FOR SELECT TO authenticated
+DROP POLICY IF EXISTS "Tiers readable by all" ON public.tiers;
+CREATE POLICY "Tiers readable by all" ON public.tiers FOR SELECT TO authenticated
 USING (true);
 
-CREATE POLICY "Rewards readable by all"
-ON public.rewards FOR SELECT TO authenticated
+DROP POLICY IF EXISTS "Rewards readable by all" ON public.rewards;
+CREATE POLICY "Rewards readable by all" ON public.rewards FOR SELECT TO authenticated
 USING (true);
 
 -- NOTIFICATIONS
-CREATE POLICY "Users can read and update own notifications"
-ON public.notifications FOR ALL TO authenticated
+DROP POLICY IF EXISTS "Users can read and update own notifications" ON public.notifications;
+CREATE POLICY "Users can read and update own notifications" ON public.notifications FOR ALL TO authenticated
 USING (user_id = auth.uid());
 
 -- ANNOUNCEMENTS
-CREATE POLICY "Users can read published announcements"
-ON public.announcements FOR SELECT TO authenticated
+DROP POLICY IF EXISTS "Users can read published announcements" ON public.announcements;
+CREATE POLICY "Users can read published announcements" ON public.announcements FOR SELECT TO authenticated
 USING (status = 'published' OR public.is_admin() OR created_by = auth.uid());
 
-CREATE POLICY "Admins manage announcements"
-ON public.announcements FOR ALL TO authenticated
+DROP POLICY IF EXISTS "Admins manage announcements" ON public.announcements;
+CREATE POLICY "Admins manage announcements" ON public.announcements FOR ALL TO authenticated
 USING (public.is_admin());
 
 -- PLATFORM SETTINGS
-CREATE POLICY "Settings readable by authenticated users"
-ON public.platform_settings FOR SELECT TO authenticated
+DROP POLICY IF EXISTS "Settings readable by authenticated users" ON public.platform_settings;
+CREATE POLICY "Settings readable by authenticated users" ON public.platform_settings FOR SELECT TO authenticated
 USING (true);
 
-CREATE POLICY "Only admins can modify settings"
-ON public.platform_settings FOR ALL TO authenticated
+DROP POLICY IF EXISTS "Only admins can modify settings" ON public.platform_settings;
+CREATE POLICY "Only admins can modify settings" ON public.platform_settings FOR ALL TO authenticated
 USING (public.is_admin());
 
 -- ============================================================
@@ -442,15 +442,15 @@ VALUES ('proofs', 'proofs', false)
 ON CONFLICT (id) DO NOTHING;
 
 -- Storage policies: Student uploads to proofs/{auth.uid()}
-CREATE POLICY "Students can upload proofs into own folder"
-ON storage.objects FOR INSERT TO authenticated
+DROP POLICY IF EXISTS "Students can upload proofs into own folder" ON storage.objects;
+CREATE POLICY "Students can upload proofs into own folder" ON storage.objects FOR INSERT TO authenticated
 WITH CHECK (
     bucket_id = 'proofs'
     AND (storage.foldername(name))[1] = auth.uid()::text
 );
 
-CREATE POLICY "Owners, Task Reviewers, and Admin can read proofs"
-ON storage.objects FOR SELECT TO authenticated
+DROP POLICY IF EXISTS "Owners, Task Reviewers, and Admin can read proofs" ON storage.objects;
+CREATE POLICY "Owners, Task Reviewers, and Admin can read proofs" ON storage.objects FOR SELECT TO authenticated
 USING (
     bucket_id = 'proofs'
     AND (
