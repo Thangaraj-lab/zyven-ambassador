@@ -27,12 +27,15 @@ import { MissionCard } from "@/components/ui/MissionCard";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { LocaleToggle } from "@/components/ui/LocaleToggle";
 import { TiltCard } from "@/components/ui/TiltCard";
+import { useMissions } from "@/lib/data/hooks";
 import {
   SEED_MISSIONS,
   SEED_COLLEGES,
 } from "@/lib/data/mock/seed";
 
 export default function LandingPage() {
+  const { data: missions = [] } = useMissions();
+  const liveMissions = missions.filter((m) => m.status === "live");
   const [openFaq, setOpenFaq] = useState<number | null>(0);
   const { scrollYProgress } = useScroll();
 
@@ -484,11 +487,35 @@ export default function LandingPage() {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {SEED_MISSIONS.slice(0, 2).map((m) => (
-            <TiltCard key={m.id} maxTilt={6} scale={1.02}>
-              <MissionCard mission={m} state="AVAILABLE" />
-            </TiltCard>
-          ))}
+          {liveMissions.length === 0 ? (
+            <div className="col-span-full rounded-3xl border border-dashed border-border bg-surface/50 p-10 text-center shadow-soft-sm">
+              <Sparkles className="mx-auto h-8 w-8 text-primary mb-2" />
+              <h3 className="font-display text-lg font-bold text-text">New Campus Missions Dropping Soon</h3>
+              <p className="text-xs text-text-muted mt-1 max-w-md mx-auto">
+                Official missions and technical challenges are being scheduled. Create your student account today to be notified the moment tasks go live!
+              </p>
+              <div className="mt-5 flex items-center justify-center gap-3">
+                <Link
+                  href="/register"
+                  className="brand-gradient-bg text-white px-5 py-2 rounded-full text-xs font-bold hover:brightness-110 shadow-soft-sm transition-all"
+                >
+                  Create Student Account
+                </Link>
+                <Link
+                  href="/login"
+                  className="px-5 py-2 rounded-full border border-border bg-surface text-xs font-bold text-text hover:bg-surface-2 transition-all"
+                >
+                  Ambassador Login
+                </Link>
+              </div>
+            </div>
+          ) : (
+            liveMissions.slice(0, 2).map((m) => (
+              <TiltCard key={m.id} maxTilt={6} scale={1.02}>
+                <MissionCard mission={m} state="AVAILABLE" />
+              </TiltCard>
+            ))
+          )}
         </div>
       </section>
 

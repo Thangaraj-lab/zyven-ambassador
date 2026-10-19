@@ -17,7 +17,8 @@ import type {
 export interface Repository {
   // Session & Auth
   getSession(): Promise<{ user: User | null; profile: AmbassadorProfile | null }>;
-  loginWithGoogleMock(email?: string): Promise<User>;
+  login(email: string, password?: string, requestedRole?: "student" | "ambassador"): Promise<User>;
+  loginWithGoogleMock(email?: string, requestedRole?: "student" | "ambassador"): Promise<User>;
   loginAdminMock(): Promise<User>;
   logout(): Promise<void>;
   registerAmbassador(data: {
@@ -145,8 +146,12 @@ let repositoryInstance: Repository | null = null;
 export async function getRepository(): Promise<Repository> {
   if (repositoryInstance) return repositoryInstance;
 
-  // Always use mock repository during mock phase
-  const { mockRepository } = await import("./mock/mockRepository");
-  repositoryInstance = mockRepository;
+  if (process.env.NEXT_PUBLIC_USE_MOCK === "true") {
+    const { mockRepository } = await import("./mock/mockRepository");
+    repositoryInstance = mockRepository;
+  } else {
+    const { supabaseRepository } = await import("./supabase/supabaseRepository");
+    repositoryInstance = supabaseRepository;
+  }
   return repositoryInstance;
 }

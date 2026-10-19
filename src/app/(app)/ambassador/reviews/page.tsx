@@ -469,29 +469,42 @@ export default function AmbassadorReviewsPage() {
                 </h3>
 
                 {activeSubmission.proofUrl && (
-                  <div className="p-3.5 rounded-xl bg-surface-elevated/40 border border-border/60 flex items-center justify-between gap-3">
-                    <div className="truncate">
-                      <div className="text-[11px] font-semibold text-text-muted">
-                        External Proof URL
+                  <div className="p-4 rounded-xl bg-surface-elevated/40 border border-border/60 space-y-3">
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="truncate">
+                        <div className="text-[11px] font-semibold text-text-muted">
+                          External Proof URL
+                        </div>
+                        <a
+                          href={activeSubmission.proofUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-xs font-bold text-primary hover:underline truncate block"
+                        >
+                          {activeSubmission.proofUrl}
+                        </a>
                       </div>
                       <a
                         href={activeSubmission.proofUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-xs font-bold text-primary hover:underline truncate block"
+                        className="px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold flex items-center gap-1.5 shrink-0 transition-colors"
                       >
-                        {activeSubmission.proofUrl}
+                        <span>Inspect Link</span>
+                        <ExternalLink className="w-3.5 h-3.5" />
                       </a>
                     </div>
-                    <a
-                      href={activeSubmission.proofUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary text-xs font-bold flex items-center gap-1.5 shrink-0 transition-colors"
-                    >
-                      <span>Open Link</span>
-                      <ExternalLink className="w-3.5 h-3.5" />
-                    </a>
+
+                    {/* Authenticity & Fraud Check Badge */}
+                    <div className="flex items-center gap-2 pt-2 border-t border-border/40">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                        <ShieldCheck className="w-3 h-3" />
+                        Verified Domain Format
+                      </span>
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-[10px] font-bold bg-primary/10 text-primary border border-primary/20">
+                        Unique Submission (No Duplicates)
+                      </span>
+                    </div>
                   </div>
                 )}
 

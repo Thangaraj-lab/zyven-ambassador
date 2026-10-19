@@ -6,25 +6,30 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { BackButton } from "@/components/ui/BackButton";
-import { useCreateAmbassadorTask, useMyTeam, usePlatformSettings } from "@/lib/data/hooks";
+import { useCreateAmbassadorTask, usePlatformSettings, useColleges } from "@/lib/data/hooks";
 import {
   Sparkles,
   ArrowRight,
   ArrowLeft,
   CheckCircle2,
-  AlertCircle,
-  Clock,
-  Zap,
-  Users,
-  Shield,
+  FileSpreadsheet,
+  Link as LinkIcon,
+  HelpCircle,
   Plus,
   Trash2,
+  Globe,
+  GraduationCap,
+  Building2,
+  UserCheck,
+  FileText,
+  UploadCloud,
+  Layers,
 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function CreateAmbassadorTaskPage() {
   const router = useRouter();
-  const { data: myTeam } = useMyTeam();
+  const { data: colleges = [] } = useColleges();
   const { data: settings } = usePlatformSettings();
   const { mutateAsync: createTask, isPending } = useCreateAmbassadorTask();
 
@@ -32,28 +37,60 @@ export default function CreateAmbassadorTaskPage() {
 
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
 
-  // Step 1: Basics
+  // STEP 1 — TASK BASICS
   const [title, setTitle] = useState("");
   const [titleTa, setTitleTa] = useState("");
-  const [description, setDescription] = useState("");
-  const [descriptionTa, setDescriptionTa] = useState("");
+  const [shortDescription, setShortDescription] = useState("");
+  const [detailedDescription, setDetailedDescription] = useState("");
+  const [category, setCategory] = useState("Social Media");
+  const [taskType, setTaskType] = useState<string>("url");
+  const [language, setLanguage] = useState<"English" | "Tamil" | "Both">("English");
   const [brand, setBrand] = useState<"college" | "linkedin" | "whatsapp" | "instagram" | "event">("college");
-  const [estimatedMinutes, setEstimatedMinutes] = useState(5);
+  const [estimatedMinutes, setEstimatedMinutes] = useState(10);
   const [externalUrl, setExternalUrl] = useState("");
 
-  // Step 2: Instructions & Proof
+  // STEP 2 — INSTRUCTIONS BUILDER
   const [instructions, setInstructions] = useState([
-    { stepNumber: 1, title: "Review Guidelines", description: "Follow the campus instructions provided by ambassador." },
-    { stepNumber: 2, title: "Execute Action", description: "Perform the activity and record proof." },
-    { stepNumber: 3, title: "Submit Verification", description: "Submit link or screenshot for review." },
+    {
+      stepNumber: 1,
+      title: "Review Task Guidelines",
+      description: "Carefully read all task prerequisites and rules before starting.",
+      actionType: "link" as const,
+      actionUrl: "",
+    },
+    {
+      stepNumber: 2,
+      title: "Perform Required Activity",
+      description: "Execute the task as instructed and collect proof of completion.",
+      actionType: "text" as const,
+    },
+    {
+      stepNumber: 3,
+      title: "Submit Verification Proof",
+      description: "Submit your live link, uploaded file, or registration response.",
+      actionType: "upload" as const,
+    },
   ]);
+
+  // STEP 3 — REQUIREMENTS & GOOGLE FORM / SPREADSHEET INTEGRATION
   const [urlRequired, setUrlRequired] = useState(true);
   const [screenshotRequired, setScreenshotRequired] = useState(false);
+  const [documentRequired, setDocumentRequired] = useState(false);
   const [postTemplateEn, setPostTemplateEn] = useState("");
 
-  // Step 3: Points & Audience (Capped at maxPointsCap, NEVER 'everyone')
-  const [points, setPoints] = useState(20);
-  const [audience, setAudience] = useState<"own_team" | "specific_members">("own_team");
+  // Google Form & Spreadsheet Options
+  const [enableGoogleForm, setEnableGoogleForm] = useState(false);
+  const [googleFormUrl, setGoogleFormUrl] = useState("");
+  const [googleSpreadsheetUrl, setGoogleSpreadsheetUrl] = useState("");
+
+  // Course Completion Task Fields
+  const [courseProvider, setCourseProvider] = useState("");
+  const [courseCompletionPct, setCourseCompletionPct] = useState(100);
+
+  // STEP 4 — AUDIENCE & POINTS (SOLO AMBASSADOR - NO TEAMS)
+  const [points, setPoints] = useState(25);
+  const [audience, setAudience] = useState<"public" | "all_students" | "college" | "selected_students">("public");
+  const [selectedCollegeId, setSelectedCollegeId] = useState("col-mec");
 
   const addInstruction = () => {
     setInstructions([
@@ -62,6 +99,7 @@ export default function CreateAmbassadorTaskPage() {
         stepNumber: instructions.length + 1,
         title: "",
         description: "",
+        actionType: "text",
       },
     ]);
   };
@@ -74,15 +112,15 @@ export default function CreateAmbassadorTaskPage() {
     setInstructions(updated);
   };
 
-  const updateInstruction = (idx: number, field: "title" | "description", val: string) => {
+  const updateInstruction = (idx: number, field: "title" | "description" | "actionUrl", val: string) => {
     const updated = [...instructions];
-    updated[idx][field] = val;
+    updated[idx] = { ...updated[idx], [field]: val };
     setInstructions(updated);
   };
 
   const handleSubmit = async (submitStatus: "draft" | "pending_approval") => {
-    if (!title.trim() || !description.trim()) {
-      toast.error("Please complete the required task details");
+    if (!title.trim() || !shortDescription.trim()) {
+      toast.error("Please complete the task title and description");
       return;
     }
 
@@ -90,24 +128,36 @@ export default function CreateAmbassadorTaskPage() {
       await createTask({
         title,
         titleTa: titleTa || title,
-        description,
-        descriptionTa: descriptionTa || description,
+        description: shortDescription,
+        descriptionTa: detailedDescription || shortDescription,
+        category,
+        taskType: taskType as any,
         brand,
         estimatedMinutes: Number(estimatedMinutes),
         externalUrl: externalUrl || undefined,
-        instructions,
+        googleFormUrl: enableGoogleForm && googleFormUrl ? googleFormUrl : undefined,
+        googleSpreadsheetUrl: enableGoogleForm && googleSpreadsheetUrl ? googleSpreadsheetUrl : undefined,
+        instructions: instructions.map((i) => ({
+          stepNumber: i.stepNumber,
+          title: i.title,
+          description: i.description,
+          actionType: i.actionType,
+          actionUrl: i.actionUrl || undefined,
+        })),
         proofRequired: {
           url: urlRequired,
           screenshot: screenshotRequired,
+          document: documentRequired,
         },
         proofTypes: [
           ...(urlRequired ? ["url" as const] : []),
           ...(screenshotRequired ? ["screenshot" as const] : []),
+          ...(documentRequired ? ["document" as const] : []),
+          ...(enableGoogleForm ? ["form" as const] : []),
         ],
         points: Math.min(Number(points), maxPointsCap),
         audience,
-        teamId: myTeam?.id,
-        category: "Campus Initiative",
+        collegeId: audience === "college" ? selectedCollegeId : undefined,
         status: submitStatus,
         postTemplate: postTemplateEn ? { en: postTemplateEn, ta: "" } : undefined,
       });
@@ -119,23 +169,23 @@ export default function CreateAmbassadorTaskPage() {
       );
       router.push("/ambassador/tasks");
     } catch {
-      toast.error("Failed to create task");
+      toast.error("Failed to save task");
     }
   };
 
   return (
-    <div className="space-y-8 max-w-3xl mx-auto pb-12">
-      <BackButton fallbackHref="/ambassador/tasks" label="Back to Team Tasks" />
+    <div className="space-y-8 max-w-4xl mx-auto pb-16">
+      <BackButton fallbackHref="/ambassador/tasks" label="Back to Tasks" />
 
       {/* Stepper Header */}
       <div className="space-y-2">
         <div className="flex items-center justify-between text-xs font-bold text-text-muted">
           <span>STEP {step} OF 4</span>
-          <span className="text-primary">
-            {step === 1 && "Basic Information"}
-            {step === 2 && "Instructions & Proof"}
-            {step === 3 && "Points & Audience"}
-            {step === 4 && "Review & Submit"}
+          <span className="text-primary font-black uppercase tracking-wider">
+            {step === 1 && "Step 1: Task Basics"}
+            {step === 2 && "Step 2: Step-by-Step Instructions"}
+            {step === 3 && "Step 3: Requirements & Form Integration"}
+            {step === 4 && "Step 4: Audience & Points"}
           </span>
         </div>
         <div className="h-2 w-full bg-surface-2 rounded-full overflow-hidden border border-border">
@@ -146,20 +196,24 @@ export default function CreateAmbassadorTaskPage() {
         </div>
       </div>
 
-      {/* Step 1: Basics */}
+      {/* STEP 1: TASK BASICS */}
       {step === 1 && (
         <div className="p-7 rounded-[28px] bg-surface border border-border shadow-soft-sm space-y-6">
           <div>
-            <h2 className="text-xl font-black text-text">Task Basics</h2>
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold mb-2">
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>Task Creation Studio</span>
+            </div>
+            <h2 className="text-2xl font-black text-text tracking-tight">Step 1 — Task Basics</h2>
             <p className="text-xs text-text-muted mt-1">
-              Provide clear and concise details for your campus task.
+              Configure the foundational metadata and type for your Zyven student initiative.
             </p>
           </div>
 
           <div className="space-y-4">
             <Input
-              label="Task Title (English) *"
-              placeholder="e.g. Share Tech Symposium Announcement"
+              label="Task Title *"
+              placeholder="e.g. Follow & Post on LinkedIn or Register for Campus Hackathon"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               required
@@ -172,29 +226,97 @@ export default function CreateAmbassadorTaskPage() {
               onChange={(e) => setTitleTa(e.target.value)}
             />
 
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-xs font-bold text-text mb-1.5">Category *</label>
+                <select
+                  value={category}
+                  onChange={(e) => setCategory(e.target.value)}
+                  className="w-full p-2.5 rounded-xl border border-border bg-surface text-xs text-text font-semibold focus:outline-none focus:ring-2 focus:ring-primary/40"
+                >
+                  <option value="Social Media">Social Media</option>
+                  <option value="Learning">Learning</option>
+                  <option value="Course">Course</option>
+                  <option value="Quiz">Quiz</option>
+                  <option value="Assignment">Assignment</option>
+                  <option value="Competition">Competition</option>
+                  <option value="Event">Event</option>
+                  <option value="Content Creation">Content Creation</option>
+                  <option value="Referral">Referral</option>
+                  <option value="Survey">Survey</option>
+                  <option value="Community">Community</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-text mb-1.5">Task Type *</label>
+                <select
+                  value={taskType}
+                  onChange={(e) => {
+                    const t = e.target.value;
+                    setTaskType(t);
+                    if (t === "form") setEnableGoogleForm(true);
+                  }}
+                  className="w-full p-2.5 rounded-xl border border-border bg-surface text-xs text-text font-semibold focus:outline-none focus:ring-2 focus:ring-primary/40"
+                >
+                  <option value="url">URL Submission</option>
+                  <option value="screenshot">Screenshot Proof</option>
+                  <option value="form">Form / Google Form Registration</option>
+                  <option value="document">Document / PDF Submission</option>
+                  <option value="ppt">PPT Submission</option>
+                  <option value="quiz">Quiz Task</option>
+                  <option value="course_completion">Course Completion</option>
+                  <option value="text">Text Response</option>
+                  <option value="multi_step">Multi-step Initiative</option>
+                  <option value="hybrid">Hybrid Task</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-bold text-text mb-1.5">Language</label>
+                <select
+                  value={language}
+                  onChange={(e) => setLanguage(e.target.value as typeof language)}
+                  className="w-full p-2.5 rounded-xl border border-border bg-surface text-xs text-text font-semibold focus:outline-none focus:ring-2 focus:ring-primary/40"
+                >
+                  <option value="English">English</option>
+                  <option value="Tamil">Tamil</option>
+                  <option value="Both">Both (Bilingual)</option>
+                </select>
+              </div>
+            </div>
+
             <div>
-              <label className="block text-xs font-bold text-text mb-1.5">
-                Description (English) *
-              </label>
+              <label className="block text-xs font-bold text-text mb-1.5">Short Description *</label>
               <textarea
-                rows={3}
-                placeholder="Explain the purpose and outcome of this campus initiative..."
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-                className="w-full p-3.5 rounded-xl border border-border bg-surface text-xs text-text focus:outline-none focus:ring-2 focus:ring-primary/40"
+                rows={2}
+                placeholder="A compelling 1-2 sentence overview shown on task cards..."
+                value={shortDescription}
+                onChange={(e) => setShortDescription(e.target.value)}
+                className="w-full p-3 rounded-xl border border-border bg-surface text-xs text-text focus:outline-none focus:ring-2 focus:ring-primary/40"
                 required
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-text mb-1.5">Detailed Description</label>
+              <textarea
+                rows={4}
+                placeholder="Complete details, background, learning outcomes, and verification criteria..."
+                value={detailedDescription}
+                onChange={(e) => setDetailedDescription(e.target.value)}
+                className="w-full p-3 rounded-xl border border-border bg-surface text-xs text-text focus:outline-none focus:ring-2 focus:ring-primary/40"
               />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-text mb-1.5">
-                  Platform / Brand
-                </label>
+                <label className="block text-xs font-bold text-text mb-1.5">Platform Brand Target</label>
                 <select
                   value={brand}
                   onChange={(e) => setBrand(e.target.value as typeof brand)}
-                  className="w-full p-3 rounded-xl border border-border bg-surface text-xs text-text focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  className="w-full p-2.5 rounded-xl border border-border bg-surface text-xs text-text font-semibold focus:outline-none focus:ring-2 focus:ring-primary/40"
                 >
                   <option value="college">College Campus</option>
                   <option value="linkedin">LinkedIn</option>
@@ -205,18 +327,18 @@ export default function CreateAmbassadorTaskPage() {
               </div>
 
               <Input
-                label="Estimated Minutes"
+                label="Estimated Completion Time (Minutes)"
                 type="number"
                 min={1}
-                max={60}
+                max={180}
                 value={estimatedMinutes}
                 onChange={(e) => setEstimatedMinutes(Number(e.target.value))}
               />
             </div>
 
             <Input
-              label="External Reference Link (Optional)"
-              placeholder="https://chat.whatsapp.com/... or event link"
+              label="External Reference or Action URL (Optional)"
+              placeholder="https://... official post link or external platform URL"
               value={externalUrl}
               onChange={(e) => setExternalUrl(e.target.value)}
             />
@@ -226,7 +348,7 @@ export default function CreateAmbassadorTaskPage() {
             <Button
               variant="primary"
               size="md"
-              disabled={!title.trim() || !description.trim()}
+              disabled={!title.trim() || !shortDescription.trim()}
               onClick={() => setStep(2)}
               className="gap-2 font-bold"
             >
@@ -237,101 +359,65 @@ export default function CreateAmbassadorTaskPage() {
         </div>
       )}
 
-      {/* Step 2: Instructions */}
+      {/* STEP 2: INSTRUCTIONS */}
       {step === 2 && (
         <div className="p-7 rounded-[28px] bg-surface border border-border shadow-soft-sm space-y-6">
-          <div>
-            <h2 className="text-xl font-black text-text">Instructions & Proof</h2>
-            <p className="text-xs text-text-muted mt-1">
-              Define the verification steps your team members must follow.
-            </p>
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-black text-text tracking-tight">Step 2 — Task Instructions</h2>
+              <p className="text-xs text-text-muted mt-1">
+                Build clear, sequential steps for students to follow. Add as many steps as needed.
+              </p>
+            </div>
+            <Button variant="outline" size="sm" onClick={addInstruction} className="gap-1.5 text-xs font-bold">
+              <Plus className="h-3.5 w-3.5" />
+              <span>Add Step</span>
+            </Button>
           </div>
 
-          <div className="space-y-4">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-text">Steps Checklist</span>
-                <button
-                  type="button"
-                  onClick={addInstruction}
-                  className="text-xs font-bold text-primary hover:underline flex items-center gap-1 cursor-pointer"
-                >
-                  <Plus className="h-3.5 w-3.5" />
-                  <span>Add Step</span>
-                </button>
-              </div>
-
-              {instructions.map((inst, idx) => (
-                <div key={idx} className="p-3.5 rounded-2xl bg-surface-2 border border-border space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[11px] font-black uppercase text-primary">
-                      Step {inst.stepNumber}
-                    </span>
-                    {instructions.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeInstruction(idx)}
-                        className="text-danger hover:opacity-80 p-1 cursor-pointer"
-                      >
-                        <Trash2 className="h-3.5 w-3.5" />
-                      </button>
-                    )}
-                  </div>
-                  <input
-                    type="text"
-                    placeholder="Step Title"
-                    value={inst.title}
-                    onChange={(e) => updateInstruction(idx, "title", e.target.value)}
-                    className="w-full p-2.5 rounded-xl border border-border bg-surface text-xs text-text focus:outline-none"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Step Instruction Details"
-                    value={inst.description}
-                    onChange={(e) => updateInstruction(idx, "description", e.target.value)}
-                    className="w-full p-2.5 rounded-xl border border-border bg-surface text-xs text-text focus:outline-none"
-                  />
+          <div className="space-y-3.5">
+            {instructions.map((inst, idx) => (
+              <div key={idx} className="p-4 rounded-2xl bg-surface-2 border border-border space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <span className="text-[11px] font-black uppercase tracking-wider text-primary">
+                    Step {inst.stepNumber}
+                  </span>
+                  {instructions.length > 1 && (
+                    <button
+                      type="button"
+                      onClick={() => removeInstruction(idx)}
+                      className="text-danger hover:opacity-80 p-1 cursor-pointer"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </button>
+                  )}
                 </div>
-              ))}
-            </div>
 
-            <div className="pt-2 border-t border-border space-y-3">
-              <span className="text-xs font-bold text-text block">Proof Requirements</span>
-              <div className="flex items-center gap-6">
-                <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-text">
-                  <input
-                    type="checkbox"
-                    checked={urlRequired}
-                    onChange={(e) => setUrlRequired(e.target.checked)}
-                    className="rounded text-primary focus:ring-primary"
-                  />
-                  <span>Live URL Proof Required</span>
-                </label>
+                <input
+                  type="text"
+                  placeholder="Step title (e.g. Join Discord or Open Google Form)"
+                  value={inst.title}
+                  onChange={(e) => updateInstruction(idx, "title", e.target.value)}
+                  className="w-full p-2.5 rounded-xl border border-border bg-surface text-xs font-bold text-text focus:outline-none"
+                />
 
-                <label className="flex items-center gap-2 cursor-pointer text-xs font-semibold text-text">
-                  <input
-                    type="checkbox"
-                    checked={screenshotRequired}
-                    onChange={(e) => setScreenshotRequired(e.target.checked)}
-                    className="rounded text-primary focus:ring-primary"
-                  />
-                  <span>Screenshot Proof Required</span>
-                </label>
+                <textarea
+                  rows={2}
+                  placeholder="Step instructions and guidance..."
+                  value={inst.description}
+                  onChange={(e) => updateInstruction(idx, "description", e.target.value)}
+                  className="w-full p-2.5 rounded-xl border border-border bg-surface text-xs text-text focus:outline-none"
+                />
+
+                <input
+                  type="url"
+                  placeholder="Optional external link for this step (https://...)"
+                  value={inst.actionUrl || ""}
+                  onChange={(e) => updateInstruction(idx, "actionUrl", e.target.value)}
+                  className="w-full p-2 rounded-lg border border-border bg-surface text-[11px] text-text font-mono focus:outline-none"
+                />
               </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-text mb-1.5">
-                Social Post Template (Optional)
-              </label>
-              <textarea
-                rows={3}
-                placeholder="Pre-approved post template text for students to copy..."
-                value={postTemplateEn}
-                onChange={(e) => setPostTemplateEn(e.target.value)}
-                className="w-full p-3.5 rounded-xl border border-border bg-surface text-xs text-text focus:outline-none"
-              />
-            </div>
+            ))}
           </div>
 
           <div className="pt-4 flex items-center justify-between">
@@ -340,84 +426,123 @@ export default function CreateAmbassadorTaskPage() {
               <span>Back</span>
             </Button>
             <Button variant="primary" size="md" onClick={() => setStep(3)} className="gap-2 font-bold">
-              <span>Next: Points & Audience</span>
+              <span>Next: Requirements & Forms</span>
               <ArrowRight className="h-4 w-4" />
             </Button>
           </div>
         </div>
       )}
 
-      {/* Step 3: Points & Audience */}
+      {/* STEP 3: REQUIREMENTS & GOOGLE FORM / SPREADSHEET */}
       {step === 3 && (
         <div className="p-7 rounded-[28px] bg-surface border border-border shadow-soft-sm space-y-6">
           <div>
-            <h2 className="text-xl font-black text-text">Points & Audience</h2>
+            <h2 className="text-2xl font-black text-text tracking-tight">Step 3 — Proof Requirements & Forms</h2>
             <p className="text-xs text-text-muted mt-1">
-              Ambassador task points are capped at {maxPointsCap} points by platform policy.
+              Specify what students must provide for review, and configure Google Form / Spreadsheet integrations.
             </p>
           </div>
 
-          <div className="space-y-5">
-            <div>
-              <label className="block text-xs font-bold text-text mb-1.5">
-                Reward Points (Max {maxPointsCap} pts)
-              </label>
-              <div className="flex items-center gap-3">
+          {/* GOOGLE FORM & SPREADSHEET CARD */}
+          <div className="p-5 rounded-2xl bg-primary/5 border border-primary/20 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <FileSpreadsheet className="h-5 w-5 text-primary" />
+                <div>
+                  <h3 className="text-xs font-black uppercase text-text tracking-wider">
+                    Google Form & Spreadsheet Integration
+                  </h3>
+                  <p className="text-[11px] text-text-muted">
+                    Collect registrations, surveys, and track responses via Google Sheets
+                  </p>
+                </div>
+              </div>
+              <label className="relative inline-flex items-center cursor-pointer">
                 <input
-                  type="number"
-                  min={5}
-                  max={maxPointsCap}
-                  value={points}
-                  onChange={(e) => setPoints(Math.min(Number(e.target.value), maxPointsCap))}
-                  className="w-32 p-3 rounded-xl border border-border bg-surface text-sm font-black text-primary focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  type="checkbox"
+                  checked={enableGoogleForm}
+                  onChange={(e) => setEnableGoogleForm(e.target.checked)}
+                  className="sr-only peer"
                 />
-                <span className="text-xs text-text-muted">
-                  Points awarded upon verified review
-                </span>
-              </div>
+                <div className="w-11 h-6 bg-surface-2 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+              </label>
             </div>
 
-            <div className="space-y-2">
-              <label className="block text-xs font-bold text-text">Audience Target</label>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div
-                  onClick={() => setAudience("own_team")}
-                  className={`p-4 rounded-2xl border cursor-pointer transition-all ${
-                    audience === "own_team"
-                      ? "border-primary bg-primary/5 text-text"
-                      : "border-border bg-surface text-text-muted hover:border-border/80"
-                  }`}
-                >
-                  <div className="flex items-center gap-2 font-bold text-xs">
-                    <Users className="h-4 w-4 text-primary" />
-                    <span>Entire Campus Team</span>
-                  </div>
-                  <p className="text-[11px] text-text-muted mt-1">
-                    Available to all members of {myTeam?.name || "your campus cohort"}.
-                  </p>
-                </div>
+            {enableGoogleForm && (
+              <div className="space-y-3 pt-2 border-t border-primary/20">
+                <Input
+                  label="Google Form URL (for student registration / survey)"
+                  placeholder="https://docs.google.com/forms/d/e/.../viewform"
+                  value={googleFormUrl}
+                  onChange={(e) => setGoogleFormUrl(e.target.value)}
+                  leftIcon={<LinkIcon className="h-4 w-4 text-primary" />}
+                />
 
-                <div
-                  onClick={() => setAudience("specific_members")}
-                  className={`p-4 rounded-2xl border cursor-pointer transition-all ${
-                    audience === "specific_members"
-                      ? "border-primary bg-primary/5 text-text"
-                      : "border-border bg-surface text-text-muted hover:border-border/80"
-                  }`}
-                >
-                  <div className="flex items-center gap-2 font-bold text-xs">
-                    <Shield className="h-4 w-4 text-primary" />
-                    <span>Selected Members</span>
-                  </div>
-                  <p className="text-[11px] text-text-muted mt-1">
-                    Assigned to specific student delegates for special initiatives.
-                  </p>
-                </div>
+                <Input
+                  label="Google Spreadsheet Tracking URL (Optional - View / Verification)"
+                  placeholder="https://docs.google.com/spreadsheets/d/.../edit?usp=sharing"
+                  value={googleSpreadsheetUrl}
+                  onChange={(e) => setGoogleSpreadsheetUrl(e.target.value)}
+                  leftIcon={<FileSpreadsheet className="h-4 w-4 text-emerald-500" />}
+                />
+                <p className="text-[10px] text-text-muted">
+                  Students will be prompted to open the Google Form to complete their task registration.
+                </p>
               </div>
-              <p className="text-[11px] text-text-muted pt-1">
-                Note: Only Administrators can broadcast global tasks to all users.
-              </p>
+            )}
+          </div>
+
+          {/* PROOF CHECKBOXES */}
+          <div className="space-y-3">
+            <span className="text-xs font-bold text-text block uppercase tracking-wider">
+              Student Proof Types
+            </span>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <label className="p-3.5 rounded-xl border border-border bg-surface-2 flex items-center gap-2.5 cursor-pointer hover:border-primary/40 transition-colors">
+                <input
+                  type="checkbox"
+                  checked={urlRequired}
+                  onChange={(e) => setUrlRequired(e.target.checked)}
+                  className="rounded text-primary focus:ring-primary h-4 w-4"
+                />
+                <span className="text-xs font-bold text-text">URL Link Proof</span>
+              </label>
+
+              <label className="p-3.5 rounded-xl border border-border bg-surface-2 flex items-center gap-2.5 cursor-pointer hover:border-primary/40 transition-colors">
+                <input
+                  type="checkbox"
+                  checked={screenshotRequired}
+                  onChange={(e) => setScreenshotRequired(e.target.checked)}
+                  className="rounded text-primary focus:ring-primary h-4 w-4"
+                />
+                <span className="text-xs font-bold text-text">Screenshot Upload</span>
+              </label>
+
+              <label className="p-3.5 rounded-xl border border-border bg-surface-2 flex items-center gap-2.5 cursor-pointer hover:border-primary/40 transition-colors">
+                <input
+                  type="checkbox"
+                  checked={documentRequired}
+                  onChange={(e) => setDocumentRequired(e.target.checked)}
+                  className="rounded text-primary focus:ring-primary h-4 w-4"
+                />
+                <span className="text-xs font-bold text-text">Document / PPT Proof</span>
+              </label>
             </div>
+          </div>
+
+          {/* SOCIAL POST TEMPLATE */}
+          <div>
+            <label className="block text-xs font-bold text-text mb-1.5">
+              Social Media Post Template (Optional)
+            </label>
+            <textarea
+              rows={3}
+              placeholder="Pre-written announcement text students can copy with one click..."
+              value={postTemplateEn}
+              onChange={(e) => setPostTemplateEn(e.target.value)}
+              className="w-full p-3 rounded-xl border border-border bg-surface text-xs text-text focus:outline-none"
+            />
           </div>
 
           <div className="pt-4 flex items-center justify-between">
@@ -426,101 +551,170 @@ export default function CreateAmbassadorTaskPage() {
               <span>Back</span>
             </Button>
             <Button variant="primary" size="md" onClick={() => setStep(4)} className="gap-2 font-bold">
-              <span>Next: Review & Submit</span>
+              <span>Next: Audience & Points</span>
               <ArrowRight className="h-4 w-4" />
             </Button>
           </div>
         </div>
       )}
 
-      {/* Step 4: Review Preview & Submit */}
+      {/* STEP 4: AUDIENCE & POINTS (SOLO AMBASSADOR - NO TEAMS) */}
       {step === 4 && (
         <div className="p-7 rounded-[28px] bg-surface border border-border shadow-soft-sm space-y-6">
           <div>
-            <h2 className="text-xl font-black text-text">Review Task Preview</h2>
+            <h2 className="text-2xl font-black text-text tracking-tight">Step 4 — Task Audience & Points</h2>
             <p className="text-xs text-text-muted mt-1">
-              Every ambassador-created task requires admin approval before becoming live.
+              Choose who receives the task and designate reward points (capped at {maxPointsCap} pts).
             </p>
           </div>
 
-          <div className="p-5 rounded-2xl bg-surface-2 border border-border space-y-4">
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <span className="text-[10px] font-black uppercase tracking-wider text-primary">
-                  {brand.toUpperCase()} • Campus Initiative
-                </span>
-                <h3 className="text-lg font-black text-text mt-0.5">{title}</h3>
-                <p className="text-xs text-text-muted mt-1">{description}</p>
-              </div>
-              <span className="text-xs font-black uppercase px-2.5 py-1 rounded-full bg-primary/10 text-primary shrink-0">
-                +{points} Points
-              </span>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 text-xs pt-2 border-t border-border/80">
-              <div>
-                <span className="text-text-muted block text-[10px] uppercase font-bold">Audience</span>
-                <span className="font-bold text-text">{audience === "own_team" ? "Own Team" : "Specific Members"}</span>
-              </div>
-              <div>
-                <span className="text-text-muted block text-[10px] uppercase font-bold">Est. Time</span>
-                <span className="font-bold text-text">~{estimatedMinutes} mins</span>
-              </div>
-              <div>
-                <span className="text-text-muted block text-[10px] uppercase font-bold">Proof Type</span>
-                <span className="font-bold text-text">
-                  {urlRequired && screenshotRequired ? "URL + Screenshot" : urlRequired ? "URL Link" : "Screenshot"}
+          <div className="space-y-5">
+            {/* REWARD POINTS */}
+            <div className="p-4 rounded-2xl bg-surface-2 border border-border space-y-2">
+              <label className="block text-xs font-black uppercase tracking-wider text-text">
+                Task Reward Points
+              </label>
+              <div className="flex items-center gap-3">
+                <input
+                  type="number"
+                  min={5}
+                  max={maxPointsCap}
+                  value={points}
+                  onChange={(e) => setPoints(Math.min(Number(e.target.value), maxPointsCap))}
+                  className="w-28 p-2.5 rounded-xl border border-border bg-surface text-base font-black text-primary focus:outline-none focus:ring-2 focus:ring-primary/40 tabular-nums"
+                />
+                <span className="text-xs text-text-muted">
+                  Points awarded upon verified review (Platform policy: max {maxPointsCap} pts for ambassador tasks)
                 </span>
               </div>
             </div>
 
-            <div className="space-y-2 pt-2 border-t border-border/80">
-              <span className="text-[11px] font-bold text-text block">Steps ({instructions.length}):</span>
-              <div className="space-y-1">
-                {instructions.map((inst) => (
-                  <div key={inst.stepNumber} className="text-xs text-text-muted flex items-center gap-2">
-                    <span className="h-5 w-5 rounded-md bg-surface border border-border font-bold text-[10px] flex items-center justify-center shrink-0">
-                      {inst.stepNumber}
-                    </span>
-                    <span className="font-bold text-text">{inst.title}</span>
+            {/* AUDIENCE SELECTOR (SECTION 14 - NO TEAMS) */}
+            <div className="space-y-2.5">
+              <label className="block text-xs font-black uppercase tracking-wider text-text">
+                Task Audience Selection
+              </label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {/* 1. PUBLIC */}
+                <div
+                  onClick={() => setAudience("public")}
+                  className={`p-4 rounded-2xl border cursor-pointer transition-all ${
+                    audience === "public"
+                      ? "border-primary bg-primary/5 text-text"
+                      : "border-border bg-surface text-text-muted hover:border-border/80"
+                  }`}
+                >
+                  <div className="flex items-center gap-2 font-bold text-xs">
+                    <Globe className="h-4 w-4 text-primary" />
+                    <span>1. Public</span>
                   </div>
-                ))}
+                  <p className="text-[11px] text-text-muted mt-1 leading-relaxed">
+                    Visible to all eligible Zyven visitors and students across campuses.
+                  </p>
+                </div>
+
+                {/* 2. ALL STUDENTS */}
+                <div
+                  onClick={() => setAudience("all_students")}
+                  className={`p-4 rounded-2xl border cursor-pointer transition-all ${
+                    audience === "all_students"
+                      ? "border-primary bg-primary/5 text-text"
+                      : "border-border bg-surface text-text-muted hover:border-border/80"
+                  }`}
+                >
+                  <div className="flex items-center gap-2 font-bold text-xs">
+                    <GraduationCap className="h-4 w-4 text-primary" />
+                    <span>2. All Students</span>
+                  </div>
+                  <p className="text-[11px] text-text-muted mt-1 leading-relaxed">
+                    Available to every authenticated student account on the platform.
+                  </p>
+                </div>
+
+                {/* 3. COLLEGE TARGETING */}
+                <div
+                  onClick={() => setAudience("college")}
+                  className={`p-4 rounded-2xl border cursor-pointer transition-all ${
+                    audience === "college"
+                      ? "border-primary bg-primary/5 text-text"
+                      : "border-border bg-surface text-text-muted hover:border-border/80"
+                  }`}
+                >
+                  <div className="flex items-center gap-2 font-bold text-xs">
+                    <Building2 className="h-4 w-4 text-primary" />
+                    <span>3. College Targeting</span>
+                  </div>
+                  <p className="text-[11px] text-text-muted mt-1 leading-relaxed">
+                    Only students belonging to the chosen campus can discover this task.
+                  </p>
+                </div>
+
+                {/* 4. SELECTED STUDENTS */}
+                <div
+                  onClick={() => setAudience("selected_students")}
+                  className={`p-4 rounded-2xl border cursor-pointer transition-all ${
+                    audience === "selected_students"
+                      ? "border-primary bg-primary/5 text-text"
+                      : "border-border bg-surface text-text-muted hover:border-border/80"
+                  }`}
+                >
+                  <div className="flex items-center gap-2 font-bold text-xs">
+                    <UserCheck className="h-4 w-4 text-primary" />
+                    <span>4. Selected Students</span>
+                  </div>
+                  <p className="text-[11px] text-text-muted mt-1 leading-relaxed">
+                    Targeted directly to specific student delegates for special initiatives.
+                  </p>
+                </div>
               </div>
+
+              {/* College Dropdown if College Target is chosen */}
+              {audience === "college" && (
+                <div className="p-4 rounded-2xl bg-surface-2 border border-border space-y-2 mt-2">
+                  <label className="block text-xs font-bold text-text">Select Target College</label>
+                  <select
+                    value={selectedCollegeId}
+                    onChange={(e) => setSelectedCollegeId(e.target.value)}
+                    className="w-full p-2.5 rounded-xl border border-border bg-surface text-xs font-bold text-text focus:outline-none focus:ring-2 focus:ring-primary/40"
+                  >
+                    {colleges.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name} ({c.shortName})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
             </div>
           </div>
 
-          <div className="p-4 rounded-2xl bg-primary/5 border border-primary/20 flex items-start gap-3">
-            <AlertCircle className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-            <p className="text-xs text-text-muted leading-relaxed">
-              When submitted, this task moves to <strong className="text-text">Pending Approval</strong>.
-              Admins review and publish to your students. You will receive an instant notification once approved.
-            </p>
-          </div>
-
-          <div className="pt-4 flex items-center justify-between gap-3">
-            <Button variant="outline" size="md" onClick={() => setStep(3)} className="gap-2">
+          {/* SUBMISSION BUTTONS */}
+          <div className="pt-6 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3">
+            <Button variant="outline" size="md" onClick={() => setStep(3)} className="gap-2 w-full sm:w-auto">
               <ArrowLeft className="h-4 w-4" />
               <span>Back</span>
             </Button>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2.5 w-full sm:w-auto">
               <Button
                 variant="outline"
                 size="md"
-                disabled={isPending}
                 onClick={() => handleSubmit("draft")}
+                disabled={isPending}
+                className="w-full sm:w-auto font-bold"
               >
                 Save Draft
               </Button>
+
               <Button
                 variant="primary"
                 size="md"
-                isLoading={isPending}
                 onClick={() => handleSubmit("pending_approval")}
-                className="gap-2 font-bold"
+                disabled={isPending}
+                className="w-full sm:w-auto font-bold gap-2"
               >
                 <CheckCircle2 className="h-4 w-4" />
-                <span>Send for Approval</span>
+                <span>Submit for Admin Approval</span>
               </Button>
             </div>
           </div>

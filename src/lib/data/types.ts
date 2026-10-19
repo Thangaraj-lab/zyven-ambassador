@@ -76,6 +76,34 @@ export const BrandTypeSchema = z.enum([
 ]);
 export type BrandType = z.infer<typeof BrandTypeSchema>;
 
+export const MissionTypeSchema = z.enum([
+  "quiz",
+  "upload",
+  "url",
+  "text",
+  "course_completion",
+  "screenshot",
+  "document",
+  "ppt",
+  "video",
+  "image",
+  "form",
+  "multi_step",
+  "hybrid",
+]);
+export type MissionType = z.infer<typeof MissionTypeSchema>;
+
+export const TaskAudienceSchema = z.enum([
+  "public",
+  "all_students",
+  "college",
+  "selected_students",
+  "everyone",
+  "own_team",
+  "specific_members",
+]);
+export type TaskAudience = z.infer<typeof TaskAudienceSchema>;
+
 export const MissionSchema = z.object({
   id: z.string(),
   slug: z.string(),
@@ -84,6 +112,7 @@ export const MissionSchema = z.object({
   description: z.string(),
   descriptionTa: z.string(),
   category: z.string(),
+  taskType: MissionTypeSchema.optional().default("url"),
   instructions: z.array(MissionStepSchema),
   points: z.number(),
   difficulty: z.enum(["Easy", "Medium", "Hard"]),
@@ -91,22 +120,44 @@ export const MissionSchema = z.object({
   startsAt: z.string(),
   deadline: z.string().optional(),
   status: MissionStatusSchema,
-  proofTypes: z.array(z.enum(["url", "screenshot", "text"])),
+  proofTypes: z.array(z.string()),
   proofRequired: z.object({
     url: z.boolean(),
     screenshot: z.boolean(),
+    document: z.boolean().optional(),
+    text: z.boolean().optional(),
   }),
   verification: z.enum(["manual", "auto"]),
   externalUrl: z.string().optional(),
+  googleFormUrl: z.string().optional(),
+  googleSpreadsheetUrl: z.string().optional(),
   brand: BrandTypeSchema,
   teamId: z.string().optional(),
   createdById: z.string().optional(),
-  audience: z.enum(["everyone", "own_team", "specific_members"]).optional(),
+  collegeId: z.string().optional(),
+  selectedStudentIds: z.array(z.string()).optional(),
+  audience: TaskAudienceSchema.optional().default("public"),
   feedback: z.string().optional(),
   postTemplate: z
     .object({
       en: z.string(),
       ta: z.string(),
+    })
+    .optional(),
+  quizData: z
+    .object({
+      questions: z.array(
+        z.object({
+          id: z.string(),
+          question: z.string(),
+          type: z.string(),
+          options: z.array(z.string()),
+          points: z.number(),
+          correctAnswerIndex: z.number().optional(),
+          explanation: z.string().optional(),
+        })
+      ),
+      passPercentage: z.number().optional(),
     })
     .optional(),
 });

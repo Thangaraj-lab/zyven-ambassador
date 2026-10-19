@@ -84,7 +84,7 @@ export default function LeaderboardPage() {
                 : "text-text-muted hover:text-text"
             }`}
           >
-            Ambassadors
+            Students
           </button>
           <button
             onClick={() => setActiveTab("college")}
@@ -104,36 +104,42 @@ export default function LeaderboardPage() {
         <span className="px-3 py-1 rounded-full text-xs font-bold brand-gradient-bg text-white">
           All-Time Active
         </span>
-        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-surface-2 text-text-muted border border-border opacity-60 cursor-not-allowed">
-          Weekly (Soon)
-        </span>
-        <span className="px-3 py-1 rounded-full text-xs font-semibold bg-surface-2 text-text-muted border border-border opacity-60 cursor-not-allowed">
-          Monthly (Soon)
-        </span>
       </div>
 
       {activeTab === "individual" ? (
         <div className="space-y-6">
-          {/* Top 3 Podium */}
-          {top3[0] && <PodiumCard topThree={top3} />}
+          {ambassadors.length === 0 ? (
+            <div className="py-16 text-center rounded-[24px] bg-surface border border-border p-8 space-y-3">
+              <Trophy className="h-10 w-10 text-text-muted mx-auto opacity-50" />
+              <h3 className="text-base font-bold text-text">No ranked students yet.</h3>
+              <p className="text-xs text-text-muted max-w-sm mx-auto">
+                Complete your launch tasks to earn verified points and appear on the official student leaderboard!
+              </p>
+            </div>
+          ) : (
+            <>
+              {/* Top 3 Podium (Only if students have earned points) */}
+              {top3[0] && top3[0].points > 0 && <PodiumCard topThree={top3} />}
 
-          {/* Ranked List */}
-          <div className="space-y-2">
-            {ambassadors.map((a) => (
-              <LeaderboardRow
-                key={a.ambassadorId}
-                user={{
-                  id: a.ambassadorId,
-                  rank: a.rank,
-                  name: a.name,
-                  college: a.college,
-                  points: a.points,
-                  avatarUrl: a.avatarUrl,
-                  isYou: a.isYou,
-                }}
-              />
-            ))}
-          </div>
+              {/* Ranked List */}
+              <div className="space-y-2">
+                {ambassadors.map((a) => (
+                  <LeaderboardRow
+                    key={a.ambassadorId}
+                    user={{
+                      id: a.ambassadorId,
+                      rank: a.rank,
+                      name: a.name,
+                      college: a.college,
+                      points: a.points,
+                      avatarUrl: a.avatarUrl,
+                      isYou: a.isYou,
+                    }}
+                  />
+                ))}
+              </div>
+            </>
+          )}
 
           {/* Sticky-pinned "You" row at viewport bottom */}
           {youEntry && (

@@ -35,7 +35,6 @@ export function AdminSidebar() {
     { href: "/admin/tasks", label: "Tasks", icon: Target },
     { href: "/admin/users", label: "Users", icon: Users },
     { href: "/admin/ambassadors", label: "Ambassadors", icon: UserCheck },
-    { href: "/admin/teams", label: "Teams", icon: Shield },
     { href: "/admin/announcements", label: "Announcements", icon: Megaphone },
     { href: "/admin/rewards", label: "Rewards", icon: Gift },
     { href: "/admin/colleges", label: "Colleges", icon: Building2 },

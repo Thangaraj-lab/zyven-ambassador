@@ -13,8 +13,16 @@ import type {
   Tier,
 } from "../types";
 import { mockStore } from "./store";
-import { SEED_COLLEGES, SEED_REWARDS, ADMIN_USER, CURRENT_USER } from "./seed";
+import {
+  SEED_COLLEGES,
+  SEED_REWARDS,
+  ADMIN_USER,
+  ADMIN_CREDENTIAL_PASSWORD,
+  CURRENT_USER,
+  AMBASSADOR_USER,
+} from "./seed";
 import normalizeUrl from "normalize-url";
+import { validateTaskSubmissionUrl, normalizeSubmissionUrl } from "@/lib/security/linkValidator";
 
 // Artificial latency helper (300-500ms)
 const delay = (ms = 350) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -103,12 +111,81 @@ export const mockRepository: Repository = {
     return { user, profile };
   },
 
-  async loginWithGoogleMock(email?: string) {
+  async login(email: string, password?: string, requestedRole: "student" | "ambassador" = "student") {
     await delay(350);
+    const normalizedEmail = email.trim().toLowerCase();
+
+    // Check if logging in as Admin with the configured admin credentials
+    if (normalizedEmail === ADMIN_USER.email.toLowerCase()) {
+      if (password && password !== ADMIN_CREDENTIAL_PASSWORD) {
+        throw new Error("Invalid admin password");
+      }
+      mockStore.setState(() => ({ currentUserId: ADMIN_USER.id }));
+      return ADMIN_USER;
+    }
+
     const state = mockStore.getState();
     const existing = state.users.find(
-      (u) => u.email === (email || CURRENT_USER.email)
+      (u) => u.email.toLowerCase() === normalizedEmail
     );
+
+    if (existing) {
+      mockStore.setState(() => ({ currentUserId: existing.id }));
+      return existing;
+    }
+
+    // Create new account with requested role
+    const newUser: User = {
+      id: `user-${Date.now()}`,
+      role: requestedRole,
+      name: normalizedEmail.split("@")[0].replace(/[._-]/g, " "),
+      email: normalizedEmail,
+      avatarUrl: null,
+    };
+
+    const newProfile: AmbassadorProfile = {
+      userId: newUser.id,
+      college: "Muthayammal Engineering College",
+      department: "Engineering",
+      year: "1st Year",
+      city: "Tamil Nadu",
+      interests: ["Tech Opportunities"],
+      skills: ["Problem Solving"],
+      whyJoin: "Participate in Zyven initiatives",
+      status: "active",
+      joinedAt: new Date().toISOString(),
+      cohortNumber: 1,
+    };
+
+    mockStore.setState((prev) => ({
+      users: [...prev.users, newUser],
+      profiles: [...prev.profiles, newProfile],
+      currentUserId: newUser.id,
+    }));
+
+    return newUser;
+  },
+
+  async loginWithGoogleMock(email?: string, requestedRole: "student" | "ambassador" = "student") {
+    await delay(350);
+    const normalizedEmail = (
+      email ||
+      (requestedRole === "ambassador"
+        ? AMBASSADOR_USER.email
+        : CURRENT_USER.email)
+    ).trim().toLowerCase();
+
+    // Check if logging in as Admin
+    if (normalizedEmail === ADMIN_USER.email.toLowerCase()) {
+      mockStore.setState(() => ({ currentUserId: ADMIN_USER.id }));
+      return ADMIN_USER;
+    }
+
+    const state = mockStore.getState();
+    const existing = state.users.find(
+      (u) => u.email.toLowerCase() === normalizedEmail
+    );
+
     if (existing) {
       mockStore.setState(() => ({ currentUserId: existing.id }));
       return existing;
@@ -116,15 +193,32 @@ export const mockRepository: Repository = {
 
     const newUser: User = {
       id: `user-${Date.now()}`,
-      role: "ambassador",
-      name: "Google Student",
-      email: email || "student@zyven.mock",
+      role: requestedRole,
+      name: requestedRole === "ambassador" ? "Ambassador Leader" : "Student Member",
+      email: normalizedEmail,
       avatarUrl: null,
     };
+
+    const newProfile: AmbassadorProfile = {
+      userId: newUser.id,
+      college: "Muthayammal Engineering College",
+      department: "Engineering",
+      year: "1st Year",
+      city: "Tamil Nadu",
+      interests: ["Technology", "Leadership"],
+      skills: ["Communication"],
+      whyJoin: "Explore student opportunities",
+      status: "active",
+      joinedAt: new Date().toISOString(),
+      cohortNumber: 1,
+    };
+
     mockStore.setState((prev) => ({
       users: [...prev.users, newUser],
+      profiles: [...prev.profiles, newProfile],
       currentUserId: newUser.id,
     }));
+
     return newUser;
   },
 
@@ -269,12 +363,13 @@ export const mockRepository: Repository = {
       if (!proofUrl) {
         throw new Error("URL proof is required for this mission");
       }
-      if (mission.brand === "linkedin" && !validateLinkedInUrl(proofUrl)) {
-        throw new Error("Please enter a valid LinkedIn post URL (e.g. linkedin.com/posts/...)");
+      const urlCheck = validateTaskSubmissionUrl(proofUrl, mission.brand);
+      if (!urlCheck.isValid) {
+        throw new Error(urlCheck.error || "Invalid submission URL provided");
       }
-      normalized = cleanUrl(proofUrl);
+      normalized = normalizeSubmissionUrl(proofUrl);
 
-      // Duplicate URL check
+      // Duplicate URL check across all students
       const duplicate = submissions.find(
         (s) =>
           s.missionId === missionId &&
@@ -282,7 +377,7 @@ export const mockRepository: Repository = {
           s.ambassadorId !== currentUserId
       );
       if (duplicate) {
-        throw new Error("This post URL has already been submitted by another ambassador.");
+        throw new Error("This link has already been submitted by another student. Each submission must be unique.");
       }
     }
 
@@ -389,7 +484,7 @@ export const mockRepository: Repository = {
       });
 
       const entries: LeaderboardEntry[] = state.users
-        .filter((u) => u.role === "ambassador")
+        .filter((u) => u.role === "student")
         .map((u) => {
           const profile = state.profiles.find((p) => p.userId === u.id);
           const pointsData = pointsMap[u.id] || {
@@ -768,6 +863,8 @@ export const mockRepository: Repository = {
         estimatedMinutes: missionData.estimatedMinutes || 10,
         startsAt: new Date().toISOString(),
         status: missionData.status || "live",
+        taskType: missionData.taskType || "url",
+        audience: missionData.audience || "public",
         proofTypes: missionData.proofTypes || ["url"],
         proofRequired: missionData.proofRequired || { url: true, screenshot: false },
         verification: missionData.verification || "manual",
@@ -1046,6 +1143,11 @@ export const mockRepository: Repository = {
       estimatedMinutes: data.estimatedMinutes || 5,
       startsAt: new Date().toISOString(),
       status: "pending_approval",
+      taskType: (data.taskType as any) || "url",
+      audience: (data.audience as any) || "public",
+      googleFormUrl: data.googleFormUrl,
+      googleSpreadsheetUrl: data.googleSpreadsheetUrl,
+      collegeId: data.collegeId,
       proofTypes: data.proofTypes || ["url", "screenshot"],
       proofRequired: data.proofRequired || { url: true, screenshot: false },
       verification: "manual",
@@ -1053,7 +1155,6 @@ export const mockRepository: Repository = {
       brand: data.brand || "college",
       teamId: data.teamId,
       createdById: currentUserId || undefined,
-      audience: data.audience || "own_team",
       postTemplate: data.postTemplate,
     };
 

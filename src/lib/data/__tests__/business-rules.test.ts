@@ -88,6 +88,33 @@ describe("Zyven Business Rules & Data Layer", () => {
 
   describe("Points Sum & Atomic Idempotent Approval", () => {
     it("never doubles points when approving the same submission twice", async () => {
+      // Seed test mission fixture
+      mockStore.setState((prev) => ({
+        missions: [
+          {
+            id: "mission-linkedin",
+            slug: "linkedin-follow-post",
+            title: "Follow & Post on LinkedIn",
+            titleTa: "LinkedIn-இல் பின்தொடருங்கள்",
+            description: "Follow Zyven and share announcement",
+            descriptionTa: "Zyven பக்கத்தைப் பின்தொடரவும்",
+            category: "Social Media",
+            brand: "linkedin",
+            taskType: "url",
+            points: 50,
+            difficulty: "Easy",
+            estimatedMinutes: 5,
+            startsAt: "2026-10-01T00:00:00Z",
+            status: "live",
+            audience: "public",
+            proofTypes: ["url"],
+            proofRequired: { url: true, screenshot: false },
+            verification: "manual",
+            instructions: [],
+          },
+        ],
+      }));
+
       // Create a submission
       const sub = await mockRepository.startMission("mission-linkedin");
       await mockRepository.submitProof({
@@ -125,15 +152,15 @@ describe("Zyven Business Rules & Data Layer", () => {
           ...prev.users,
           {
             id: "user-early",
-            role: "ambassador",
-            name: "Early Ambassador",
+            role: "student",
+            name: "Early Student",
             email: "early@test.com",
             avatarUrl: null,
           },
           {
             id: "user-late",
-            role: "ambassador",
-            name: "Late Ambassador",
+            role: "student",
+            name: "Late Student",
             email: "late@test.com",
             avatarUrl: null,
           },

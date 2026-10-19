@@ -30,14 +30,15 @@ export default function MissionsListPage() {
     return "AVAILABLE";
   };
 
-  const filteredMissions = missions.filter((mission) => {
+  const liveMissions = missions.filter((m) => m.status === "live");
+
+  const filteredMissions = liveMissions.filter((mission) => {
     const state = getMissionState(mission.id, mission.status);
 
     if (activeFilter === "all") return true;
     if (activeFilter === "available") return state === "AVAILABLE" || state === "STARTED";
     if (activeFilter === "in_review") return state === "UNDER_REVIEW";
     if (activeFilter === "completed") return state === "APPROVED";
-    if (activeFilter === "coming_soon") return state === "LOCKED";
     return true;
   });
 
@@ -46,7 +47,6 @@ export default function MissionsListPage() {
     { key: "available", label: t("filters.available") },
     { key: "in_review", label: t("filters.inReview") },
     { key: "completed", label: t("filters.completed") },
-    { key: "coming_soon", label: t("filters.comingSoon") },
   ];
 
   return (
@@ -91,11 +91,15 @@ export default function MissionsListPage() {
       {/* Missions Grid */}
       {filteredMissions.length === 0 ? (
         <EmptyState
-          icon={<Filter className="h-6 w-6" />}
-          title="No missions found"
-          description="There are currently no tasks matching this filter. Switch back to 'All' to view all campus opportunities."
-          actionLabel="Show All Missions"
-          onAction={() => setActiveFilter("all")}
+          icon={<Sparkles className="h-6 w-6 text-primary" />}
+          title={missions.length === 0 ? "No active tasks yet" : "No missions found"}
+          description={
+            missions.length === 0
+              ? "New campus tasks and challenges are being prepared. Check back shortly for exciting opportunities to earn verified points!"
+              : "There are currently no tasks matching this filter. Switch back to 'All' to view all campus opportunities."
+          }
+          actionLabel={missions.length === 0 ? undefined : "Show All Missions"}
+          onAction={missions.length === 0 ? undefined : () => setActiveFilter("all")}
         />
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">

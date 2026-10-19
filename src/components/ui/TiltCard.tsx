@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { motion } from "motion/react";
 
 interface TiltCardProps {
@@ -21,6 +21,11 @@ export function TiltCard({
   const ref = useRef<HTMLDivElement>(null);
   const [tilt, setTilt] = useState({ x: 0, y: 0, glareX: 50, glareY: 50 });
   const [isHovered, setIsHovered] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!ref.current) return;
@@ -47,6 +52,14 @@ export function TiltCard({
     setTilt({ x: 0, y: 0, glareX: 50, glareY: 50 });
   };
 
+  if (!mounted) {
+    return (
+      <div className={`relative ${className}`} suppressHydrationWarning>
+        {children}
+      </div>
+    );
+  }
+
   return (
     <motion.div
       ref={ref}
@@ -64,6 +77,7 @@ export function TiltCard({
         perspective: 1200,
       }}
       className={`relative ${className}`}
+      suppressHydrationWarning
     >
       {children}
       {glare && isHovered && (

@@ -132,10 +132,11 @@ export function Zyven3DMark({
     observer.observe(container);
 
     // Animation Loop
-    const clock = new THREE.Clock();
-    const animate = () => {
+    let lastTime = performance.now();
+    const animate = (currentTime: number = performance.now()) => {
       if (isIntersecting) {
-        const delta = clock.getDelta();
+        const delta = Math.min((currentTime - lastTime) / 1000, 0.1);
+        lastTime = currentTime;
         if (!prefersReducedMotion) {
           group.rotation.y += delta * 0.45;
           group.rotation.x += delta * 0.2;
@@ -146,6 +147,8 @@ export function Zyven3DMark({
         group.rotation.x += (targetRotationX - group.rotation.x) * 0.05;
 
         renderer.render(scene, camera);
+      } else {
+        lastTime = currentTime;
       }
       animationFrameId = requestAnimationFrame(animate);
     };

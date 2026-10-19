@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { ArrowRight, User, Mail, Phone, Lock } from "lucide-react";
 import { toast } from "sonner";
-import { mockRepository } from "@/lib/data/mock/mockRepository";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 
 function getDraft() {
   if (typeof window === "undefined") return null;
@@ -34,26 +34,56 @@ export default function RegisterStep1Page() {
     } catch {}
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !email) {
-      toast.error("Please enter your full name and student email");
+    if (!name || !email || password.length < 8) {
+      toast.error("Enter your full name, student email, and a password of at least 8 characters.");
       return;
     }
 
-    handleSaveDraft({ name, email, phone });
-    // Proceed to Step 2-4 profile setup
-    router.push("/register/profile");
+    setIsLoading(true);
+    try {
+      const supabase = getSupabaseBrowserClient();
+      if (!supabase) throw new Error("Registration is temporarily unavailable. Please try again shortly.");
+      const { data, error } = await supabase.auth.signUp({
+        email: email.trim(),
+        password,
+        options: {
+          data: { full_name: name.trim(), phone: phone.trim() || undefined },
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      if (error) throw error;
+      handleSaveDraft({ name, email, phone });
+      if (data.session) {
+        router.push("/register/profile");
+      } else {
+        toast.success("Check your inbox to confirm your email, then sign in to complete your ambassador application.");
+        router.push("/login");
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Unable to create your account.");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleGoogleQuickstart = async () => {
     setIsLoading(true);
     try {
-      const user = await mockRepository.loginWithGoogleMock();
-      handleSaveDraft({ name: user.name, email: user.email });
-      router.push("/register/profile");
-    } catch {
-      toast.error("Google sign up failed");
+      const supabase = getSupabaseBrowserClient();
+      if (!supabase) {
+        throw new Error("Supabase is not configured. Please add your Supabase keys to .env.local.");
+      }
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+        options: {
+          redirectTo: `${window.location.origin}/auth/callback`,
+        },
+      });
+      if (error) throw error;
+    } catch (err: unknown) {
+      toast.error((err as Error)?.message || "Google sign up failed");
     } finally {
       setIsLoading(false);
     }
@@ -181,6 +211,8 @@ export default function RegisterStep1Page() {
             <Lock className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-text-muted" />
             <input
               type="password"
+              required
+              minLength={8}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••••••"

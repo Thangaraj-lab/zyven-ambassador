@@ -68,7 +68,10 @@ export default async function RootLayout({
       suppressHydrationWarning
       className={`${plusJakarta.variable} ${fraunces.variable} ${notoSansTamil.variable}`}
     >
-      <body className="min-h-screen bg-bg text-text font-sans antialiased selection:bg-primary/20 selection:text-primary">
+      <body
+        suppressHydrationWarning
+        className="min-h-screen bg-bg text-text font-sans antialiased selection:bg-primary/20 selection:text-primary"
+      >
         <NextIntlClientProvider messages={messages} locale={locale}>
           <ThemeProvider
             attribute="class"
@@ -79,7 +82,7 @@ export default async function RootLayout({
             <QueryProvider>
               <MotionProvider>
                 {children}
-                <DevPanel />
+                {process.env.NEXT_PUBLIC_USE_MOCK === "true" ? <DevPanel /> : null}
                 <RGBAlertSystem />
               </MotionProvider>
               <Toaster

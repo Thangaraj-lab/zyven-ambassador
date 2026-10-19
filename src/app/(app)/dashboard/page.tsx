@@ -9,6 +9,7 @@ import {
   useMyPoints,
   useMyRank,
   useMyTier,
+  useMissions,
 } from "@/lib/data/hooks";
 import { AnimatedNumber } from "@/components/ui/AnimatedNumber";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
@@ -31,12 +32,15 @@ import { EnergyLine } from "@/components/motion/EnergyLine";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
+  const { data: missions = [] } = useMissions();
   const { data: submissions = [] } = useMySubmissions();
   const { data: pointsData } = useMyPoints();
   const { data: rankData } = useMyRank();
   const { data: tierData } = useMyTier();
 
   const [searchQuery, setSearchQuery] = useState("");
+
+  const liveMissions = missions.filter((m) => m.status === "live");
 
   // Approval notification state
   const [approvalAlert, setApprovalAlert] = useState<{
@@ -49,11 +53,11 @@ export default function DashboardPage() {
   const [tierUpgrade, setTierUpgrade] = useState<string | null>(null);
 
   const user = session?.user;
-  const userName = user?.name || "Thangaraj";
-  const totalPoints = pointsData?.total ?? 80;
-  const rank = rankData?.rank ?? 24;
-  const completedCount = submissions.filter((s) => s.state === "APPROVED").length || 2;
-  const totalAvailableCount = 2;
+  const userName = user?.name || "Student";
+  const totalPoints = pointsData?.total ?? 0;
+  const rank = rankData?.rank ?? 1;
+  const completedCount = submissions.filter((s) => s.state === "APPROVED").length;
+  const totalAvailableCount = liveMissions.length;
 
   // Recent approval detection
   useEffect(() => {
@@ -267,134 +271,74 @@ export default function DashboardPage() {
           </Link>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2">
-          {/* Task 1: LinkedIn Follow & Post */}
-          <div
-            onClick={() =>
-              openMissionPortal({
-                slug: "linkedin-follow-post",
-                title: "Follow & Post on LinkedIn",
-                description:
-                  "Follow the official Zyven page and publish our student ambassador launch announcement to your network.",
-                points: 50,
-                brand: "linkedin",
-                category: "Social Media",
-                estimatedMinutes: 5,
-                steps: [
-                  {
-                    stepNumber: 1,
-                    title: "Follow Zyven Profile",
-                    description: "Open the official LinkedIn page and hit Follow to connect to our network.",
-                  },
-                  {
-                    stepNumber: 2,
-                    title: "Publish Launch Post",
-                    description: "Copy our pre-written announcement template and share it on your LinkedIn feed.",
-                  },
-                  {
-                    stepNumber: 3,
-                    title: "Submit URL for Verification",
-                    description: "Paste your live LinkedIn post URL to receive 50 points upon approval.",
-                  },
-                ],
-              })
-            }
-            className="group relative block rounded-[1.25rem] border border-border bg-surface p-6 shadow-soft-sm transition-all duration-300 hover:shadow-glow hover:-translate-y-1 active:scale-[0.985] cursor-pointer overflow-hidden"
-          >
-            <EnergyLine color="#0077B5" active={true} />
-            <div className="flex items-start gap-4">
-              <div className="grid h-12 w-12 place-items-center rounded-xl bg-[#0077B5]/10 text-[#0077B5] shrink-0 border border-[#0077B5]/20 group-hover:scale-105 group-hover:shadow-[0_0_15px_rgba(0,119,181,0.35)] transition-all">
-                <span className="font-black text-lg">in</span>
-              </div>
-              <div className="flex-1">
-                <div className="font-bold text-base text-text group-hover:text-primary transition-colors">
-                  Follow &amp; Post on LinkedIn
-                </div>
-                <span className="mt-2 inline-block rounded-full bg-[#0077B5]/10 px-3 py-1 text-xs font-bold text-[#0077B5] border border-[#0077B5]/20">
-                  +50 Points
-                </span>
-              </div>
-            </div>
-
-            <div className="mt-6 flex items-center justify-between pt-3 border-t border-border/60">
-              <span className="flex items-center gap-1.5 text-xs text-text-muted font-medium">
-                <Clock className="h-3.5 w-3.5 text-primary" />
-                <span>~ 5 mins</span>
-              </span>
-              <div className="grid h-10 w-10 place-items-center rounded-full bg-brand text-white shadow-soft-sm transition-transform group-hover:translate-x-1">
-                <ArrowRight className="h-4 w-4" />
-              </div>
+        {liveMissions.length === 0 ? (
+          <div className="rounded-[1.25rem] border border-dashed border-border bg-surface/50 p-8 text-center">
+            <Sparkles className="mx-auto h-8 w-8 text-primary/60 mb-2" />
+            <div className="font-bold text-text">No active tasks yet</div>
+            <div className="text-xs text-text-muted mt-1 max-w-sm mx-auto">
+              New campus challenges and initiatives will appear here once approved by administrators.
             </div>
           </div>
-
-          {/* Task 2: Join WhatsApp Community */}
-          <div
-            onClick={() =>
-              openMissionPortal({
-                slug: "join-whatsapp-community",
-                title: "Join Zyven WhatsApp Community",
-                description:
-                  "Join the official Zyven Tamil Nadu student ambassador community on WhatsApp to receive real-time task alerts.",
-                points: 30,
-                brand: "whatsapp",
-                category: "Community",
-                estimatedMinutes: 2,
-                steps: [
-                  {
-                    stepNumber: 1,
-                    title: "Open Community Channel",
-                    description: "Access the private Tamil Nadu student ambassador WhatsApp group.",
-                  },
-                  {
-                    stepNumber: 2,
-                    title: "Introduce Yourself",
-                    description: "Share your college, department, and connect with fellow campus ambassadors.",
-                  },
-                  {
-                    stepNumber: 3,
-                    title: "Upload Membership Screenshot",
-                    description: "Capture your membership screen and submit it for verified point rewards.",
-                  },
-                ],
-              })
-            }
-            className="group relative block rounded-[1.25rem] border border-border bg-surface p-6 shadow-soft-sm transition-all duration-300 hover:shadow-glow hover:-translate-y-1 active:scale-[0.985] cursor-pointer overflow-hidden"
-          >
-            <EnergyLine color="#25D366" active={true} />
-            <div className="flex items-start gap-4">
-              <div className="grid h-12 w-12 place-items-center rounded-xl bg-[#25D366]/10 text-[#25D366] shrink-0 border border-[#25D366]/20 group-hover:scale-105 group-hover:shadow-[0_0_15px_rgba(37,211,102,0.35)] transition-all">
-                <span className="font-black text-sm">WA</span>
-              </div>
-              <div className="flex-1">
-                <div className="font-bold text-base text-text group-hover:text-primary transition-colors">
-                  Join Zyven WhatsApp Community
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2">
+            {liveMissions.map((mission) => (
+              <div
+                key={mission.id}
+                onClick={() =>
+                  openMissionPortal({
+                    slug: mission.slug,
+                    title: mission.title,
+                    description: mission.description,
+                    points: mission.points,
+                    brand: mission.brand || "zyven",
+                    category: mission.category || "General",
+                    estimatedMinutes: mission.estimatedMinutes || 10,
+                    steps: mission.instructions?.map((inst, idx) => ({
+                      stepNumber: inst.stepNumber || idx + 1,
+                      title: inst.title,
+                      description: inst.description,
+                    })),
+                  })
+                }
+                className="group relative block rounded-[1.25rem] border border-border bg-surface p-6 shadow-soft-sm transition-all duration-300 hover:shadow-glow hover:-translate-y-1 active:scale-[0.985] cursor-pointer overflow-hidden"
+              >
+                <EnergyLine color="#6366F1" active={true} />
+                <div className="flex items-start gap-4">
+                  <div className="grid h-12 w-12 place-items-center rounded-xl bg-primary/10 text-primary shrink-0 border border-primary/20 group-hover:scale-105 group-hover:shadow-[0_0_15px_rgba(99,102,241,0.35)] transition-all">
+                    <Sparkles className="h-6 w-6" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="font-bold text-base text-text group-hover:text-primary transition-colors">
+                      {mission.title}
+                    </div>
+                    <span className="mt-2 inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary border border-primary/20">
+                      +{mission.points} Points
+                    </span>
+                  </div>
                 </div>
-                <span className="mt-2 inline-block rounded-full bg-[#25D366]/10 px-3 py-1 text-xs font-bold text-[#25D366] border border-[#25D366]/20">
-                  +30 Points
-                </span>
-              </div>
-            </div>
 
-            <div className="mt-6 flex items-center justify-between pt-3 border-t border-border/60">
-              <span className="flex items-center gap-1.5 text-xs text-text-muted font-medium">
-                <Clock className="h-3.5 w-3.5 text-primary" />
-                <span>~ 2 mins</span>
-              </span>
-              <div className="grid h-10 w-10 place-items-center rounded-full bg-brand text-white shadow-soft-sm transition-transform group-hover:translate-x-1">
-                <ArrowRight className="h-4 w-4" />
+                <div className="mt-6 flex items-center justify-between pt-3 border-t border-border/60">
+                  <span className="flex items-center gap-1.5 text-xs text-text-muted font-medium">
+                    <Clock className="h-3.5 w-3.5 text-primary" />
+                    <span>~ {mission.estimatedMinutes || 10} mins</span>
+                  </span>
+                  <div className="grid h-10 w-10 place-items-center rounded-full bg-brand text-white shadow-soft-sm transition-transform group-hover:translate-x-1">
+                    <ArrowRight className="h-4 w-4" />
+                  </div>
+                </div>
               </div>
-            </div>
+            ))}
           </div>
-        </div>
+        )}
       </section>
 
-      {/* Two-column Bottom: Campus Team & Points Activity */}
+      {/* Two-column Bottom: Campus Info & Rewards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Campus Team */}
+        {/* Campus Info */}
         <div className="p-6 rounded-[24px] bg-surface border border-border shadow-soft-sm space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-xs font-bold text-text-muted uppercase tracking-wider">
-              Your Campus Team
+              Your Campus
             </span>
             <Users className="h-4 w-4 text-primary" />
           </div>
@@ -403,12 +347,12 @@ export default function DashboardPage() {
               {session?.profile?.college || "Muthayammal Engineering College"}
             </h3>
             <p className="text-xs text-text-muted mt-0.5">
-              Ranked #2 with 1,240 pts • 24 active ambassadors
+              Verified campus representation • Solo Ambassador Network
             </p>
           </div>
-          <Link href="/leaderboard?tab=college" className="inline-block w-full">
+          <Link href="/leaderboard" className="inline-block w-full">
             <button className="w-full py-2.5 rounded-xl border border-border bg-surface-2 text-xs font-bold text-text hover:bg-surface transition-colors cursor-pointer">
-              View College Standings
+              View Student Leaderboard
             </button>
           </Link>
         </div>
@@ -423,7 +367,7 @@ export default function DashboardPage() {
           </div>
           <div>
             <h3 className="text-lg font-black text-text">
-              Silver Status • 150 Points
+              {totalPoints >= 150 ? "Gold Status • 300 Points" : "Silver Status • 150 Points"}
             </h3>
             <p className="text-xs text-text-muted mt-0.5">
               Unlock official Zyven ambassador merchandise box & priority invitations.

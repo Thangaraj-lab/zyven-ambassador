@@ -28,19 +28,18 @@ export function AmbassadorSidebar() {
   const primaryLinks = [
     { href: "/ambassador", label: "Overview", icon: LayoutDashboard },
     { href: "/ambassador/tasks", label: "Tasks", icon: ClipboardList },
-    { href: "/ambassador/reviews", label: "Reviews", icon: CheckCircle2 },
-    { href: "/ambassador/team", label: "Team", icon: Users },
+    { href: "/ambassador/tasks/new", label: "Create Task", icon: CheckCircle2 },
+    { href: "/ambassador/reviews", label: "Submissions", icon: ClipboardList },
     { href: "/ambassador/announcements", label: "Announcements", icon: Megaphone },
   ];
 
   const secondaryLinks = [
-    { href: "/ambassador/team#leaderboard", label: "Team Leaderboard", icon: Trophy },
     { href: "/ambassador/profile", label: "Profile", icon: User },
     { href: "/ambassador/profile#settings", label: "Settings", icon: Settings },
   ];
 
   const supportLinks = [
-    { href: "/ambassador/help", label: "Help & Guide", icon: HelpCircle },
+    { href: "/ambassador/profile#help", label: "Help & Guide", icon: HelpCircle },
   ];
 
   return (

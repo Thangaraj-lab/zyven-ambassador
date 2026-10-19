@@ -518,6 +518,43 @@ export default function MissionDetailPage() {
             </div>
           </div>
 
+          {/* Google Form & Spreadsheet Integration Card */}
+          {(mission.googleFormUrl || mission.googleSpreadsheetUrl) && (
+            <div className="p-4 rounded-2xl bg-primary/10 border border-primary/30 space-y-3">
+              <div className="flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-wider">
+                <ExternalLink className="h-4 w-4" />
+                <span>Google Form & Tracking Sheet</span>
+              </div>
+              <p className="text-[11px] text-text-muted leading-relaxed">
+                This initiative uses Google Form for registration and spreadsheet verification.
+              </p>
+              <div className="flex flex-col gap-2 pt-1">
+                {mission.googleFormUrl && (
+                  <a
+                    href={mission.googleFormUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between p-2.5 rounded-xl bg-surface border border-border hover:border-primary text-xs font-bold text-text transition-colors"
+                  >
+                    <span>Open Registration Form</span>
+                    <span className="text-[10px] text-primary">Launch ↗</span>
+                  </a>
+                )}
+                {mission.googleSpreadsheetUrl && (
+                  <a
+                    href={mission.googleSpreadsheetUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center justify-between p-2.5 rounded-xl bg-surface border border-border hover:border-emerald-500 text-xs font-bold text-text transition-colors"
+                  >
+                    <span>View Tracking Spreadsheet</span>
+                    <span className="text-[10px] text-emerald-500">Sheet ↗</span>
+                  </a>
+                )}
+              </div>
+            </div>
+          )}
+
           {/* Approved state banner */}
           {missionState === "APPROVED" && (
             <div className="p-4 rounded-2xl bg-success/10 border border-success/30 space-y-2">

@@ -11,14 +11,14 @@ import type {
 import {
   CURRENT_USER,
   CURRENT_PROFILE,
+  AMBASSADOR_USER,
+  AMBASSADOR_PROFILE,
   ADMIN_USER,
   SEED_MISSIONS,
   SEED_ANNOUNCEMENTS,
-  SEED_DEMO_AMBASSADORS,
-  SEED_PENDING_SUBMISSIONS,
 } from "./seed";
 
-const STORAGE_KEY = "zyven_portal_mock_store_v1";
+const STORAGE_KEY = "zyven_portal_production_store_v4";
 
 export interface MockStoreState {
   users: User[];
@@ -49,56 +49,25 @@ class MockStore {
   }
 
   private getInitialState(): MockStoreState {
-    const demoUsers: User[] = SEED_DEMO_AMBASSADORS.map((d) => d.user);
-    const demoProfiles: AmbassadorProfile[] = SEED_DEMO_AMBASSADORS.map(
-      (d) => d.profile
-    );
-
-    // Initial point transactions for demo ambassadors
-    const demoTransactions: PointTransaction[] = [];
-    SEED_DEMO_AMBASSADORS.forEach((demo) => {
-      if (demo.points > 0) {
-        demoTransactions.push({
-          id: `tx-${demo.user.id}-initial`,
-          ambassadorId: demo.user.id,
-          submissionId: `sub-${demo.user.id}-initial`,
-          missionId: "mission-linkedin",
-          points: demo.points,
-          reason: "Prior verified missions",
-          createdAt: demo.joinedAt,
-        });
-      }
-    });
-
     const initialNotifications: Notification[] = [
       {
         id: "notif-welcome",
         userId: CURRENT_USER.id,
         type: "application_approved",
         title: "Welcome to Zyven!",
-        body: "Your ambassador membership has been activated. Start your first mission to earn points.",
+        body: "Your membership is active. Complete your initial missions to start earning verified points.",
         createdAt: "2026-10-18T08:00:00Z",
         readAt: null,
         href: "/missions",
       },
-      {
-        id: "notif-mission-1",
-        userId: CURRENT_USER.id,
-        type: "new_mission",
-        title: "New Mission: Follow & Post on LinkedIn",
-        body: "Earn 50 Points and jump immediately to Bronze tier.",
-        createdAt: "2026-10-18T08:05:00Z",
-        readAt: null,
-        href: "/missions/linkedin-follow-post",
-      },
     ];
 
     return {
-      users: [CURRENT_USER, ADMIN_USER, ...demoUsers],
-      profiles: [CURRENT_PROFILE, ...demoProfiles],
+      users: [ADMIN_USER, CURRENT_USER, AMBASSADOR_USER],
+      profiles: [CURRENT_PROFILE, AMBASSADOR_PROFILE],
       missions: [...SEED_MISSIONS],
-      submissions: [...SEED_PENDING_SUBMISSIONS],
-      pointTransactions: [...demoTransactions],
+      submissions: [],
+      pointTransactions: [],
       notifications: [...initialNotifications],
       announcements: [...SEED_ANNOUNCEMENTS],
       auditLogs: [
@@ -110,36 +79,11 @@ class MockStore {
           entity: "System",
           entityId: "system",
           result: "SUCCESS",
-          metadata: { version: "2.0.0", platform: "Zyven Ambassador Cloud" },
+          metadata: { version: "3.0.0", platform: "Zyven Production Platform" },
           createdAt: "2026-10-01T00:00:00Z",
         },
       ],
-      teams: [
-        {
-          id: "team-mec-alpha",
-          name: "MEC Zyven Alpha Squad",
-          college: "Muthayammal Engineering College",
-          ambassadorId: CURRENT_USER.id,
-          ambassadorName: CURRENT_USER.name,
-          inviteCode: "ZYV-MEC-2026",
-          memberCount: 8,
-          totalPoints: 420,
-          createdAt: "2026-10-01T00:00:00Z",
-          status: "active",
-        },
-        {
-          id: "team-psg-prime",
-          name: "PSG Tech Innovators",
-          college: "PSG College of Technology",
-          ambassadorId: "demo-amb-1",
-          ambassadorName: "Kavitha R",
-          inviteCode: "ZYV-PSG-2026",
-          memberCount: 12,
-          totalPoints: 680,
-          createdAt: "2026-10-02T00:00:00Z",
-          status: "active",
-        },
-      ],
+      teams: [],
       platformSettings: {
         maxAmbassadorTaskPoints: 25,
         allowAmbassadorReview: true,

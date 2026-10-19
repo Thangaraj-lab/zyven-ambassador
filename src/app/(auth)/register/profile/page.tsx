@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { SEED_COLLEGES } from "@/lib/data/mock/seed";
-import { mockRepository } from "@/lib/data/mock/mockRepository";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 import {
   ArrowRight,
   ArrowLeft,
@@ -112,31 +112,62 @@ export default function RegisterProfilePage() {
 
     setIsLoading(true);
     try {
-      await mockRepository.registerAmbassador({
-        name,
-        email,
-        phone,
-        college,
-        department,
-        year,
-        city,
-        studentId,
-        linkedin,
-        instagram,
-        interests,
-        skills: ["Community Building", "Frontend Development", "Leadership"],
-        whyJoin,
-      });
+      const supabase = getSupabaseBrowserClient();
+      if (!supabase) throw new Error("Registration is temporarily unavailable. Please try again shortly.");
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Please sign in before submitting your ambassador application.");
+
+      const { data: matchingCollege } = await supabase
+        .from("colleges")
+        .select("id")
+        .eq("name", college)
+        .maybeSingle();
+
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update({
+          full_name: name,
+          college_id: matchingCollege?.id ?? null,
+          department,
+          year,
+          city,
+          bio: `Student ID: ${studentId || "not provided"}\nLinkedIn: ${linkedin || "not provided"}\nInstagram: ${instagram || "not provided"}`,
+        })
+        .eq("id", user.id);
+      if (profileError) throw profileError;
+
+      const application = [
+        `College: ${college}`,
+        `Department: ${department}`,
+        `Year: ${year}`,
+        `City: ${city}`,
+        `Phone: ${phone || "not provided"}`,
+        `LinkedIn: ${linkedin || "not provided"}`,
+        `Instagram: ${instagram || "not provided"}`,
+        `Interests: ${interests.join(", ") || "not provided"}`,
+        "",
+        whyJoin.trim(),
+      ].join("\n");
+      const { error: requestError } = await supabase
+        .from("ambassador_requests")
+        .insert({ student_id: user.id, reason: application });
+      if (requestError) {
+        if (requestError.code === "23505") {
+          throw new Error("You already have an ambassador application awaiting review.");
+        }
+        throw requestError;
+      }
 
       // Clear draft
       try {
         localStorage.removeItem("zyven_register_draft_step1");
       } catch {}
 
-      toast.success("Registration complete! Welcome to Zyven!");
-      router.push("/welcome");
-    } catch {
-      toast.error("Failed to submit registration");
+      toast.success("Application submitted! We will notify you after review.");
+      router.push("/pending");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to submit registration");
+    } finally {
       setIsLoading(false);
     }
   };

@@ -21,7 +21,6 @@ import { toast } from "sonner";
 
 export default function AmbassadorTasksPage() {
   const { data: missions = [], isLoading } = useMissions();
-  const { data: myTeam } = useMyTeam();
   const { mutateAsync: setStatus } = useSetTaskStatus();
 
   const [activeTab, setActiveTab] = useState<
@@ -29,15 +28,7 @@ export default function AmbassadorTasksPage() {
   >("all");
   const [search, setSearch] = useState("");
 
-  // Ambassador only manages their own team's tasks
-  const teamTasks = missions.filter(
-    (m) =>
-      m.teamId === myTeam?.id ||
-      m.audience === "own_team" ||
-      m.createdById !== undefined
-  );
-
-  const filteredTasks = teamTasks.filter((task) => {
+  const filteredTasks = missions.filter((task) => {
     const matchesTab =
       activeTab === "all" ? true : task.status === activeTab;
     const matchesSearch =
@@ -74,13 +65,13 @@ export default function AmbassadorTasksPage() {
         <div>
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold mb-2">
             <ClipboardList className="h-3.5 w-3.5" />
-            <span>Team Task Operations</span>
+            <span>Campaign Task Manager</span>
           </div>
           <h1 className="text-2xl sm:text-3xl font-black text-text tracking-tight">
-            Team Tasks
+            Ambassador Tasks
           </h1>
           <p className="text-xs sm:text-sm text-text-muted mt-0.5">
-            Create meaningful tasks for your team. Every new task requires admin approval.
+            Create and manage tasks for students. Ambassador tasks go live upon Admin approval.
           </p>
         </div>
 
