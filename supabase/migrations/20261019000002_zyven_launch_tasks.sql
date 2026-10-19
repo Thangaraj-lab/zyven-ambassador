@@ -3,8 +3,11 @@
 -- Starts 100% clean and empty for live production tasks
 -- ============================================================
 
--- Ensure no demo tasks exist
-DELETE FROM public.tasks WHERE id IN (
-    't0000000-0000-0000-0000-000000000001',
-    't0000000-0000-0000-0000-000000000002'
-);
+-- Tasks are created through the authenticated admin/task workflow after the
+-- first admin profile exists. This migration intentionally does not delete or
+-- seed rows, so it is safe on a fresh production database.
+DO $$
+BEGIN
+    NULL;
+END;
+$$;
