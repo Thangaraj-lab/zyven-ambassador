@@ -129,7 +129,7 @@ export const supabaseRepository: Repository = {
   async getSession() {
     const profile = await currentProfile();
     if (!profile) return { user: null, profile: null };
-    return { user: userFromProfile(profile), profile: null };
+    return { user: userFromProfile(profile), profile: ambassadorProfileFromRow(profile) };
   },
   async login() { throw new Error("Use Supabase Auth directly for login."); },
   async loginWithGoogleMock() { throw new Error("Mock login is disabled in production."); },
