@@ -18,7 +18,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { motion } from "motion/react";
-import { mockRepository } from "@/lib/data/mock/mockRepository";
+import { getRepository } from "@/lib/data/repository";
 import { useRouter } from "next/navigation";
 import { triggerRgbAlert } from "@/components/effects/RGBAlertSystem";
 import { triggerLogoutDialog } from "@/components/motion/LogoutModal";
@@ -94,7 +94,8 @@ export function AmbassadorNav() {
 
   const handleLogout = async () => {
     triggerRgbAlert("SESSION TERMINATED", "Logged Out Securely • RGB LED Reset");
-    await mockRepository.logout();
+    const repository = await getRepository();
+    await repository.logout();
     setTimeout(() => {
       router.push("/login");
     }, 600);

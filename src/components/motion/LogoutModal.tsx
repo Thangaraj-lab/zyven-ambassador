@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "motion/react";
 import { useSession } from "@/lib/data/hooks";
-import { mockRepository } from "@/lib/data/mock/mockRepository";
+import { getRepository } from "@/lib/data/repository";
 import { Avatar } from "@/components/ui/Avatar";
 import { LogOut, ShieldCheck, X, ArrowRight, UserCheck } from "lucide-react";
 import { useMotionOK } from "@/lib/motion";
@@ -29,7 +29,8 @@ export function LogoutModal() {
 
   const handleConfirmLogout = async () => {
     setIsSigningOut(true);
-    await mockRepository.logout();
+    const repository = await getRepository();
+    await repository.logout();
 
     setTimeout(() => {
       setIsOpen(false);

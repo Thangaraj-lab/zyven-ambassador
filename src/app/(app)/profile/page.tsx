@@ -12,7 +12,7 @@ import {
 import { Avatar } from "@/components/ui/Avatar";
 import { TierBadge } from "@/components/ui/TierBadge";
 import { Button } from "@/components/ui/Button";
-import { mockRepository } from "@/lib/data/mock/mockRepository";
+import { getRepository } from "@/lib/data/repository";
 import {
   Building,
   Trophy,
@@ -62,7 +62,8 @@ export default function ProfilePage() {
     e.preventDefault();
     setIsSaving(true);
     try {
-      await mockRepository.updateProfile({
+      const repository = await getRepository();
+      await repository.updateProfile({
         department,
         city,
         whyJoin,
