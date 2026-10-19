@@ -65,11 +65,16 @@ export async function createTaskAction(input: z.infer<typeof CreateTaskSchema>) 
   }
 
   // Insert audience
-  await supabase.from("task_audiences").insert({
+  const { error: audienceError } = await supabase.from("task_audiences").insert({
     task_id: task.id,
     audience_type: parsed.audience,
     college_id: parsed.collegeId || null,
   });
+
+  if (audienceError) {
+    await supabase.from("tasks").delete().eq("id", task.id);
+    throw new Error(audienceError.message || "Failed to configure task audience");
+  }
 
   revalidatePath("/ambassador");
   revalidatePath("/admin/tasks");
