@@ -184,9 +184,9 @@ export default function ReviewDetailPage() {
                 {mission?.title || "Mission Verification"}
               </h1>
               <p className="text-xs text-text-muted mt-1">
-                Ambassador ID:{" "}
+                Student:{" "}
                 <span className="font-mono text-text font-bold">
-                  {submission.ambassadorId}
+                  {submission.studentName || submission.ambassadorId}
                 </span>
               </p>
             </div>

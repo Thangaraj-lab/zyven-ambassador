@@ -149,7 +149,7 @@ export default function AdminReviewsPage() {
                   />
                 </th>
                 <th className="p-4">Mission</th>
-                <th className="p-4">Ambassador ID</th>
+                <th className="p-4">Student</th>
                 <th className="p-4">Proof Details</th>
                 <th className="p-4">Status</th>
                 <th className="p-4 text-right">Actions</th>
@@ -198,7 +198,8 @@ export default function AdminReviewsPage() {
                       </td>
 
                       <td className="p-4 font-mono text-text-muted">
-                        {sub.ambassadorId}
+                        <span className="block font-semibold text-text">{sub.studentName || "Student"}</span>
+                        <span className="block font-mono text-[10px] text-text-muted">{sub.ambassadorId}</span>
                       </td>
 
                       <td className="p-4 text-text-muted max-w-xs truncate">
