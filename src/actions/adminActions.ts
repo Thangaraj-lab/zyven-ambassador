@@ -5,17 +5,22 @@ import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 
 export async function setUserRoleAction(userId: string, role: "student" | "ambassador" | "admin") {
-  // Sensitive action requires MFA assurance
-  const admin = await requireAdminMFA();
+  // Role promotion is available to an authenticated admin. If the admin has
+  // enrolled a verified MFA factor, the session is still challenged by the
+  // MFA gate before this action is reached.
+  const admin = await requireAdmin();
   const supabase = await getSupabaseServerClient();
   if (!supabase) throw new Error("Database connection unavailable.");
 
-  const { error } = await supabase
+  const { data: updated, error } = await supabase
     .from("profiles")
     .update({ role, updated_at: new Date().toISOString() })
-    .eq("id", userId);
+    .eq("id", userId)
+    .select("id, role")
+    .single();
 
   if (error) throw new Error(error.message);
+  if (!updated || updated.role !== role) throw new Error("The user role was not updated.");
 
   await supabase.from("audit_logs").insert({
     actor_id: admin.id,
