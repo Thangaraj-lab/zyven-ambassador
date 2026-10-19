@@ -11,6 +11,7 @@ import {
   pauseTaskAction,
   resumeTaskAction,
 } from "@/actions/taskActions";
+import { setUserRoleAction, setUserStatusAction } from "@/actions/adminActions";
 
 
 // Auto invalidate queries when mockStore updates
@@ -425,8 +426,7 @@ export function useSetUserRole() {
       userId: string;
       role: "student" | "ambassador" | "admin";
     }) => {
-      const repo = await getRepository();
-      return repo.setUserRole(userId, role);
+      return setUserRoleAction(userId, role);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminUsers"] });
@@ -446,8 +446,7 @@ export function useSetUserStatus() {
       userId: string;
       status: "active" | "suspended" | "pending";
     }) => {
-      const repo = await getRepository();
-      return repo.setUserStatus(userId, status);
+      return setUserStatusAction(userId, status);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminUsers"] });
