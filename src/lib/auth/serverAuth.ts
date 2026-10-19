@@ -100,8 +100,16 @@ export async function requireAdminMFA(): Promise<AuthenticatedProfile> {
   const supabase = await getSupabaseServerClient();
 
   if (supabase) {
-    const { data } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
-    if (data?.currentLevel !== "aal2" && data?.nextLevel === "aal2") {
+    const [{ data: assurance }, { data: factors }] = await Promise.all([
+      supabase.auth.mfa.getAuthenticatorAssuranceLevel(),
+      supabase.auth.mfa.listFactors(),
+    ]);
+    const hasVerifiedFactor = factors?.totp?.some((factor) => factor.status === "verified") ?? false;
+
+    // Enforce AAL2 only when this admin has actually enrolled a verified
+    // authenticator. Accounts without a factor must not be trapped in a
+    // challenge redirect they cannot complete.
+    if (hasVerifiedFactor && assurance?.currentLevel !== "aal2" && assurance?.nextLevel === "aal2") {
       redirect("/admin/mfa-challenge");
     }
   }
