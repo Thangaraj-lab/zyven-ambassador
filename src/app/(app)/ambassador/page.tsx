@@ -71,7 +71,7 @@ export default function AmbassadorCommandCenterPage() {
             </p>
 
             <p className="text-xs sm:text-sm text-text-muted leading-relaxed max-w-xl">
-              As a Zyven Ambassador, you create impactful campus initiatives, publish tasks for public or college audiences, and verify student participation.
+              As a Zyvex Ambassador, you create impactful campus initiatives, publish tasks for public or college audiences, and verify student participation.
             </p>
 
             <div className="flex flex-wrap items-center gap-3 pt-2">

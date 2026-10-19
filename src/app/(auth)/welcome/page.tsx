@@ -89,7 +89,7 @@ export default function WelcomePage() {
         {/* Headline Word-by-Word Reveal */}
         <div className="space-y-2">
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
-            Welcome to Zyven,{" "}
+            Welcome to Zyvex,{" "}
             <span className="brand-gradient-text">{userName}</span>
           </h1>
           <p className="text-sm sm:text-base text-white/70 max-w-md mx-auto leading-relaxed">

@@ -151,7 +151,7 @@ export default function MissionDetailPage() {
   const linkedinSteps: StepItem[] = [
     {
       id: "step-follow",
-      title: "Follow Zyven on LinkedIn",
+      title: "Follow Zyvex on LinkedIn",
       description: "Stay connected with official announcements and events",
       content: (
         <div className="space-y-3.5 pt-1">
@@ -177,7 +177,7 @@ export default function MissionDetailPage() {
                 className="gap-1.5"
               >
                 <Check className="h-3.5 w-3.5 text-success stroke-[3]" />
-                <span>I have followed Zyven</span>
+                <span>I have followed Zyvex</span>
               </Button>
             )}
           </div>
@@ -563,7 +563,7 @@ export default function MissionDetailPage() {
                 <span>Mission Completed & Verified!</span>
               </div>
               <p className="text-[11px] text-text-muted leading-relaxed">
-                You earned +{mission.points} Points. Great job representing Zyven!
+                You earned +{mission.points} Points. Great job representing Zyvex!
               </p>
               <a
                 href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(

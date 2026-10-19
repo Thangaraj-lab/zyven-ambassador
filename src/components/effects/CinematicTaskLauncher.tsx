@@ -82,7 +82,7 @@ export function CinematicTaskLauncher() {
           >
             <span className="flex items-center gap-2">
               <span className="h-2 w-2 rounded-full bg-cyan-400 animate-ping" />
-              ZYVEN HUD // RGB LED MISSION MATRIX ACTIVE
+              ZYVEX HUD // RGB LED MISSION MATRIX ACTIVE
             </span>
             <span className="text-white/60">NODE: 0x9FA • CHROMATIC PROTOCOL</span>
           </motion.div>

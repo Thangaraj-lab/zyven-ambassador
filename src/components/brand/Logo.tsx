@@ -26,7 +26,7 @@ export function Logo({
     <div className={`inline-flex items-center gap-2 select-none ${className}`}>
       <Image
         src="/assets/z3d-crystal.png"
-        alt="Zyven"
+        alt="Zyvex"
         width={markSizes[size]}
         height={markSizes[size]}
         className="object-contain drop-shadow"
@@ -35,7 +35,7 @@ export function Logo({
         <span
           className={`text-text font-bold leading-none ${textSizes[size]} flex items-center tracking-tight`}
         >
-          Zyven
+          Zyvex
         </span>
         {showTagline && (
           <span className="text-[10px] text-text-muted font-semibold tracking-wide uppercase mt-0.5">

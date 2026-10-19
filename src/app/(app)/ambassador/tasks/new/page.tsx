@@ -207,7 +207,7 @@ export default function CreateAmbassadorTaskPage() {
             </div>
             <h2 className="text-2xl font-black text-text tracking-tight">Step 1 — Task Basics</h2>
             <p className="text-xs text-text-muted mt-1">
-              Configure the foundational metadata and type for your Zyven student initiative.
+              Configure the foundational metadata and type for your Zyvex student initiative.
             </p>
           </div>
 
@@ -610,7 +610,7 @@ export default function CreateAmbassadorTaskPage() {
                     <span>1. Public</span>
                   </div>
                   <p className="text-[11px] text-text-muted mt-1 leading-relaxed">
-                    Visible to all eligible Zyven visitors and students across campuses.
+                    Visible to all eligible Zyvex visitors and students across campuses.
                   </p>
                 </div>
 

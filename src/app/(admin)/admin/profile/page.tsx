@@ -71,7 +71,7 @@ export default function AdminProfilePage() {
           </div>
           <div>
             <h2 className="text-xl font-black text-text">
-              {session?.user?.name || "Zyven Operations Admin"}
+              {session?.user?.name || "Zyvex Operations Admin"}
             </h2>
             <div className="text-xs text-text-muted mt-0.5 flex items-center gap-2">
               <Mail className="w-3.5 h-3.5" />

@@ -112,7 +112,7 @@ export default function RegisterStep1Page() {
           Join Founding Cohort
         </h1>
         <p className="text-xs text-text-muted">
-          Create your Zyven Ambassador account to represent your college.
+          Create your Zyvex Ambassador account to represent your college.
         </p>
       </div>
 

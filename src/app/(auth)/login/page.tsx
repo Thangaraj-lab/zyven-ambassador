@@ -147,12 +147,12 @@ export default function LoginPage() {
         shakeCard ? "animate-card-shake border-red-500 shadow-[0_0_50px_rgba(239,68,68,0.6)]" : ""
       }`}
     >
-      {/* Left Column: Zyven Brand & 3D Experience */}
+      {/* Left Column: Zyvex Brand & 3D Experience */}
       <div className="hidden md:flex flex-col justify-between p-10 bg-surface-2 border-r border-border relative overflow-hidden">
         <div className="space-y-3 z-10">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold">
             <Sparkles className="h-3.5 w-3.5" />
-            <span>Zyven Official Network</span>
+            <span>Zyvex Official Network</span>
           </div>
           <h2 className="text-3xl font-extrabold text-text tracking-tight leading-tight">
             {selectedRole === "student" ? (
@@ -182,7 +182,7 @@ export default function LoginPage() {
         </div>
 
         <div className="z-10 text-[11px] text-text-muted">
-          <span>Protected by Zyven Protocol • Zero-Trust Role Verification</span>
+          <span>Protected by Zyvex Protocol • Zero-Trust Role Verification</span>
         </div>
 
         {/* Radial ambient background light */}
@@ -193,7 +193,7 @@ export default function LoginPage() {
       <div className="p-7 sm:p-10 flex flex-col justify-center space-y-5">
         <div>
           <span className="text-xs font-bold tracking-widest text-primary uppercase">
-            ZYVEN
+            ZYVEX
           </span>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-text tracking-tight mt-0.5">
             Welcome back

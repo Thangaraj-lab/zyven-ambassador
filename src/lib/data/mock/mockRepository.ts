@@ -153,7 +153,7 @@ export const mockRepository: Repository = {
       city: "Tamil Nadu",
       interests: ["Tech Opportunities"],
       skills: ["Problem Solving"],
-      whyJoin: "Participate in Zyven initiatives",
+      whyJoin: "Participate in Zyvex initiatives",
       status: "active",
       joinedAt: new Date().toISOString(),
       cohortNumber: 1,
@@ -271,7 +271,7 @@ export const mockRepository: Repository = {
       id: `notif-${Date.now()}`,
       userId,
       type: "application_approved",
-      title: "Welcome to Zyven!",
+      title: "Welcome to Zyvex!",
       body: "Your ambassador membership is active. Complete your first task now!",
       createdAt: new Date().toISOString(),
       readAt: null,
@@ -1004,7 +1004,7 @@ export const mockRepository: Repository = {
       submissionId: whatsappSub.id,
       missionId: "mission-whatsapp",
       points: 30,
-      reason: "Completed: Join Zyven WhatsApp Community",
+      reason: "Completed: Join Zyvex WhatsApp Community",
       createdAt: "2026-10-18T10:15:00Z",
     };
 
@@ -1416,7 +1416,7 @@ export const mockRepository: Repository = {
       pinned: data.pinned ?? false,
       audience: data.audience || "all",
       teamId: data.teamId,
-      authorName: author?.name || "Zyven Operations",
+      authorName: author?.name || "Zyvex Operations",
     };
 
     mockStore.setState((prev) => ({

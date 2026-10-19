@@ -203,14 +203,14 @@ export default function DashboardPage() {
             {userName} 👋
           </h1>
           <p className="mt-2 text-xs sm:text-sm font-semibold text-primary">
-            Zyven Student Ambassador
+            Zyvex Student Ambassador
           </p>
         </div>
 
         <div className="relative z-10 hidden sm:block">
           <Image
             src="/assets/z3d-crystal.png"
-            alt="Zyven 3D Crystal Mark"
+            alt="Zyvex 3D Crystal Mark"
             width={190}
             height={190}
             className="float-slow h-36 w-36 sm:h-44 sm:w-44 object-contain drop-shadow-2xl"
@@ -370,7 +370,7 @@ export default function DashboardPage() {
               {totalPoints >= 150 ? "Gold Status • 300 Points" : "Silver Status • 150 Points"}
             </h3>
             <p className="text-xs text-text-muted mt-0.5">
-              Unlock official Zyven ambassador merchandise box & priority invitations.
+              Unlock official Zyvex ambassador merchandise box & priority invitations.
             </p>
           </div>
           <Link href="/rewards" className="inline-block w-full">

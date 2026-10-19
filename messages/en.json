@@ -16,17 +16,17 @@
     "logout": "Log Out"
   },
   "brand": {
-    "name": "Zyven",
+    "name": "Zyvex",
     "tagline": "Represent. Create. Influence. Grow.",
     "subtagline": "The Premier Student Ambassador Network"
   },
   "hero": {
     "badge": "Student Ambassador Program",
-    "headline": "Become a Zyven Student Ambassador",
-    "description": "Represent Zyven in your campus, take on exciting missions, earn points, unlock rewards, and be part of a growing ambassador community.",
+    "headline": "Become a Zyvex Student Ambassador",
+    "description": "Represent Zyvex in your campus, take on exciting missions, earn points, unlock rewards, and be part of a growing ambassador community.",
     "ctaRegister": "Register as Ambassador",
     "ctaHowItWorks": "See How It Works",
-    "photoAlt": "Zyven Student Ambassador",
+    "photoAlt": "Zyvex Student Ambassador",
     "tagTask": "Complete Tasks",
     "tagPoints": "Earn Points",
     "tagRank": "Climb Leaderboard",
@@ -44,7 +44,7 @@
   },
   "howItWorks": {
     "eyebrow": "How It Works",
-    "title": "Your Journey as a Zyven Ambassador",
+    "title": "Your Journey as a Zyvex Ambassador",
     "description": "Five simple steps to lead on campus, level up your career, and earn real recognition.",
     "steps": [
       {
@@ -60,7 +60,7 @@
       {
         "step": "03",
         "title": "Take on Missions",
-        "description": "Pick live challenges like sharing Zyven announcements or growing the community."
+        "description": "Pick live challenges like sharing Zyvex announcements or growing the community."
       },
       {
         "step": "04",
@@ -76,7 +76,7 @@
   },
   "dashboard": {
     "greeting": "Good {timeOfDay}, {name} 👋",
-    "subtitle": "Zyven Student Ambassador",
+    "subtitle": "Zyvex Student Ambassador",
     "pointsToNext": "{points} points to {nextTier}",
     "rank": "Rank #{rank}",
     "totalPoints": "Total Points",

@@ -175,7 +175,7 @@ export function MissionPortal() {
       ? [
           {
             stepNumber: 1,
-            title: "Follow Zyven LinkedIn Profile",
+            title: "Follow Zyvex LinkedIn Profile",
             description: "Open official page and hit Follow to connect to student tech network.",
           },
           {

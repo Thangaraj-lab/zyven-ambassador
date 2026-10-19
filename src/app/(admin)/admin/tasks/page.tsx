@@ -525,7 +525,7 @@ export default function AdminTasksPage() {
                     required
                     value={newTitle}
                     onChange={(e) => setNewTitle(e.target.value)}
-                    placeholder="e.g. Zyven State Hackathon Campus Registration Drive"
+                    placeholder="e.g. Zyvex State Hackathon Campus Registration Drive"
                     className="w-full px-3.5 py-2.5 rounded-xl bg-surface-elevated/40 border border-border text-xs text-text placeholder:text-text-muted focus:outline-none focus:border-primary transition-colors font-medium"
                   />
                 </div>

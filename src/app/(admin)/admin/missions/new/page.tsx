@@ -48,7 +48,7 @@ export default function TaskCreationStudioPage() {
   const [requireUrl, setRequireUrl] = useState(true);
   const [requireScreenshot, setRequireScreenshot] = useState(false);
   const [postTemplateEn, setPostTemplateEn] = useState(
-    "Excited to represent Zyven on our campus! Join us in building India's premier student innovation community. #Zyven #StudentAmbassador"
+    "Excited to represent Zyvex on our campus! Join us in building India's premier student innovation community. #Zyvex #StudentAmbassador"
   );
 
   // Step 3: Audience & Reward
@@ -191,7 +191,7 @@ export default function TaskCreationStudioPage() {
                 <div>
                   <label className="block text-xs font-bold text-text mb-1.5">Task Title (English) *</label>
                   <Input
-                    placeholder="e.g. Follow & Share Zyven Announcement on LinkedIn"
+                    placeholder="e.g. Follow & Share Zyvex Announcement on LinkedIn"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
                   />

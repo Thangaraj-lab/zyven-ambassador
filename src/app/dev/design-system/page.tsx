@@ -110,7 +110,7 @@ export default function DesignSystemPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <Card hoverable className="flex flex-col items-center justify-center p-8 text-center space-y-3">
             <ZyvenMark size={56} />
-            <h4 className="font-bold text-sm text-text">2D Zyven Mark</h4>
+            <h4 className="font-bold text-sm text-text">2D Zyvex Mark</h4>
             <p className="text-xs text-text-muted">High-contrast SVG vector with brand violet gradient.</p>
           </Card>
 
@@ -265,7 +265,7 @@ export default function DesignSystemPage() {
             <Checkbox
               checked={checked}
               onCheckedChange={setChecked}
-              label="I agree to the Zyven Ambassador Code"
+              label="I agree to the Zyvex Ambassador Code"
               description="Micro-interaction animated checkmark"
             />
           </Card>
@@ -426,11 +426,11 @@ export default function DesignSystemPage() {
                 {
                   id: "s1",
                   title: "Follow & Copy",
-                  description: "Follow Zyven and copy post copy",
+                  description: "Follow Zyvex and copy post copy",
                   content: (
                     <div className="space-y-3">
                       <p className="text-xs text-text-muted">
-                        Follow the official Zyven page on LinkedIn.
+                        Follow the official Zyvex page on LinkedIn.
                       </p>
                       <Button size="sm" variant="primary" onClick={() => setActiveStep(2)}>
                         Next: Create Post

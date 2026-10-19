@@ -32,11 +32,11 @@ const notoSansTamil = Noto_Sans_Tamil({
 });
 
 export const metadata: Metadata = {
-  title: "Zyven Student Ambassador Portal | Represent. Create. Influence. Grow.",
+  title: "Zyvex Student Ambassador Portal | Represent. Create. Influence. Grow.",
   description:
-    "Join the prestigious Zyven Student Ambassador Program. Complete campus missions, earn transparent points on the ledger, unlock rewards, and represent Zyven across Tamil Nadu colleges.",
+    "Join the prestigious Zyvex Student Ambassador Program. Complete campus missions, earn transparent points on the ledger, unlock rewards, and represent Zyvex across Tamil Nadu colleges.",
   keywords: [
-    "Zyven",
+    "Zyvex",
     "Student Ambassador",
     "Campus Ambassador",
     "Engineering Students",
@@ -45,9 +45,9 @@ export const metadata: Metadata = {
     "PSG",
     "Kongu",
   ],
-  authors: [{ name: "Zyven Network" }],
+  authors: [{ name: "Zyvex Network" }],
   openGraph: {
-    title: "Zyven Student Ambassador Portal",
+    title: "Zyvex Student Ambassador Portal",
     description: "Represent. Create. Influence. Grow.",
     type: "website",
   },

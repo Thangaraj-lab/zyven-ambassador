@@ -20,7 +20,7 @@ export default function PendingApprovalPage() {
           Application Under Review
         </h1>
         <p className="text-xs sm:text-sm text-text-muted leading-relaxed">
-          Thank you for applying to the Zyven Student Ambassador Program. Our campus team is reviewing your profile.
+          Thank you for applying to the Zyvex Student Ambassador Program. Our campus team is reviewing your profile.
         </p>
       </div>
 

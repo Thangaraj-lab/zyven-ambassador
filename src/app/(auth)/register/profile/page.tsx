@@ -442,7 +442,7 @@ export default function RegisterProfilePage() {
               <div>
                 <div className="flex items-center justify-between mb-1">
                   <label className="text-xs font-bold text-text">
-                    Why do you want to be a Zyven Ambassador?
+                    Why do you want to be a Zyvex Ambassador?
                   </label>
                   <span className="text-[10px] text-text-muted tabular-nums">
                     {whyJoin.length} chars (min 20)
@@ -467,7 +467,7 @@ export default function RegisterProfilePage() {
                     className="mt-0.5 h-4 w-4 rounded text-primary focus:ring-primary"
                   />
                   <span>
-                    I agree to follow the <strong>Zyven Student Ambassador Code of Conduct</strong> and represent the brand responsibly.
+                    I agree to follow the <strong>Zyvex Student Ambassador Code of Conduct</strong> and represent the brand responsibly.
                   </span>
                 </label>
 

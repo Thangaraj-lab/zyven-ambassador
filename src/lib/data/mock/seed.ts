@@ -72,7 +72,7 @@ export const AMBASSADOR_PROFILE: AmbassadorProfile = {
   linkedin: "https://linkedin.com/in/kavitha-ambassador",
   interests: ["Community Leadership", "Event Organizing"],
   skills: ["Leadership", "Management"],
-  whyJoin: "Lead Zyven campus initiatives",
+  whyJoin: "Lead Zyvex campus initiatives",
   status: "active",
   joinedAt: "2026-10-01T08:00:00Z",
   cohortNumber: 1,
@@ -89,7 +89,7 @@ export const SEED_REWARDS: Reward[] = [
     title: "Bronze Ambassador",
     titleTa: "Bronze தூதர்",
     perks: [
-      "Official Zyven Digital Certificate of Recognition",
+      "Official Zyvex Digital Certificate of Recognition",
       "Access to Private Discord & Founder AMAs",
       "Founding Ambassador Profile Badge",
     ],
@@ -102,8 +102,8 @@ export const SEED_REWARDS: Reward[] = [
     titleTa: "Silver தூதர்",
     perks: [
       "Priority access to high-point campus missions",
-      "Zyven Ambassador Welcome Kit & Stickers",
-      "Spotlight feature on Zyven LinkedIn page",
+      "Zyvex Ambassador Welcome Kit & Stickers",
+      "Spotlight feature on Zyvex LinkedIn page",
     ],
   },
   {
@@ -113,7 +113,7 @@ export const SEED_REWARDS: Reward[] = [
     title: "Gold Ambassador",
     titleTa: "Gold தூதர்",
     perks: [
-      "Premium Zyven Ambassador Hoodie & Swag Box",
+      "Premium Zyvex Ambassador Hoodie & Swag Box",
       "Fast-track internship interview consideration",
       "Exclusive invite to Regional Student Summit",
     ],
@@ -135,8 +135,8 @@ export const SEED_REWARDS: Reward[] = [
 export const SEED_ANNOUNCEMENTS: Announcement[] = [
   {
     id: "ann-1",
-    title: "Welcome Founding Ambassadors & Students to Zyven!",
-    body: "We are thrilled to launch the Zyven Student Ambassador Platform. Complete your initial missions to start earning verified points.",
+    title: "Welcome Founding Ambassadors & Students to Zyvex!",
+    body: "We are thrilled to launch the Zyvex Student Ambassador Platform. Complete your initial missions to start earning verified points.",
     createdAt: "2026-10-15T09:00:00Z",
     pinned: true,
   },

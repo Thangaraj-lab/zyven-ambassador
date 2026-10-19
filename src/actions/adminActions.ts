@@ -115,7 +115,7 @@ export async function approveAmbassadorRequestAction(requestId: string) {
     user_id: req.student_id,
     type: "ambassador_approved",
     title: "Ambassador Application Approved!",
-    body: "Congratulations! You are now an official Zyven Campus Ambassador. You can now access the Ambassador portal and create tasks.",
+    body: "Congratulations! You are now an official Zyvex Campus Ambassador. You can now access the Ambassador portal and create tasks.",
   });
 
   // Audit log

@@ -63,7 +63,7 @@ export function Zyven3DMark({
     const mainGeometry = new THREE.OctahedronGeometry(1.2, 0);
     const wireframeGeometry = new THREE.OctahedronGeometry(1.25, 0);
 
-    // Materials with Zyven violet/indigo accents
+    // Materials with Zyvex violet/indigo accents
     const mainMaterial = new THREE.MeshPhysicalMaterial({
       color: new THREE.Color("#5B5BF0"),
       metalness: 0.25,

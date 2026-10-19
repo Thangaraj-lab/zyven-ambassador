@@ -180,7 +180,7 @@ export default function AdminAnnouncementsPage() {
               <span>
                 Broadcast by:{" "}
                 <strong className="text-text font-bold">
-                  {item.authorName || "Zyven Operations Admin"}
+                  {item.authorName || "Zyvex Operations Admin"}
                 </strong>
               </span>
               <span className="font-mono text-[11px] text-text-muted/70">

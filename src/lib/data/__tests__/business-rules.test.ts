@@ -7,7 +7,7 @@ import {
 } from "../mock/mockRepository";
 import { mockStore } from "../mock/store";
 
-describe("Zyven Business Rules & Data Layer", () => {
+describe("Zyvex Business Rules & Data Layer", () => {
   beforeEach(() => {
     mockStore.resetToSeed();
   });
@@ -96,8 +96,8 @@ describe("Zyven Business Rules & Data Layer", () => {
             slug: "linkedin-follow-post",
             title: "Follow & Post on LinkedIn",
             titleTa: "LinkedIn-இல் பின்தொடருங்கள்",
-            description: "Follow Zyven and share announcement",
-            descriptionTa: "Zyven பக்கத்தைப் பின்தொடரவும்",
+            description: "Follow Zyvex and share announcement",
+            descriptionTa: "Zyvex பக்கத்தைப் பின்தொடரவும்",
             category: "Social Media",
             brand: "linkedin",
             taskType: "url",

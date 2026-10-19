@@ -253,7 +253,7 @@ export default function ProfilePage() {
 
           <div className="space-y-1 pt-3 border-t border-border">
             <span className="text-text-muted font-bold block text-[10px] uppercase">
-              Why I Joined Zyven
+              Why I Joined Zyvex
             </span>
             <p className="text-xs text-text leading-relaxed bg-surface-2 p-3.5 rounded-xl border border-border">
               {profile?.whyJoin}

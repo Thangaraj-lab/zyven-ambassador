@@ -28,7 +28,7 @@ import { motion } from "motion/react";
 
 const REASON_PRESETS = [
   "Post URL is invalid or inaccessible",
-  "Post is missing mandatory hashtag #Zyven",
+  "Post is missing mandatory hashtag #Zyvex",
   "Screenshot does not clearly show group membership",
   "Post has already been submitted by another ambassador",
   "Account appears to be inactive or fake profile",

@@ -44,7 +44,7 @@ export default function HowItWorksPage() {
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12 space-y-16">
       <SectionHeading
         eyebrow="Blueprint"
-        title="How the Zyven Ambassador Program Works"
+        title="How the Zyvex Ambassador Program Works"
         description="A complete guide to our five-stage progression loop from discovery to rewards."
       />
 

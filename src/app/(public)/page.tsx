@@ -47,8 +47,8 @@ export default function LandingPage() {
 
   const faqs = [
     {
-      q: "What is the Zyven Student Ambassador Program?",
-      a: "An elite campus leadership initiative empowering college students to represent Zyven, host developer events, build campus communities, and earn verified rewards.",
+      q: "What is the Zyvex Student Ambassador Program?",
+      a: "An elite campus leadership initiative empowering college students to represent Zyvex, host developer events, build campus communities, and earn verified rewards.",
     },
     {
       q: "Who is eligible to apply?",
@@ -68,7 +68,7 @@ export default function LandingPage() {
     },
     {
       q: "Is there any cost to join?",
-      a: "Participation in the Zyven Student Ambassador Program is 100% free.",
+      a: "Participation in the Zyvex Student Ambassador Program is 100% free.",
     },
   ];
 
@@ -107,14 +107,14 @@ export default function LandingPage() {
           <div className="relative h-10 w-10">
             <Image
               src="/assets/z3d-crystal.png"
-              alt="Zyven 3D Logo"
+              alt="Zyvex 3D Logo"
               width={40}
               height={40}
               className="h-10 w-10 object-contain drop-shadow transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6"
               priority
             />
           </div>
-          <span className="text-2xl font-black tracking-tight text-text">Zyven</span>
+          <span className="text-2xl font-black tracking-tight text-text">Zyvex</span>
         </Link>
 
         <nav className="hidden gap-8 text-sm font-semibold text-text-muted lg:flex items-center">
@@ -178,7 +178,7 @@ export default function LandingPage() {
             className="font-display text-5xl sm:text-7xl lg:text-[5.5rem] font-semibold leading-[1.0] tracking-tight text-text"
           >
             Become a <br />
-            <span className="text-brand">Zyven</span> Student <br />
+            <span className="text-brand">Zyvex</span> Student <br />
             Ambassador
           </motion.h1>
 
@@ -188,7 +188,7 @@ export default function LandingPage() {
             transition={{ duration: 0.7, delay: 0.2 }}
             className="max-w-xl text-lg sm:text-xl text-text-muted leading-relaxed"
           >
-            Represent Zyven in your campus, take on exciting missions, earn points, unlock rewards, and be part of a growing ambassador community.
+            Represent Zyvex in your campus, take on exciting missions, earn points, unlock rewards, and be part of a growing ambassador community.
           </motion.p>
 
           <motion.div
@@ -233,7 +233,7 @@ export default function LandingPage() {
               <div className="relative overflow-hidden rounded-[2.5rem] p-3 bg-gradient-to-tr from-primary/20 via-accent/50 to-white/10 dark:to-transparent border border-white/40 dark:border-border shadow-2xl backdrop-blur-md">
                 <Image
                   src="/assets/hero-ambassador.jpg"
-                  alt="Zyven student ambassador"
+                  alt="Zyvex student ambassador"
                   width={1024}
                   height={1152}
                   className="mx-auto max-h-[620px] w-full rounded-[2rem] object-cover [mask-image:radial-gradient(85%_85%_at_50%_45%,black_72%,transparent)] transition-transform duration-700 hover:scale-[1.02]"
@@ -332,7 +332,7 @@ export default function LandingPage() {
         </motion.div>
       </section>
 
-      {/* How It Works: Your Journey as a Zyven Ambassador (3D Staggered Cards) */}
+      {/* How It Works: Your Journey as a Zyvex Ambassador (3D Staggered Cards) */}
       <section id="journey" className="relative z-10 mx-auto max-w-[1360px] px-6 py-28">
         <motion.div
           initial={{ opacity: 0, y: 25 }}
@@ -345,7 +345,7 @@ export default function LandingPage() {
             How It Works
           </span>
           <h2 className="font-display text-4xl sm:text-5xl lg:text-6xl font-semibold text-text tracking-tight">
-            Your journey as a <span className="text-brand">Zyven Ambassador</span>
+            Your journey as a <span className="text-brand">Zyvex Ambassador</span>
           </h2>
           <p className="text-base text-text-muted max-w-xl">
             Five simple steps to lead on campus, level up your network, and earn verified rewards.
@@ -597,19 +597,19 @@ export default function LandingPage() {
           <div className="flex items-center gap-2.5">
             <Image
               src="/assets/z3d-crystal.png"
-              alt="Zyven Logo"
+              alt="Zyvex Logo"
               width={28}
               height={28}
               className="h-7 w-7 object-contain"
             />
-            <span className="font-black text-text text-sm">Zyven Student Ambassador Network</span>
+            <span className="font-black text-text text-sm">Zyvex Student Ambassador Network</span>
           </div>
           <div className="flex items-center gap-6 font-semibold">
             <Link href="/login" className="hover:text-text transition-colors">Ambassador Login</Link>
             <Link href="/register" className="hover:text-text transition-colors">Join Program</Link>
             <Link href="/leaderboard" className="hover:text-text transition-colors">Standings</Link>
           </div>
-          <p>© 2026 Zyven Network. All rights reserved.</p>
+          <p>© 2026 Zyvex Network. All rights reserved.</p>
         </div>
       </footer>
     </div>

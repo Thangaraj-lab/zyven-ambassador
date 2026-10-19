@@ -96,7 +96,7 @@ export function LogoutModal() {
           </div>
 
           <div className="space-y-1">
-            <h3 className="text-lg font-bold text-text tracking-tight">Sign out of Zyven?</h3>
+            <h3 className="text-lg font-bold text-text tracking-tight">Sign out of Zyvex?</h3>
             <p className="text-xs text-text-muted leading-relaxed">
               Your points and task ledger will be securely saved. You can sign back in anytime.
             </p>

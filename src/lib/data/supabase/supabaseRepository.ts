@@ -23,7 +23,7 @@ type Row = Record<string, unknown>;
 
 function client() {
   const supabase = getSupabaseBrowserClient();
-  if (!supabase) throw new Error("The Zyven backend is not configured.");
+  if (!supabase) throw new Error("The Zyvex backend is not configured.");
   return supabase;
 }
 
@@ -190,7 +190,7 @@ export const supabaseRepository: Repository = {
     if (pointsError) throw pointsError;
     const totals = new Map<string, number>();
     for (const point of (points ?? []) as Row[]) totals.set(asString(point.student_id), (totals.get(asString(point.student_id)) ?? 0) + asNumber(point.amount));
-    const individuals = ((profiles ?? []) as Row[]).map((profile) => ({ ambassadorId: asString(profile.id), name: asString(profile.full_name, "Student"), college: asString((profile.colleges as Row | null)?.name, "Zyven"), points: totals.get(asString(profile.id)) ?? 0, avatarUrl: typeof profile.avatar_url === "string" ? profile.avatar_url : null, isYou: false, earliestTimestamp: "" })).sort((a, b) => b.points - a.points).map((entry, index) => ({ ...entry, rank: index + 1 }));
+    const individuals = ((profiles ?? []) as Row[]).map((profile) => ({ ambassadorId: asString(profile.id), name: asString(profile.full_name, "Student"), college: asString((profile.colleges as Row | null)?.name, "Zyvex"), points: totals.get(asString(profile.id)) ?? 0, avatarUrl: typeof profile.avatar_url === "string" ? profile.avatar_url : null, isYou: false, earliestTimestamp: "" })).sort((a, b) => b.points - a.points).map((entry, index) => ({ ...entry, rank: index + 1 }));
     if (scope === "individual") return individuals;
     const colleges = new Map<string, CollegeLeaderboardEntry>();
     individuals.forEach((entry) => { const existing = colleges.get(entry.college) ?? { rank: 0, collegeId: entry.college, name: entry.college, shortName: entry.college, totalPoints: 0, memberCount: 0, averagePoints: 0, topAmbassadorName: entry.name, color: "var(--primary)" }; existing.totalPoints += entry.points; existing.memberCount += 1; if (entry.points > (existing.totalPoints - entry.points)) existing.topAmbassadorName = entry.name; colleges.set(entry.college, existing); });
@@ -224,7 +224,7 @@ export const supabaseRepository: Repository = {
   async upsertMission() { throw new Error("Use the Ambassador Task Studio."); },
   async getAdminStats(): Promise<AdminStats> { const [users, submissions, points] = await Promise.all([client().from("profiles").select("id", { count: "exact", head: true }).eq("role", "ambassador"), client().from("submissions").select("id,status"), client().from("point_transactions").select("amount")]); if (users.error || submissions.error || points.error) throw users.error || submissions.error || points.error; const submissionRows = (submissions.data ?? []) as Row[]; return { totalAmbassadors: users.count ?? 0, pendingReviews: submissionRows.filter((row) => row.status === "submitted").length, pointsAwarded: ((points.data ?? []) as Row[]).reduce((total, row) => total + asNumber(row.amount), 0), approvalRate: submissionRows.length ? Math.round((submissionRows.filter((row) => row.status === "approved").length / submissionRows.length) * 100) : 0 }; },
   async getAuditLog(): Promise<AuditLog[]> { const { data, error } = await client().from("audit_logs").select("*").order("created_at", { ascending: false }); if (error) throw error; return ((data ?? []) as Row[]).map((row) => ({ id: asString(row.id), actorId: asString(row.actor_id), action: asString(row.action), entity: asString(row.entity_type), entityId: asString(row.entity_id), metadata: (row.metadata as Record<string, unknown>) ?? {}, createdAt: asString(row.created_at) })); },
-  async getMyTeam() { return null; }, async listTeams() { return []; }, async createTeam() { throw new Error("Teams are not part of the Zyven production portal."); }, async joinTeam() { throw new Error("Teams are not part of the Zyven production portal."); },
+  async getMyTeam() { return null; }, async listTeams() { return []; }, async createTeam() { throw new Error("Teams are not part of the Zyvex production portal."); }, async joinTeam() { throw new Error("Teams are not part of the Zyvex production portal."); },
   async createAmbassadorTask() { throw new Error("Use the Task Studio server action."); }, async approveTask() { throw new Error("Use the admin task approval action."); }, async rejectTask() { throw new Error("Use the admin task review action."); }, async setTaskStatus() { throw new Error("Use the Task Studio server action."); },
   async listUsers(params) {
     let query = client().from("profiles").select("*, colleges(name, code)").order("created_at", { ascending: false });
