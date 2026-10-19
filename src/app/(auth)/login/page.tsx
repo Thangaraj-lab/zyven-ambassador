@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import { Zyven3DMark } from "@/components/brand/Zyven3DMark";
@@ -14,7 +14,6 @@ import { toast } from "sonner";
 import { triggerRgbAlert, triggerRedAlarm } from "@/components/effects/RGBAlertSystem";
 
 export default function LoginPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const nextUrl = searchParams.get("next");
   const authError = searchParams.get("error");
@@ -27,18 +26,18 @@ export default function LoginPage() {
   const [shakeCard, setShakeCard] = useState(false);
 
   const redirectByRole = (role: string) => {
+    let destination = "/dashboard";
     if (nextUrl) {
-      router.push(nextUrl);
-      return;
-    }
-    // Server-side / profile authoritative role resolution
-    if (role === "admin") {
-      router.push("/admin");
+      destination = nextUrl;
+    } else if (role === "admin") {
+      destination = "/admin";
     } else if (role === "ambassador") {
-      router.push("/ambassador");
-    } else {
-      router.push("/dashboard");
+      destination = "/ambassador";
     }
+
+    // Force a fresh document after authentication so React Query cannot reuse
+    // the previous user's cached role/session from the same browser tab.
+    window.location.assign(destination);
   };
 
   const handleOAuthLogin = async (provider: string = "google") => {
