@@ -229,11 +229,12 @@ export const supabaseRepository: Repository = {
     const profile = await currentProfile(); if (!profile) throw new Error("Authentication required.");
     const { data: submission, error } = await client().from("submissions").upsert({ task_id: data.missionId, student_id: profile.id, status: "submitted", submitted_at: new Date().toISOString() }, { onConflict: "task_id,student_id" }).select("*").single();
     if (error) throw error;
-    if (data.proofUrl || data.note || data.screenshotDataUrl) {
+    if (data.proofUrl || data.note || data.screenshotDataUrl || data.filePath) {
       const { error: itemError } = await client().from("submission_items").insert({
         submission_id: submission.id,
         url_value: data.proofUrl ?? null,
         text_value: data.note ?? null,
+        file_path: data.filePath ?? null,
         metadata: data.screenshotDataUrl ? { screenshotDataUrl: data.screenshotDataUrl } : {},
       });
       if (itemError) throw itemError;

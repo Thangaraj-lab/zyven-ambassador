@@ -48,6 +48,7 @@ export interface Repository {
     proofUrl?: string;
     screenshotDataUrl?: string;
     note?: string;
+    filePath?: string;
   }): Promise<Submission>;
   getMySubmissions(): Promise<Submission[]>;
   getSubmission(id: string): Promise<Submission | null>;

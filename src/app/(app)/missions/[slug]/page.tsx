@@ -14,6 +14,7 @@ import { PointsPill } from "@/components/ui/PointsPill";
 import { Button } from "@/components/ui/Button";
 import { CopyButton } from "@/components/ui/CopyButton";
 import { FileDropzone } from "@/components/ui/FileDropzone";
+import { EvidenceFileDropzone } from "@/components/ui/EvidenceFileDropzone";
 import { Timeline } from "@/components/ui/Timeline";
 import { validateLinkedInUrl } from "@/lib/security/linkValidator";
 import {
@@ -51,6 +52,7 @@ export default function MissionDetailPage() {
   // Form states
   const [proofUrl, setProofUrl] = useState("");
   const [screenshotDataUrl, setScreenshotDataUrl] = useState<string | null>(null);
+  const [evidenceFile, setEvidenceFile] = useState<File | null>(null);
   const [postLang, setPostLang] = useState<"en" | "ta">("en");
   const [followedConfirmed, setFollowedConfirmed] = useState(false);
   const [whatsappJoined, setWhatsappJoined] = useState(false);
@@ -93,7 +95,8 @@ export default function MissionDetailPage() {
   const canSubmit =
     submitStage === "idle" &&
     (!mission.proofRequired.url || isLinkedInValid) &&
-    (!mission.proofRequired.screenshot || !!screenshotDataUrl);
+    (!mission.proofRequired.screenshot || !!screenshotDataUrl) &&
+    (!mission.proofRequired.document || !!evidenceFile);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -117,6 +120,7 @@ export default function MissionDetailPage() {
         screenshotDataUrl: mission.proofRequired.screenshot
           ? screenshotDataUrl || undefined
           : undefined,
+        file: evidenceFile || undefined,
       });
 
       // Step 5 & 6: Button transforms into success state with drawn checkmark
@@ -295,6 +299,13 @@ export default function MissionDetailPage() {
             <FileDropzone onImageSelected={setScreenshotDataUrl} />
           </div>
 
+          <div>
+            <label className="block text-xs font-bold text-text mb-1.5">
+              {mission.proofRequired.document ? "Supporting Document (Required)" : "Supporting Document (Optional)"}
+            </label>
+            <EvidenceFileDropzone file={evidenceFile} onFileSelected={setEvidenceFile} />
+          </div>
+
           <div className="p-3 rounded-xl bg-surface-2 border border-border text-[11px] text-text-muted">
             ℹ️ {t("verificationNote")}
           </div>
@@ -406,6 +417,13 @@ export default function MissionDetailPage() {
             </label>
             <FileDropzone onImageSelected={setScreenshotDataUrl} />
           </div>
+
+          {mission.proofRequired.document && (
+            <div>
+              <label className="block text-xs font-bold text-text mb-1.5">Supporting Document (Required)</label>
+              <EvidenceFileDropzone file={evidenceFile} onFileSelected={setEvidenceFile} />
+            </div>
+          )}
 
           <div className="p-3 rounded-xl bg-surface-2 border border-border text-[11px] text-text-muted">
             ℹ️ {t("verificationNote")}

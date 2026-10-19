@@ -13,6 +13,7 @@ import {
   archiveTaskAction,
 } from "@/actions/taskActions";
 import { setUserRoleAction, setUserStatusAction } from "@/actions/adminActions";
+import { getSupabaseBrowserClient } from "@/lib/supabase/client";
 
 
 // Auto invalidate queries when mockStore updates
@@ -238,9 +239,20 @@ export function useSubmitProof() {
       proofUrl?: string;
       screenshotDataUrl?: string;
       note?: string;
+      file?: File;
     }) => {
       const repo = await getRepository();
-      return repo.submitProof(data);
+      let filePath: string | undefined;
+      if (data.file) {
+        const me = await repo.getMe();
+        const supabase = getSupabaseBrowserClient();
+        if (!me || !supabase) throw new Error("Authentication is required to upload a file.");
+        const safeName = data.file.name.toLowerCase().replace(/[^a-z0-9._-]/g, "-");
+        filePath = `${me.user.id}/${crypto.randomUUID()}-${safeName}`;
+        const { error } = await supabase.storage.from("proofs").upload(filePath, data.file, { upsert: false, contentType: data.file.type || undefined });
+        if (error) throw new Error(error.message || "Failed to upload the evidence file.");
+      }
+      return repo.submitProof({ ...data, filePath });
     },
     onSuccess: () => {
       queryClient.invalidateQueries();
