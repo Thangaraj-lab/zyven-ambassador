@@ -144,7 +144,7 @@ export default function LoginPage() {
     <>
       <div
         aria-hidden="true"
-        className="pointer-events-none fixed inset-0 -z-10 hidden bg-cover bg-center bg-no-repeat dark:block"
+        className="pointer-events-none fixed inset-0 z-0 hidden bg-cover bg-center bg-no-repeat dark:block"
         style={{ backgroundImage: "url('/assets/zyvex-login-campus.jpeg')" }}
       >
         <div className="absolute inset-0 bg-[#080615]/55 backdrop-blur-[1px]" />
@@ -155,7 +155,7 @@ export default function LoginPage() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        className={`w-full max-w-4xl rounded-[24px] bg-surface border border-border shadow-soft-lg overflow-hidden grid grid-cols-1 md:grid-cols-2 transition-all dark:block dark:border-white/25 dark:bg-white/[0.12] dark:shadow-[0_24px_90px_rgba(18,8,55,0.58)] dark:backdrop-blur-2xl ${
+        className={`relative z-10 w-full max-w-4xl rounded-[24px] bg-surface border border-border shadow-soft-lg overflow-hidden grid grid-cols-1 md:grid-cols-2 transition-all dark:block dark:border-white/25 dark:bg-white/[0.12] dark:shadow-[0_24px_90px_rgba(18,8,55,0.58)] dark:backdrop-blur-2xl ${
           shakeCard ? "animate-card-shake border-red-500 shadow-[0_0_50px_rgba(239,68,68,0.6)]" : ""
         }`}
       >
