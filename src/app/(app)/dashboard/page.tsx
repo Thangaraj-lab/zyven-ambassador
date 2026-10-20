@@ -29,6 +29,7 @@ import {
 import { motion, AnimatePresence } from "motion/react";
 import { openMissionPortal } from "@/components/motion/MissionPortal";
 import { EnergyLine } from "@/components/motion/EnergyLine";
+import { Zyven3DMark } from "@/components/brand/Zyven3DMark";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
@@ -148,8 +149,9 @@ export default function DashboardPage() {
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.95 }}
-            className="p-5 rounded-[20px] brand-gradient-bg text-white shadow-soft-lg flex items-center justify-between gap-4"
+            className="relative overflow-hidden p-5 rounded-[20px] brand-gradient-bg text-white shadow-soft-lg flex items-center justify-between gap-4"
           >
+            <div className="pointer-events-none absolute -right-4 -top-12 h-36 w-36 rounded-full bg-white/20 blur-3xl" />
             <div className="flex items-center gap-3.5">
               <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center font-black text-sm shrink-0">
                 <Trophy className="h-5 w-5 text-white" />
@@ -163,6 +165,14 @@ export default function DashboardPage() {
                 </h4>
               </div>
             </div>
+            <motion.div
+              initial={{ scale: 0.7, opacity: 0, rotate: -12 }}
+              animate={{ scale: 1, opacity: 1, rotate: 0 }}
+              transition={{ type: "spring", stiffness: 180, damping: 12 }}
+              className="hidden shrink-0 sm:block"
+            >
+              <Zyven3DMark size={62} interactive={false} />
+            </motion.div>
             <button
               onClick={() => setTierUpgrade(null)}
               className="text-white/80 hover:text-white p-1 cursor-pointer"
