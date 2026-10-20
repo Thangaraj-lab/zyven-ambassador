@@ -15,7 +15,14 @@ function displayName(path: string) {
 }
 
 export function SubmissionEvidence({ items }: { items?: Submission["proofItems"] }) {
-  if (!items?.length) return null;
+  if (!items?.length) {
+    return (
+      <div className="rounded-xl border border-warning/40 bg-warning/5 p-4 text-xs text-text-muted">
+        <div className="font-semibold text-text">No evidence was saved for this submission.</div>
+        <p className="mt-1">This record has no URL, note, image, PDF, or uploaded file in the database.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="p-4 rounded-xl bg-surface-elevated/40 border border-border/60 space-y-3">

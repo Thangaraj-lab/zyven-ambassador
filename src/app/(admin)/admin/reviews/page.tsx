@@ -209,8 +209,12 @@ export default function AdminReviewsPage() {
                           <span className="text-primary font-semibold">
                             Screenshot attached
                           </span>
+                        ) : sub.note ? (
+                          <span className="truncate block">Text note: {sub.note}</span>
+                        ) : sub.proofItems?.length ? (
+                          <span className="text-primary font-semibold">Evidence attached</span>
                         ) : (
-                          "Text note"
+                          <span className="text-warning">No evidence recorded</span>
                         )}
                       </td>
 

@@ -416,6 +416,14 @@ export default function AmbassadorReviewsPage() {
                           <Eye className="w-3 h-3" /> Screenshot
                         </span>
                       )}
+                      {!sub.proofUrl && !sub.screenshotDataUrl && sub.proofItems?.length ? (
+                        <span className="flex items-center gap-1 text-text-muted">
+                          <Eye className="w-3 h-3" /> Evidence attached
+                        </span>
+                      ) : null}
+                      {!sub.proofUrl && !sub.screenshotDataUrl && !sub.proofItems?.length ? (
+                        <span className="text-warning">No evidence recorded</span>
+                      ) : null}
                     </div>
                   </button>
                 );
