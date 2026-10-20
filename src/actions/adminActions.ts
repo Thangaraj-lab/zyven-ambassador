@@ -3,6 +3,7 @@
 import { requireAdmin, requireAdminMFA } from "@/lib/auth/serverAuth";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { insertNotifications } from "@/lib/notifications/server";
 
 export async function setUserRoleAction(userId: string, role: "student" | "ambassador" | "admin") {
   // Role promotion is available to an authenticated admin. If the admin has
@@ -46,6 +47,15 @@ export async function setUserStatusAction(userId: string, status: "active" | "su
 
   if (error) throw new Error(error.message);
 
+  await insertNotifications(supabase, [{
+    userId,
+    type: status === "suspended" ? "account_suspended" : "account_status_changed",
+    title: status === "suspended" ? "Account Suspended" : "Account Status Updated",
+    body: status === "suspended" ? "Your Zyvex account has been suspended by an administrator." : `Your account status is now ${status}.`,
+    entityType: "profile",
+    entityId: userId,
+  }]);
+
   await supabase.from("audit_logs").insert({
     actor_id: admin.id,
     action: "set_user_status",
@@ -72,6 +82,15 @@ export async function adjustPointsAction(studentId: string, amount: number, reas
   });
 
   if (error) throw new Error(error.message);
+
+  await insertNotifications(supabase, [{
+    userId: studentId,
+    type: "points_adjusted",
+    title: amount >= 0 ? `+${amount} Points Added` : `${amount} Points Adjustment`,
+    body: reason,
+    entityType: "point_transaction",
+    entityId: studentId,
+  }]);
 
   await supabase.from("audit_logs").insert({
     actor_id: admin.id,
@@ -160,6 +179,21 @@ export async function createAnnouncementAction(
     .single();
 
   if (error) throw new Error(error.message);
+
+  let recipientQuery = supabase.from("profiles").select("id").neq("status", "suspended");
+  if (audienceType === "all_students") recipientQuery = recipientQuery.eq("role", "student");
+  if (audienceType === "ambassadors") recipientQuery = recipientQuery.eq("role", "ambassador");
+  if (audienceType === "college" && collegeId) recipientQuery = recipientQuery.eq("college_id", collegeId);
+  const { data: recipients, error: recipientError } = await recipientQuery;
+  if (recipientError) throw new Error(recipientError.message);
+  await insertNotifications(supabase, (recipients ?? []).map((recipient) => ({
+    userId: recipient.id,
+    type: "announcement",
+    title,
+    body: content,
+    entityType: "announcement",
+    entityId: data.id,
+  })));
 
   revalidatePath("/announcements");
   revalidatePath("/dashboard");

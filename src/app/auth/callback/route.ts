@@ -6,12 +6,16 @@ export async function GET(request: Request) {
   const code = searchParams.get("code");
   const next = searchParams.get("next") ?? "/dashboard";
   const intent = searchParams.get("intent");
+  const type = searchParams.get("type");
 
   if (code) {
     const supabase = await getSupabaseServerClient();
     if (supabase) {
       const { error } = await supabase.auth.exchangeCodeForSession(code);
       if (!error) {
+        if (type === "recovery" || next === "/reset-password/update") {
+          return NextResponse.redirect(`${origin}/reset-password/update`);
+        }
         const { data: { user } } = await supabase.auth.getUser();
         if (user) {
           const { data: profile, error: profileError } = await supabase

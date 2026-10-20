@@ -280,16 +280,12 @@ export default function LoginPage() {
               required
             />
             <div className="flex justify-end pt-0.5">
-              <a
-                href="#forgot"
-                onClick={(e) => {
-                  e.preventDefault();
-                  toast.info("Password reset link will be sent to your verified email.");
-                }}
+              <Link
+                href="/reset-password"
                 className="text-[11px] text-text-muted hover:text-primary transition-colors"
               >
                 Forgot password?
-              </a>
+              </Link>
             </div>
           </div>
 

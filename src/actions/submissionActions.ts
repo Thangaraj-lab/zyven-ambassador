@@ -4,6 +4,7 @@ import { z } from "zod";
 import { requireStudent, requireAmbassador } from "@/lib/auth/serverAuth";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { insertNotifications, notifyRole } from "@/lib/notifications/server";
 
 export async function startTaskAction(taskId: string) {
   const profile = await requireStudent();
@@ -125,6 +126,32 @@ export async function submitTaskProofAction(taskId: string, items: z.infer<typeo
     const { error: itemError } = await supabase.from("submission_items").insert(rows);
     if (itemError) throw new Error(itemError.message || "Failed to save task proof.");
   }
+
+  const { data: task } = await supabase.from("tasks").select("title, created_by").eq("id", taskId).single();
+  const recipients = task?.created_by ? [{
+    userId: task.created_by,
+    type: "submission_received",
+    title: "New Submission Received",
+    body: `A student submitted proof for "${task.title}".`,
+    entityType: "submission",
+    entityId: currentSub.id,
+  }] : [];
+  recipients.push({
+    userId: profile.id,
+    type: "submission_sent",
+    title: "Submission Sent",
+    body: `Your proof for "${task?.title || "the task"}" is now waiting for review.`,
+    entityType: "submission",
+    entityId: currentSub.id,
+  });
+  await insertNotifications(supabase, recipients);
+  await notifyRole(supabase, "admin", {
+    type: "submission_received",
+    title: "Submission Awaiting Review",
+    body: `A student submitted proof for "${task?.title || "a task"}".`,
+    entityType: "submission",
+    entityId: currentSub.id,
+  });
 
   revalidatePath(`/missions/${taskId}`);
   revalidatePath("/dashboard");

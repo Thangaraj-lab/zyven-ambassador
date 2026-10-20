@@ -4,6 +4,7 @@ import { z } from "zod";
 import { requireAmbassador, requireAdmin } from "@/lib/auth/serverAuth";
 import { getSupabaseServerClient } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { insertNotifications, notifyRole } from "@/lib/notifications/server";
 
 const CreateTaskSchema = z.object({
   title: z.string().min(3).max(100),
@@ -76,6 +77,16 @@ export async function createTaskAction(input: z.infer<typeof CreateTaskSchema>) 
     throw new Error(audienceError.message || "Failed to configure task audience");
   }
 
+  if (initialStatus === "pending_approval") {
+    await notifyRole(supabase, "admin", {
+      type: "task_pending_approval",
+      title: "Task Awaiting Approval",
+      body: `The ambassador task "${parsed.title}" is ready for admin review.`,
+      entityType: "task",
+      entityId: task.id,
+    });
+  }
+
   revalidatePath("/ambassador");
   revalidatePath("/admin/tasks");
   revalidatePath("/missions");
@@ -88,12 +99,17 @@ export async function approveTaskAction(taskId: string) {
   const supabase = await getSupabaseServerClient();
   if (!supabase) throw new Error("Database connection unavailable.");
 
+  const { data: task } = await supabase.from("tasks").select("created_by, title").eq("id", taskId).single();
   const { error } = await supabase
     .from("tasks")
     .update({ status: "live", updated_at: new Date().toISOString() })
     .eq("id", taskId);
 
   if (error) throw new Error(error.message);
+
+  if (task?.created_by) {
+    await insertNotifications(supabase, [{ userId: task.created_by, type: "task_approved", title: "Task Approved", body: `Your task "${task.title}" is now live.`, entityType: "task", entityId: taskId }]);
+  }
 
   // Log audit
   await supabase.from("audit_logs").insert({
@@ -115,12 +131,17 @@ export async function rejectTaskAction(taskId: string, reason: string) {
   const supabase = await getSupabaseServerClient();
   if (!supabase) throw new Error("Database connection unavailable.");
 
+  const { data: task } = await supabase.from("tasks").select("created_by, title").eq("id", taskId).single();
   const { error } = await supabase
     .from("tasks")
     .update({ status: "rejected", updated_at: new Date().toISOString() })
     .eq("id", taskId);
 
   if (error) throw new Error(error.message);
+
+  if (task?.created_by) {
+    await insertNotifications(supabase, [{ userId: task.created_by, type: "task_rejected", title: "Task Needs Changes", body: `Your task "${task.title}" was rejected. ${reason}`, entityType: "task", entityId: taskId }]);
+  }
 
   await supabase.from("audit_logs").insert({
     actor_id: profile.id,
