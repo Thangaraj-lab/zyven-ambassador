@@ -1,5 +1,5 @@
 "use client";
-
+ 
 import type { Submission } from "@/lib/data/types";
 import { ExternalLink, FileText, Image as ImageIcon, Link2 } from "lucide-react";
 

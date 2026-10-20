@@ -141,16 +141,26 @@ export default function LoginPage() {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 12 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-      className={`w-full max-w-4xl rounded-[24px] bg-surface border border-border shadow-soft-lg overflow-hidden grid grid-cols-1 md:grid-cols-2 transition-all ${
-        shakeCard ? "animate-card-shake border-red-500 shadow-[0_0_50px_rgba(239,68,68,0.6)]" : ""
-      }`}
-    >
+    <>
+      <div
+        aria-hidden="true"
+        className="pointer-events-none fixed inset-0 -z-10 hidden bg-cover bg-center bg-no-repeat dark:block"
+        style={{ backgroundImage: "url('/assets/zyvex-login-campus.jpeg')" }}
+      >
+        <div className="absolute inset-0 bg-[#080615]/55 backdrop-blur-[1px]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#120a2c]/55 via-transparent to-[#09051b]/70" />
+      </div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
+        className={`w-full max-w-4xl rounded-[24px] bg-surface border border-border shadow-soft-lg overflow-hidden grid grid-cols-1 md:grid-cols-2 transition-all dark:block dark:border-white/25 dark:bg-white/[0.12] dark:shadow-[0_24px_90px_rgba(18,8,55,0.58)] dark:backdrop-blur-2xl ${
+          shakeCard ? "animate-card-shake border-red-500 shadow-[0_0_50px_rgba(239,68,68,0.6)]" : ""
+        }`}
+      >
       {/* Left Column: Zyvex Brand & 3D Experience */}
-      <div className="hidden md:flex flex-col justify-between p-10 bg-surface-2 border-r border-border relative overflow-hidden">
+      <div className="hidden md:flex flex-col justify-between p-10 bg-surface-2 border-r border-border relative overflow-hidden dark:hidden">
         <div className="space-y-3 z-10">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-bold">
             <Sparkles className="h-3.5 w-3.5" />
@@ -192,8 +202,11 @@ export default function LoginPage() {
       </div>
 
       {/* Right Column: Authentication Form */}
-      <div className="p-7 sm:p-10 flex flex-col justify-center space-y-5">
+      <div className="p-7 sm:p-10 flex flex-col justify-center space-y-5 dark:p-7 sm:dark:p-10">
         <div>
+          <div className="mb-5 hidden items-center justify-center dark:flex">
+            <Zyven3DMark size={72} />
+          </div>
           <span className="text-xs font-bold tracking-widest text-primary uppercase">
             ZYVEX
           </span>
@@ -211,13 +224,13 @@ export default function LoginPage() {
         </div>
 
         {/* STRICT PUBLIC ROLE SELECTION TABS (Student & Ambassador ONLY) */}
-        <div className="grid grid-cols-2 p-1 bg-surface-2 rounded-xl border border-border">
+        <div className="grid grid-cols-2 p-1 bg-surface-2 rounded-xl border border-border dark:border-white/20 dark:bg-black/20">
           <button
             type="button"
             onClick={() => setSelectedRole("student")}
             className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold transition-all ${
               selectedRole === "student"
-                ? "bg-surface text-text shadow-sm border border-border"
+                ? "bg-surface text-text shadow-sm border border-border dark:bg-white/20 dark:border-white/25 dark:text-white"
                 : "text-text-muted hover:text-text"
             }`}
           >
@@ -229,7 +242,7 @@ export default function LoginPage() {
             onClick={() => setSelectedRole("ambassador")}
             className={`flex items-center justify-center gap-2 py-2 px-3 rounded-lg text-xs font-bold transition-all ${
               selectedRole === "ambassador"
-                ? "bg-surface text-text shadow-sm border border-border"
+                ? "bg-surface text-text shadow-sm border border-border dark:bg-white/20 dark:border-white/25 dark:text-white"
                 : "text-text-muted hover:text-text"
             }`}
           >
@@ -251,6 +264,7 @@ export default function LoginPage() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             leftIcon={<Mail className="h-4 w-4" />}
+            className="dark:border-white/25 dark:bg-black/20 dark:text-white dark:placeholder:text-white/55"
             required
           />
 
@@ -262,6 +276,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               leftIcon={<Lock className="h-4 w-4" />}
+              className="dark:border-white/25 dark:bg-black/20 dark:text-white dark:placeholder:text-white/55"
               required
             />
             <div className="flex justify-end pt-0.5">
@@ -292,7 +307,7 @@ export default function LoginPage() {
         {/* Divider */}
         <div className="relative flex items-center justify-center">
           <div className="border-t border-border w-full" />
-          <span className="bg-surface px-3 text-[11px] font-semibold text-text-muted uppercase">
+          <span className="bg-surface px-3 text-[11px] font-semibold text-text-muted uppercase dark:bg-transparent dark:text-white/70">
             or continue with
           </span>
         </div>
@@ -302,7 +317,7 @@ export default function LoginPage() {
           type="button"
           onClick={() => handleOAuthLogin("google")}
           disabled={isLoading}
-          className="w-full h-11 rounded-[14px] border border-border bg-surface hover:bg-surface-2 text-text font-bold text-xs sm:text-sm flex items-center justify-center gap-2.5 transition-all shadow-soft-sm cursor-pointer disabled:opacity-50"
+          className="w-full h-11 rounded-[14px] border border-border bg-surface hover:bg-surface-2 text-text font-bold text-xs sm:text-sm flex items-center justify-center gap-2.5 transition-all shadow-soft-sm cursor-pointer disabled:opacity-50 dark:border-white/25 dark:bg-black/20 dark:text-white dark:hover:bg-white/15"
           title={`Continue with Google as ${selectedRole}`}
         >
           <svg className="h-4 w-4" viewBox="0 0 24 24">
@@ -339,6 +354,7 @@ export default function LoginPage() {
           </p>
         </div>
       </div>
-    </motion.div>
+      </motion.div>
+    </>
   );
 }
