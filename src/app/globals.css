@@ -285,6 +285,60 @@ html {
   40%, 80% { transform: translateX(9px); }
 }
 
+@keyframes loginLedBorder {
+  0% { filter: hue-rotate(0deg); opacity: 0.72; }
+  50% { filter: hue-rotate(55deg); opacity: 1; }
+  100% { filter: hue-rotate(0deg); opacity: 0.72; }
+}
+
+@keyframes loginBackdropDrift {
+  0% { background-position: 50% 48%; background-size: 100%; }
+  100% { background-position: 53% 52%; background-size: 108%; }
+}
+
+@keyframes loginDepthPulse {
+  0%, 100% { opacity: 0.48; transform: scale(1); }
+  50% { opacity: 0.72; transform: scale(1.04); }
+}
+
+.dark .dark-login-backdrop {
+  animation: loginBackdropDrift 18s ease-in-out infinite alternate;
+  transform: translateZ(0);
+}
+
+.dark .dark-login-vignette {
+  background: radial-gradient(circle at 50% 35%, rgba(30, 20, 70, 0.15), rgba(4, 3, 16, 0.76) 88%), rgba(8, 6, 21, 0.42);
+}
+
+.dark .dark-login-depth {
+  animation: loginDepthPulse 8s ease-in-out infinite;
+  mix-blend-mode: screen;
+}
+
+.dark .dark-login-card {
+  isolation: isolate;
+}
+
+.dark .dark-login-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(120deg, rgba(119, 91, 255, 0.95), rgba(255, 255, 255, 0.3), rgba(255, 113, 228, 0.9), rgba(74, 197, 255, 0.88));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 0;
+  animation: loginLedBorder 7s linear infinite;
+}
+
+.dark .dark-login-card > * {
+  position: relative;
+  z-index: 1;
+}
+
 @keyframes shimmer {
   0% { transform: translateX(-100%); }
   100% { transform: translateX(200%); }

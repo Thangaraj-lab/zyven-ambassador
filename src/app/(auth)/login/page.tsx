@@ -144,18 +144,18 @@ export default function LoginPage() {
     <>
       <div
         aria-hidden="true"
-        className="pointer-events-none fixed inset-0 z-0 hidden bg-cover bg-center bg-no-repeat dark:block"
+        className="dark-login-backdrop pointer-events-none fixed inset-0 z-0 hidden bg-cover bg-center bg-no-repeat dark:block"
         style={{ backgroundImage: "url('/assets/zyvex-login-campus.jpeg')" }}
       >
-        <div className="absolute inset-0 bg-[#080615]/55 backdrop-blur-[1px]" />
-        <div className="absolute inset-0 bg-gradient-to-br from-[#120a2c]/55 via-transparent to-[#09051b]/70" />
+        <div className="dark-login-vignette absolute inset-0 bg-[#080615]/55 backdrop-blur-[1px]" />
+        <div className="dark-login-depth absolute inset-0 bg-gradient-to-br from-[#120a2c]/55 via-transparent to-[#09051b]/70" />
       </div>
 
       <motion.div
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-        className={`relative z-10 w-full max-w-4xl rounded-[24px] bg-surface border border-border shadow-soft-lg overflow-hidden grid grid-cols-1 md:grid-cols-2 transition-all dark:block dark:border-white/25 dark:bg-white/[0.12] dark:shadow-[0_24px_90px_rgba(18,8,55,0.58)] dark:backdrop-blur-2xl ${
+        className={`dark-login-card relative z-10 w-full max-w-4xl rounded-[24px] bg-surface border border-border shadow-soft-lg overflow-hidden grid grid-cols-1 md:grid-cols-2 transition-all dark:block dark:max-w-3xl dark:border-white/25 dark:bg-white/[0.12] dark:shadow-[0_24px_90px_rgba(18,8,55,0.58)] dark:backdrop-blur-2xl ${
           shakeCard ? "animate-card-shake border-red-500 shadow-[0_0_50px_rgba(239,68,68,0.6)]" : ""
         }`}
       >
@@ -202,7 +202,7 @@ export default function LoginPage() {
       </div>
 
       {/* Right Column: Authentication Form */}
-      <div className="p-7 sm:p-10 flex flex-col justify-center space-y-5 dark:p-7 sm:dark:p-10">
+      <div className="p-7 sm:p-10 flex flex-col justify-center space-y-5 dark:p-6 sm:dark:p-8">
         <div>
           <div className="mb-5 hidden items-center justify-center dark:flex">
             <Zyven3DMark size={72} />
