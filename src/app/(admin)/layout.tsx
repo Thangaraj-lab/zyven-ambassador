@@ -38,7 +38,7 @@ export default function AdminLayout({
   }
 
   return (
-    <div className="min-h-screen flex bg-bg text-text">
+    <div className="glass-dashboard-root min-h-screen flex bg-bg text-text">
       <RouteProgressBar />
       <AdminSidebar />
       <div className="flex-1 flex flex-col min-w-0">

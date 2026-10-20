@@ -39,7 +39,7 @@ export default function AmbassadorPortalLayout({
   }
 
   return (
-    <div className="min-h-screen flex bg-bg text-text">
+    <div className="glass-dashboard-root min-h-screen flex bg-bg text-text">
       <RouteProgressBar />
       {/* Dedicated Section 8 Ambassador Sidebar */}
       <AmbassadorSidebar />
