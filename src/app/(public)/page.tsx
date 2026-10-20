@@ -68,7 +68,7 @@ export default function LandingPage() {
   ];
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-bg text-text selection:bg-primary/20">
+    <div className="relative min-h-screen overflow-x-hidden bg-bg text-text selection:bg-primary/20">
       {/* Top Scroll Progress Line */}
       <motion.div
         style={{ scaleX: scrollYProgress, transformOrigin: "0%" }}
