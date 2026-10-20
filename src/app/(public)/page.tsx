@@ -24,14 +24,9 @@ import {
   Sparkles,
 } from "lucide-react";
 import { MissionCard } from "@/components/ui/MissionCard";
-import { ThemeToggle } from "@/components/ui/ThemeToggle";
-import { LocaleToggle } from "@/components/ui/LocaleToggle";
 import { TiltCard } from "@/components/ui/TiltCard";
 import { useMissions } from "@/lib/data/hooks";
-import {
-  SEED_MISSIONS,
-  SEED_COLLEGES,
-} from "@/lib/data/mock/seed";
+import { SEED_COLLEGES } from "@/lib/data/mock/seed";
 
 export default function LandingPage() {
   const { data: missions = [] } = useMissions();
@@ -100,61 +95,6 @@ export default function LandingPage() {
         {/* Subtle Cybernetic Grid Mesh Overlay */}
         <div className="absolute inset-0 bg-grid-mesh opacity-70" />
       </div>
-
-      {/* Header Navigation */}
-      <header className="relative z-30 mx-auto flex max-w-[1360px] items-center justify-between px-6 py-6">
-        <Link href="/" className="flex items-center gap-3 group">
-          <div className="relative h-10 w-10">
-            <Image
-              src="/assets/z3d-crystal.png"
-              alt="Zyvex 3D Logo"
-              width={40}
-              height={40}
-              className="h-10 w-10 object-contain drop-shadow transition-transform duration-300 group-hover:scale-110 group-hover:rotate-6"
-              priority
-            />
-          </div>
-          <span className="text-2xl font-black tracking-tight text-text">Zyvex</span>
-        </Link>
-
-        <nav className="hidden gap-8 text-sm font-semibold text-text-muted lg:flex items-center">
-          <Link href="/" className="text-text font-bold hover:text-primary transition-colors">
-            Home
-          </Link>
-          <Link href="#about" className="hover:text-text transition-colors">
-            About
-          </Link>
-          <Link href="#journey" className="hover:text-text transition-colors">
-            How It Works
-          </Link>
-          <Link href="#benefits" className="hover:text-text transition-colors">
-            Benefits
-          </Link>
-          <Link href="/leaderboard" className="hover:text-text transition-colors">
-            Leaderboard
-          </Link>
-          <Link href="#faq" className="hover:text-text transition-colors">
-            Contact
-          </Link>
-        </nav>
-
-        <div className="flex items-center gap-3">
-          <LocaleToggle />
-          <ThemeToggle />
-          <Link
-            href="/login"
-            className="rounded-full border border-border bg-surface px-5 py-2.5 text-sm font-bold text-text hover:bg-surface-2 transition-all cursor-pointer"
-          >
-            Login
-          </Link>
-          <Link
-            href="/register"
-            className="rounded-full bg-brand px-6 py-2.5 text-sm font-bold text-white shadow-glow hover:brightness-105 active:scale-95 transition-all cursor-pointer"
-          >
-            Register
-          </Link>
-        </div>
-      </header>
 
       {/* Hero Section - Ultra Grand & 3D */}
       <section className="relative z-10 mx-auto grid max-w-[1360px] items-center gap-12 px-6 pt-8 pb-16 lg:grid-cols-12 min-h-[82vh]">

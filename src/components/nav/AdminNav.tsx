@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Logo } from "@/components/brand/Logo";
@@ -22,6 +22,8 @@ import {
   User,
   LogOut,
   ExternalLink,
+  Menu,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { triggerLogoutDialog } from "@/components/motion/LogoutModal";
@@ -109,13 +111,34 @@ export function AdminSidebar() {
 }
 
 export function AdminHeader() {
+  const [open, setOpen] = useState(false);
+  const links = [
+    ["/admin", "Overview"], ["/admin/reviews", "Reviews"], ["/admin/tasks", "Tasks"],
+    ["/admin/users", "Users"], ["/admin/ambassadors", "Ambassadors"], ["/admin/announcements", "Announcements"],
+    ["/admin/rewards", "Rewards"], ["/admin/colleges", "Colleges"], ["/admin/analytics", "Analytics"],
+    ["/admin/audit-log", "Audit Log"], ["/admin/settings", "Settings"], ["/admin/profile", "Profile"],
+  ];
   return (
-    <header className="sticky top-0 z-30 w-full glass-nav border-b border-border/80 px-4 py-3 flex md:hidden items-center justify-between">
+    <header className="sticky top-0 z-50 w-full glass-nav border-b border-border/80 px-4 py-3 md:hidden">
+      <div className="flex items-center justify-between">
       <Logo size="sm" href="/admin" />
       <div className="flex items-center gap-2">
         <LocaleToggle />
         <ThemeToggle />
+        <button type="button" onClick={() => setOpen((value) => !value)} aria-label="Toggle admin menu" className="grid h-9 w-9 place-items-center rounded-xl border border-border bg-surface-2 text-text">
+          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+        </button>
       </div>
+      </div>
+      {open && (
+        <nav className="mt-3 grid max-h-[70vh] grid-cols-2 gap-1.5 overflow-y-auto border-t border-border/70 pt-3">
+          {links.map(([href, label]) => (
+            <Link key={href} href={href} onClick={() => setOpen(false)} className="rounded-xl px-3 py-2.5 text-xs font-bold text-text-muted hover:bg-surface-2 hover:text-text">
+              {label}
+            </Link>
+          ))}
+        </nav>
+      )}
     </header>
   );
 }
